@@ -53,7 +53,7 @@ export interface ApostaFormErrors {
 interface ApostaFormProps {
   formData: ApostaFormData;
   onChange: (field: keyof ApostaFormData, value: string) => void;
-  onSubmit: () => void;
+  onSubmit: (e?: FormEvent) => void | Promise<void>;
   bancas: ApiBankroll[];
   tipsters: ApiTipster[];
   errors?: ApostaFormErrors;
@@ -82,7 +82,7 @@ export default function ApostaForm({
 }: ApostaFormProps) {
   const handleSubmit = useCallback((e: FormEvent) => {
     e.preventDefault();
-    onSubmit();
+    onSubmit(e);
   }, [onSubmit]);
 
   const handleStatusChange = useCallback((value: string) => {

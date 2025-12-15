@@ -208,10 +208,23 @@ export default function TelegramEdit() {
   const fetchAposta = useCallback(async () => {
     try {
       setLoading(true);
+      console.log('🔍 Buscando aposta com ID:', betId);
+      
       const response = await apostaService.getAll();
+      console.log('📊 Total de apostas recebidas:', response.apostas.length);
+      
       const apostasArray = response.apostas;
       const apostaEncontrada = apostasArray.find(a => a.id === betId);
+      
+      console.log('🎯 Aposta encontrada?', !!apostaEncontrada);
+      
       if (apostaEncontrada) {
+        console.log('✅ Aposta encontrada:', {
+          id: apostaEncontrada.id,
+          evento: apostaEncontrada.evento,
+          bancaId: apostaEncontrada.bancaId
+        });
+        
         setAposta(apostaEncontrada);
         const dataEvento = apostaEncontrada.dataEvento
           ? new Date(apostaEncontrada.dataEvento).toISOString().split('T')[0]
@@ -242,11 +255,15 @@ export default function TelegramEdit() {
           retornoObtido: retornoObtido
         });
       } else {
-        setError('Aposta não encontrada');
+        console.error('❌ Aposta não encontrada na lista. BetId buscado:', betId);
+        console.log('📋 IDs disponíveis:', apostasArray.map(a => a.id).slice(0, 5));
+        setError('Aposta não encontrada. Pode ter sido deletada ou você não tem permissão.');
       }
     } catch (err) {
-      console.error('Erro ao buscar aposta:', err);
-      setError('Erro ao carregar aposta');
+      console.error('❌ Erro ao buscar aposta:', err);
+      const apiError = err as ApiError;
+      const errorMessage = apiError.response?.data?.error || apiError.message;
+      setError(`Erro ao carregar aposta: ${typeof errorMessage === 'string' ? errorMessage : 'Erro desconhecido'}`);
     } finally {
       setLoading(false);
     }

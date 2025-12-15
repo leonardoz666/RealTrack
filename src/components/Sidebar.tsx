@@ -224,8 +224,8 @@ const Sidebar = ({ collapsed, onToggle }: SidebarProps) => {
     navigate('/perfil');
   };
 
-  const handleLogout = () => {
-    AuthManager.clearTokens();
+  const handleLogout = async () => {
+    await AuthManager.logout();
     navigate('/login', { replace: true });
   };
 

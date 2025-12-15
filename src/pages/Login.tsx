@@ -52,15 +52,8 @@ export default function Login() {
       const response = await authService.login(email, senha);
       
       if (response.success) {
-        // Salvar tokens no localStorage
-        if (response.token && response.refreshToken && response.expiresAt) {
-          AuthManager.setTokens({
-            accessToken: response.token,
-            refreshToken: response.refreshToken,
-            expiresAt: response.expiresAt
-          });
-        }
-        
+        // Tokens são gerenciados automaticamente via httpOnly cookies
+        // Backend já configurou os cookies na resposta
         void navigate('/dashboard');
       }
     } catch (err) {

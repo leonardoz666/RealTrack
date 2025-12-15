@@ -234,7 +234,10 @@ const createApiClient = (config: ApiClientConfig = {}): AxiosInstance => {
       if (status === 401) {
         clearTokens?.();
         // Redirecionar para login se não estiver na página de login
-        if (typeof window !== 'undefined' && !window.location.pathname.includes('/login')) {
+        // EXCETO para páginas do Telegram WebApp que têm seu próprio fluxo de auth
+        if (typeof window !== 'undefined' && 
+            !window.location.pathname.includes('/login') &&
+            !window.location.pathname.includes('/telegram/')) {
           window.location.href = '/login';
         }
       }

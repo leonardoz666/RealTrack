@@ -320,8 +320,9 @@ export default function TelegramEdit() {
       const torneio = formData.torneio.trim();
       const pais = formData.pais.trim();
 
+      // IMPORTANTE: Não incluir bancaId no payload de atualização
+      // para evitar problemas quando a banca padrão é alterada
       const payload: Record<string, unknown> = {
-        bancaId: formData.bancaId,
         esporte,
         evento,
         aposta: descricaoAposta,
@@ -493,17 +494,11 @@ export default function TelegramEdit() {
 
       <div className="flex flex-col gap-4">
         <div>
-          <label className="mb-2 block text-sm font-medium">Banca *</label>
-          <select
-            value={formData.bancaId}
-            onChange={(e) => setFormData({ ...formData, bancaId: e.target.value })}
-            className={inputClasses}
-          >
-            <option value="">Selecione uma banca</option>
-            {bancas.map(banca => (
-              <option key={banca.id} value={banca.id}>{banca.nome}</option>
-            ))}
-          </select>
+          <label className="mb-2 block text-sm font-medium">Banca</label>
+          <div className="w-full rounded-lg border border-border/60 bg-background-muted px-3 py-3 text-base text-foreground-muted">
+            {bancas.find(b => b.id === formData.bancaId)?.nome || 'Banca não encontrada'}
+          </div>
+          <p className="mt-1 text-xs text-foreground-muted">A banca não pode ser alterada ao editar uma aposta</p>
         </div>
 
         <div>

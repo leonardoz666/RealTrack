@@ -348,9 +348,10 @@ export default function TelegramEdit() {
       const torneio = formData.torneio.trim();
       const pais = formData.pais.trim();
 
-      // IMPORTANTE: Não incluir bancaId no payload de atualização
-      // para evitar problemas quando a banca padrão é alterada
+      // Incluir bancaId no payload de atualização
+      // (backend valida que a banca pertence ao usuário)
       const payload: Record<string, unknown> = {
+        bancaId: formData.bancaId,
         esporte,
         evento,
         aposta: descricaoAposta,

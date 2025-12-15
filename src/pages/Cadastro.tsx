@@ -47,7 +47,7 @@ export default function Cadastro() {
       const data = await authService.register(nomeCompleto, email, senha);
       
       if (data.token) {
-        localStorage.setItem('token', data.token);
+        // Token gerenciado automaticamente via httpOnly cookies
         void navigate('/dashboard');
       }
     } catch (err) {

@@ -822,13 +822,11 @@ ${limitReachedMessage}`);
   }, [searchParams, setSearchParams, apostas, location, navigate, resetFormState]);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      return;
-    }
-
-    const streamUrl = `${API_BASE_URL}/apostas/stream?token=${encodeURIComponent(token)}`;
-    const eventSource = new EventSource(streamUrl);
+    // SSE com httpOnly cookies - backend valida automaticamente
+    const streamUrl = `${API_BASE_URL}/apostas/stream`;
+    const eventSource = new EventSource(streamUrl, {
+      withCredentials: true // Envia cookies httpOnly
+    });
 
     // Throttle para evitar muitas requisições
     let lastFetchTime = 0;

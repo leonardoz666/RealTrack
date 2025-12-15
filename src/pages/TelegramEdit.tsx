@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { authService, apostaService, bancaService, tipsterService, telegramService } from '../services/api';
+import { AuthManager } from '../lib/auth';
 import { type ApiBetWithBank, type ApiError } from '../types/api';
 import { ESPORTES, normalizarEsporteParaOpcao } from '../constants/esportes';
 import { CASAS_APOSTAS } from '../constants/casasApostas';
@@ -180,14 +181,14 @@ export default function TelegramEdit() {
         }
       } else {
         // Se não estiver no Telegram, verificar se já está autenticado
-        console.log('📱 Não está no Telegram Web App, verificando localStorage...');
-        const token = localStorage.getItem('at'); // 'at' é a chave real do localStorage
-        if (token) {
-          console.log('✅ Token encontrado no localStorage');
+        console.log('📱 Não está no Telegram Web App, verificando autenticação...');
+        const isAuth = await AuthManager.checkAuth();
+        if (isAuth) {
+          console.log('✅ Autenticado');
           setAuthenticated(true);
           setLoading(false);
         } else {
-          console.error('❌ Nenhum token encontrado');
+          console.error('❌ Não autenticado');
           setError('Você precisa estar logado para editar apostas.');
           setLoading(false);
         }

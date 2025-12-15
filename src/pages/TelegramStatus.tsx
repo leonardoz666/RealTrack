@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { authService, apostaService, telegramService } from '../services/api';
+import { AuthManager } from '../lib/auth';
 import { type ApiBetWithBank, type ApiError } from '../types/api';
 import { STATUS_APOSTAS } from '../constants/statusApostas';
 import { normalizarEsporteParaOpcao } from '../constants/esportes';
@@ -55,7 +56,7 @@ export default function TelegramStatus() {
         try {
           const data = await authService.telegramAuth(webapp.initData);
           if (typeof data.token === 'string') {
-            localStorage.setItem('token', data.token);
+            // Token gerenciado via httpOnly cookies
             setAuthenticated(true);
           }
         } catch (err: unknown) {
@@ -64,8 +65,8 @@ export default function TelegramStatus() {
         }
       } else {
         // Se não estiver no Telegram, verificar se já está autenticado
-        const token = localStorage.getItem('token');
-        if (token) {
+        const isAuth = await AuthManager.checkAuth();
+        if (isAuth) {
           setAuthenticated(true);
         } else {
           setError('Você precisa estar logado para alterar o status.');

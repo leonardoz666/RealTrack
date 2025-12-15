@@ -5,7 +5,7 @@
  * Busca flags do backend e cacheia localmente
  */
 
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import axios from 'axios';
 
 interface FeatureFlags {

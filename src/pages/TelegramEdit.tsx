@@ -159,24 +159,35 @@ export default function TelegramEdit() {
       const telegramWebApp = window.Telegram?.WebApp;
       if (telegramWebApp?.initData) {
         try {
+          console.log('🔐 Autenticando via Telegram...');
           const data = await authService.telegramAuth(telegramWebApp.initData);
+          
           if (typeof data.token === 'string') {
-            localStorage.setItem('token', data.token);
+            console.log('✅ Token recebido e salvo');
             setAuthenticated(true);
+            setLoading(false);
+          } else {
+            console.error('❌ Token não recebido:', data.error);
+            setError(`Erro ao autenticar: ${data.error || 'Token não fornecido'}`);
             setLoading(false);
           }
         } catch (err: unknown) {
           console.error('❌ Erro ao autenticar via Telegram:', err);
-          setError('Erro ao autenticar. Verifique se sua conta está vinculada ao Telegram.');
+          const apiError = err as ApiError;
+          const errorMsg = apiError.response?.data?.error || 'Erro ao autenticar';
+          setError(`${typeof errorMsg === 'string' ? errorMsg : 'Erro ao autenticar'}`);
           setLoading(false);
         }
       } else {
         // Se não estiver no Telegram, verificar se já está autenticado
-        const token = localStorage.getItem('token');
+        console.log('📱 Não está no Telegram Web App, verificando localStorage...');
+        const token = localStorage.getItem('at'); // 'at' é a chave real do localStorage
         if (token) {
+          console.log('✅ Token encontrado no localStorage');
           setAuthenticated(true);
           setLoading(false);
         } else {
+          console.error('❌ Nenhum token encontrado');
           setError('Você precisa estar logado para editar apostas.');
           setLoading(false);
         }

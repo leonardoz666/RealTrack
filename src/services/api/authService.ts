@@ -216,7 +216,18 @@ const telegramAuth = async (initData: string): Promise<TelegramAuthResponse> => 
   const response = await apiClient.post<TelegramAuthResponse>('/auth/telegram', {
     initData,
   });
-  return response.data;
+  
+  const data = response.data;
+  // Se recebeu token, salvar os tokens automaticamente
+  if (typeof data.token === 'string') {
+    setTokens({
+      accessToken: data.token,
+      refreshToken: data.token, // Telegram usa o mesmo token para ambos
+      expiresAt: Date.now() + (24 * 60 * 60 * 1000), // Validade de 24h
+    });
+  }
+  
+  return data;
 };
 
 /**

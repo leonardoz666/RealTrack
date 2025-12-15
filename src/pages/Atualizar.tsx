@@ -6,7 +6,7 @@ import StatCard from '../components/StatCard';
 import EmptyState from '../components/EmptyState';
 import Modal from '../components/Modal';
 import UploadTicketModal from '../components/UploadTicketModal';
-import ApostaForm, { ApostaFormData, ApostaFormErrors } from '../components/ApostaForm';
+import ApostaForm, { type ApostaFormData, type ApostaFormErrors } from '../components/ApostaForm';
 import FilterPopover from '../components/FilterPopover';
 import DateInput from '../components/DateInput';
 import { CASAS_APOSTAS } from '../constants/casasApostas';
@@ -1937,4 +1937,5 @@ ${limitReachedMessage}`);
     </div>
   );
 }
+
 

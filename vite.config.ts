@@ -46,7 +46,22 @@ export default defineConfig({
     chunkSizeWarningLimit: 500, // Avisar se chunk > 500KB (mais restritivo)
     reportCompressedSize: true, // Reportar tamanho comprimido
     // Minificar CSS em produção
-    cssMinify: true
+    cssMinify: true,
+    // Code splitting manual para vendors e páginas
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Separar vendors grandes em chunks próprios
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'chart-vendor': ['recharts'], // Se usar gráficos
+          'utils': ['date-fns', 'axios'],
+        },
+        // Nomes de chunks mais limpos
+        chunkFileNames: 'assets/[name]-[hash].js',
+        entryFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash].[ext]',
+      }
+    }
   },
   // Otimização de dependências pré-empacotadas
   optimizeDeps: {

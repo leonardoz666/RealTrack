@@ -4,6 +4,7 @@ import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 import { PerfilProvider } from './contexts/PerfilContext';
 import ToastContainer from './components/ToastContainer';
+import ErrorBoundary from './components/ErrorBoundary';
 
 
 // Lazy load de todas as páginas para reduzir bundle inicial
@@ -31,9 +32,10 @@ const PageLoader = () => (
 
 function App() {
   return (
-    <PerfilProvider>
-      <ToastContainer />
-      <Suspense fallback={<PageLoader />}>
+    <ErrorBoundary>
+      <PerfilProvider>
+        <ToastContainer />
+        <Suspense fallback={<PageLoader />}>
         <Routes>
           <Route index element={<Navigate to="/login" replace />} />
           <Route path="/login" element={<Login />} />
@@ -52,7 +54,8 @@ function App() {
           <Route path="/telegram/status" element={<TelegramStatus />} />
         </Routes>
       </Suspense>
-    </PerfilProvider>
+      </PerfilProvider>
+    </ErrorBoundary>
   );
 }
 

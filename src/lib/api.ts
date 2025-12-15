@@ -58,22 +58,8 @@ const api: AxiosInstance = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-  // Removido refresh automático para evitar problemas com cookies
-  
-  const token = AuthManager.getAccessToken();
-  // Em produção, não enviar Authorization header - usa cookies httpOnly
-  if (token && token !== 'httpOnly-cookie') {
-    if (config.headers instanceof AxiosHeaders) {
-      config.headers.set('Authorization', `Bearer ${token}`);
-    } else {
-      const existing = config.headers as Record<string, string | number | boolean> | undefined;
-      const normalizedHeaders: Record<string, string | number | boolean> = existing ? { ...existing } : {};
-      normalizedHeaders.Authorization = `Bearer ${token}`;
-      config.headers = normalizedHeaders as typeof config.headers;
-    }
-  }
-
-  // Sempre incluir credentials para httpOnly cookies (produção e desenvolvimento)
+  // Usar apenas httpOnly cookies para autenticação
+  // Navegador envia cookies automaticamente com withCredentials: true
   config.withCredentials = true;
 
   // Marcar cache key no config para uso posterior

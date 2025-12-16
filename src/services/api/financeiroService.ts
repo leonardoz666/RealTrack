@@ -153,24 +153,27 @@ async function getAll(filters: TransacoesFilter = {}): Promise<TransacoesRespons
   const url = queryString ? `/financeiro/transacoes?${queryString}` : '/financeiro/transacoes';
   
   const response = await apiClient.get<{
-    data: ApiFinancialTransactionWithBank[];
+    data?: ApiFinancialTransactionWithBank[];
+    nextCursor?: string | null;
+    hasMore?: boolean;
     total?: number;
     page?: number;
     totalPages?: number;
-  }>(url);
+  } | ApiFinancialTransactionWithBank[]>(url);
   
-  const data = response.data;
-  const transacoes = Array.isArray(data) 
-    ? data 
-    : Array.isArray(data.data) 
-      ? data.data 
+  const responseData = response.data;
+  // Suporta tanto array direto quanto { data, nextCursor, hasMore }
+  const transacoes = Array.isArray(responseData) 
+    ? responseData 
+    : Array.isArray(responseData.data) 
+      ? responseData.data 
       : [];
   
   return {
     transacoes: transacoes.map(mapTransacaoFromApi),
-    total: 'total' in data ? data.total ?? transacoes.length : transacoes.length,
-    page: 'page' in data ? data.page ?? 1 : 1,
-    totalPages: 'totalPages' in data ? data.totalPages ?? 1 : 1,
+    total: !Array.isArray(responseData) && 'total' in responseData ? responseData.total ?? transacoes.length : transacoes.length,
+    page: !Array.isArray(responseData) && 'page' in responseData ? responseData.page ?? 1 : 1,
+    totalPages: !Array.isArray(responseData) && 'totalPages' in responseData ? responseData.totalPages ?? 1 : 1,
   };
 }
 

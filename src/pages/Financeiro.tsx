@@ -225,10 +225,12 @@ export default function Financeiro() {
   }, [appliedFilters]);
 
   const fetchStats = useCallback(async () => {
+    const bancaIdToUse = appliedFilters.bancaId || resolvedBancaId;
     console.log('[DEBUG Financeiro] fetchStats - appliedFilters:', appliedFilters);
-    console.log('[DEBUG Financeiro] fetchStats - bancaId:', appliedFilters.bancaId);
+    console.log('[DEBUG Financeiro] fetchStats - bancaId original:', appliedFilters.bancaId);
+    console.log('[DEBUG Financeiro] fetchStats - bancaId resolvido:', bancaIdToUse);
     
-    if (!appliedFilters.bancaId) {
+    if (!bancaIdToUse) {
       console.log('[DEBUG Financeiro] bancaId vazio, usando emptyStats');
       setStatsData(emptyStats);
       setStatsLoading(false);
@@ -238,8 +240,8 @@ export default function Financeiro() {
     try {
       setError(null);
       setStatsLoading(true);
-      console.log('[DEBUG Financeiro] Chamando getSaldoGeral com bancaId:', appliedFilters.bancaId);
-      const data = await financeiroService.getSaldoGeral({ bancaId: appliedFilters.bancaId });
+      console.log('[DEBUG Financeiro] Chamando getSaldoGeral com bancaId:', bancaIdToUse);
+      const data = await financeiroService.getSaldoGeral({ bancaId: bancaIdToUse });
       console.log('[DEBUG Financeiro] Dados recebidos:', data);
       setStatsData(data);
     } catch (err) {
@@ -249,14 +251,16 @@ export default function Financeiro() {
     } finally {
       setStatsLoading(false);
     }
-  }, [appliedFilters.bancaId]);
+  }, [appliedFilters.bancaId, resolvedBancaId]);
 
   useEffect(() => {
+    console.log('[DEBUG Financeiro] useEffect principal - appliedFilters:', appliedFilters);
     void fetchTransacoes();
     void fetchStats();
   }, [fetchTransacoes, fetchStats]);
 
   useEffect(() => {
+    console.log('[DEBUG Financeiro] useEffect secundário - appliedFilters:', appliedFilters);
     if (appliedFilters.bancaId) {
       setStatsLoading(true);
     }

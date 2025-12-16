@@ -225,7 +225,11 @@ export default function Financeiro() {
   }, [appliedFilters]);
 
   const fetchStats = useCallback(async () => {
+    console.log('[DEBUG Financeiro] fetchStats - appliedFilters:', appliedFilters);
+    console.log('[DEBUG Financeiro] fetchStats - bancaId:', appliedFilters.bancaId);
+    
     if (!appliedFilters.bancaId) {
+      console.log('[DEBUG Financeiro] bancaId vazio, usando emptyStats');
       setStatsData(emptyStats);
       setStatsLoading(false);
       return;
@@ -234,7 +238,9 @@ export default function Financeiro() {
     try {
       setError(null);
       setStatsLoading(true);
+      console.log('[DEBUG Financeiro] Chamando getSaldoGeral com bancaId:', appliedFilters.bancaId);
       const data = await financeiroService.getSaldoGeral({ bancaId: appliedFilters.bancaId });
+      console.log('[DEBUG Financeiro] Dados recebidos:', data);
       setStatsData(data);
     } catch (err) {
       console.error('Erro ao buscar estatísticas:', err);

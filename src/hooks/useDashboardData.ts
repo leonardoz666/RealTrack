@@ -415,8 +415,9 @@ export function useDashboardData(
 
     setLoadingApostasRecentes(true);
     try {
-      const response = await apiClient.get<ApostaRecente[]>('/apostas/recentes', { params: { bancaId } });
-      const recentData = Array.isArray(response.data) ? response.data : [];
+      const response = await apiClient.get<{ data: ApostaRecente[]; nextCursor: string | null; hasMore: boolean }>('/apostas/recentes', { params: { bancaId } });
+      // O endpoint agora retorna { data, nextCursor, hasMore }
+      const recentData = response.data?.data ? response.data.data : [];
       setApostasRecentes(recentData);
     } catch {
       setApostasRecentes([]);

@@ -449,11 +449,11 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <section className="grid gap-5 lg:grid-cols-4">
+      <section className="grid gap-6 lg:grid-cols-4">
         <div
           className={cn(
-            'col-span-1 space-y-6 rounded-lg border border-border/30 p-6 text-[#f2f2f2] shadow-card lg:col-span-2',
-            'bg-bank-hero'
+            'col-span-1 space-y-6 rounded-2xl border border-[#14b8a6]/40 p-8 text-[#f2f2f2] shadow-[0_25px_60px_rgba(20,184,166,0.2)] lg:col-span-2',
+            'bg-gradient-to-br from-[#0a3d37] via-[#0d3934] to-[#082d2a]'
           )}
         >
           <div className="flex flex-wrap items-start justify-between gap-4">

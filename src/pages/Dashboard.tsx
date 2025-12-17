@@ -659,7 +659,7 @@ export default function Dashboard() {
                   />
                 </LineChart>
               ) : (
-                <div className="flex h-full items-center justify-center rounded-2xl border border-dashed border-white/10 text-sm text-white/70">
+                <div className="flex h-full items-center justify-center rounded-2xl border border-dashed border-[#14b8a6]/40 bg-[#14b8a6]/5 text-sm text-white/60">
                   Nenhum dado disponível para o período selecionado.
                 </div>
               )}

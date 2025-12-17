@@ -228,25 +228,25 @@ interface ApiDiagnosticsState {
 
 const pageShellClass = 'space-y-10 text-foreground';
 const statGridClass = 'grid gap-6 md:grid-cols-2 xl:grid-cols-4';
-const dashboardCardShellClass = 'rounded-lg border border-white/5 bg-[#0f2d29] p-6 text-white shadow-[0_25px_45px_rgba(0,0,0,0.25)] backdrop-blur-sm';
+const dashboardCardShellClass = 'rounded-2xl border border-[#14b8a6]/20 bg-gradient-to-br from-[#0f3a35] via-[#0d3230] to-[#0a2a26] p-6 text-white shadow-[0_25px_60px_rgba(20,184,166,0.15)] backdrop-blur-xl';
 const buttonVariants = {
   primary:
-    'inline-flex items-center gap-2 rounded-full bg-brand-emerald px-4 py-2 text-sm font-semibold text-white shadow-glow transition hover:bg-brand-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-emerald/40 disabled:cursor-not-allowed disabled:opacity-60',
+    'inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-[#14b8a6] to-[#10b981] px-4 py-2 text-sm font-semibold text-white shadow-[0_10px_25px_rgba(20,184,166,0.3)] transition hover:shadow-[0_15px_35px_rgba(20,184,166,0.4)] hover:scale-[1.02] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#14b8a6]/40 disabled:cursor-not-allowed disabled:opacity-60 disabled:scale-100',
   ghost:
-    'inline-flex items-center gap-2 rounded-full border border-border/40 bg-background/40 px-3 py-2 text-sm font-semibold text-foreground transition hover:border-foreground/40 hover:bg-background/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-emerald/30',
+    'inline-flex items-center gap-2 rounded-2xl border border-[#14b8a6]/40 bg-gradient-to-br from-[#0f3a35] to-[#0a2a26] px-3 py-2 text-sm font-semibold text-white shadow-[0_8px_20px_rgba(20,184,166,0.15)] transition hover:border-[#14b8a6]/60 hover:shadow-[0_12px_30px_rgba(20,184,166,0.25)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#14b8a6]/40',
   destructive:
-    'inline-flex items-center gap-2 rounded-full border border-rose-400/60 bg-rose-500/10 px-3 py-2 text-sm font-semibold text-rose-400 transition hover:bg-rose-500/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400/40'
+    'inline-flex items-center gap-2 rounded-2xl border border-rose-400/60 bg-gradient-to-br from-rose-500/20 to-rose-500/10 px-3 py-2 text-sm font-semibold text-rose-400 transition hover:bg-rose-500/30 hover:border-rose-400/80 hover:shadow-[0_8px_20px_rgba(244,63,94,0.2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400/40'
 } as const;
 const tableActionButtonClass =
-  'inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-white/15 bg-white/5 text-white/80 transition hover:border-brand-emerald/40 hover:bg-white/10 hover:text-brand-emerald focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-emerald/30';
+  'inline-flex h-10 w-10 items-center justify-center rounded-xl border border-[#14b8a6]/30 bg-[#14b8a6]/5 text-white/80 transition hover:border-[#14b8a6]/60 hover:bg-[#14b8a6]/10 hover:text-[#14b8a6] hover:shadow-[0_6px_15px_rgba(20,184,166,0.15)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#14b8a6]/40';
 const tableActionButtonDangerClass =
-  'inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-rose-400/40 bg-rose-500/10 text-rose-200 transition hover:bg-rose-500/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400/40';
-const filterButtonClass = 'inline-flex items-center gap-2 rounded-full border border-border/40 bg-background px-4 py-2 text-sm font-semibold text-foreground shadow-sm transition hover:text-brand-emerald focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-emerald/40';
+  'inline-flex h-10 w-10 items-center justify-center rounded-xl border border-rose-400/40 bg-rose-500/10 text-rose-200 transition hover:bg-rose-500/20 hover:border-rose-400/60 hover:shadow-[0_6px_15px_rgba(244,63,94,0.2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400/40';
+const filterButtonClass = 'inline-flex items-center gap-2 rounded-2xl border border-[#14b8a6]/40 bg-gradient-to-br from-[#0f3a35] to-[#0a2a26] px-4 py-2 text-sm font-semibold text-white shadow-[0_8px_20px_rgba(20,184,166,0.15)] transition hover:border-[#14b8a6]/60 hover:shadow-[0_12px_30px_rgba(20,184,166,0.25)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#14b8a6]/40';
 const filterCountClass = 'rounded-full bg-foreground/10 px-2 py-0.5 text-xs font-semibold text-foreground';
 const formGridClass = 'grid gap-4 md:grid-cols-2';
 const formFieldClass = 'flex flex-col gap-2';
 const labelClass = 'text-sm font-semibold text-foreground/80';
-const inputClass = 'w-full rounded-2xl border border-border/40 bg-background px-4 py-3 text-sm text-foreground placeholder:text-foreground/50 focus-visible:border-brand-emerald focus-visible:ring-2 focus-visible:ring-brand-emerald/30 outline-none transition';
+const inputClass = 'w-full rounded-2xl border border-[#14b8a6]/30 bg-gradient-to-br from-[#0f3a35] to-[#0a2a26] px-4 py-3 text-sm text-foreground placeholder:text-foreground/50 focus-visible:border-[#14b8a6]/60 focus-visible:ring-2 focus-visible:ring-[#14b8a6]/30 focus-visible:shadow-[0_0_15px_rgba(20,184,166,0.2)] outline-none transition';
 const inlineInputClass = 'grid gap-3 sm:grid-cols-2';
 const errorTextClass = 'text-xs font-semibold text-rose-400';
 
@@ -1690,7 +1690,7 @@ ${limitReachedMessage}`);
             {isDev && (
               <button
                 type="button"
-                className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white/80 transition hover:border-brand-emerald/50 hover:text-brand-emerald focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-emerald/30"
+                className="inline-flex items-center gap-2 rounded-2xl border border-[#14b8a6]/40 bg-gradient-to-br from-[#0f3a35] to-[#0a2a26] px-4 py-2 text-sm font-semibold text-white shadow-[0_8px_20px_rgba(20,184,166,0.15)] transition hover:border-[#14b8a6]/60 hover:shadow-[0_12px_30px_rgba(20,184,166,0.25)]"
                 onClick={() => {
                   void seedTestBets();
                 }}
@@ -1701,7 +1701,7 @@ ${limitReachedMessage}`);
             )}
             <button
               type="button"
-              className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white/80 transition hover:border-brand-emerald/50 hover:text-brand-emerald focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-emerald/30"
+              className="inline-flex items-center gap-2 rounded-2xl border border-[#14b8a6]/40 bg-gradient-to-br from-[#0f3a35] to-[#0a2a26] px-4 py-2 text-sm font-semibold text-white shadow-[0_8px_20px_rgba(20,184,166,0.15)] transition hover:border-[#14b8a6]/60 hover:shadow-[0_12px_30px_rgba(20,184,166,0.25)]"
               onClick={() => setBetsExpanded((prev) => !prev)}
             >
               {betsExpanded ? 'Recolher' : 'Expandir'}
@@ -1712,23 +1712,23 @@ ${limitReachedMessage}`);
         {apostas.length === 0 ? (
           <EmptyState title="Nenhuma aposta" description="Cadastre uma nova aposta para começar a acompanhar resultados." />
         ) : (
-          <div className={cn('overflow-hidden rounded-2xl border border-white/10', betsExpanded ? '' : 'max-h-[420px] overflow-y-auto')}>
-            <table className="w-full table-auto border-collapse text-left text-sm text-white">
-              <thead className="bg-white/5">
+          <div className={cn('overflow-hidden rounded-2xl border border-[#14b8a6]/20', betsExpanded ? '' : 'max-h-[420px] overflow-y-auto')}>
+            <table className="w-full table-auto border-collapse text-left text-sm text-white bg-gradient-to-br from-white/[0.05] to-white/[0.02]">
+              <thead className="bg-gradient-to-r from-[#14b8a6]/10 to-transparent border-b border-[#14b8a6]/20">
                 <tr>
                   {['Casa de Aposta', 'Tipster', 'Data', 'Esporte', 'Evento', 'Aposta', 'Mercado', 'Stake', 'Status', 'Retorno Obtido', 'Ações'].map((column) => (
-                    <th key={column} className="px-4 py-3 text-[0.7rem] uppercase tracking-[0.18em] text-white/60">
+                    <th key={column} className="px-4 py-3 text-[0.7rem] uppercase tracking-widest text-[#14b8a6]/80 font-semibold">
                       {column}
                     </th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/10">
+              <tbody className="divide-y divide-[#14b8a6]/15">
                 {filteredApostas.map((aposta) => {
                   const marketSelections = extractMarketSelections(aposta.mercado);
 
                   return (
-                    <tr key={aposta.id} className="text-white">
+                    <tr key={aposta.id} className="text-white border-[#14b8a6]/10 hover:bg-white/[0.03] transition-colors">
                     <td className="px-4 py-3 align-middle text-sm font-medium text-white">{formatOptionalCellText(aposta.casaDeAposta)}</td>
                     <td className="px-4 py-3 align-middle text-sm text-white/80">{formatOptionalCellText(aposta.tipster)}</td>
                     <td className="px-4 py-3 align-middle text-sm text-white/80">{formatDate(aposta.dataEvento)}</td>
@@ -1808,7 +1808,7 @@ ${limitReachedMessage}`);
         size="form"
       >
         {formNotice && (
-          <div className="mb-4 rounded-2xl border border-border/30 bg-background/80 p-4 text-sm text-foreground">
+          <div className="mb-4 rounded-2xl border border-[#14b8a6]/30 bg-gradient-to-br from-[#14b8a6]/10 to-[#14b8a6]/5 p-4 text-sm text-white/80 shadow-[0_8px_20px_rgba(20,184,166,0.15)]">
             {formNotice}
           </div>
         )}
@@ -1937,5 +1937,3 @@ ${limitReachedMessage}`);
     </div>
   );
 }
-
-

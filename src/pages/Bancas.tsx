@@ -37,12 +37,12 @@ const defaultForm: EditFormState = {
 };
 
 const sectionCardClass =
-  'rounded-3xl border border-border/30 bg-background-card/80 p-6 shadow-card backdrop-blur-sm';
+  'rounded-2xl border border-[#14b8a6]/30 bg-gradient-to-br from-[#0f3a35] via-[#0d3230] to-[#0a2a26] p-6 sm:p-8 shadow-[0_25px_60px_rgba(20,184,166,0.15)] backdrop-blur-xl';
 const dashboardCardShellClass =
-  'rounded-lg border border-white/5 bg-[#0f2d29] p-6 text-white shadow-[0_25px_45px_rgba(0,0,0,0.25)] backdrop-blur-sm';
+  'rounded-2xl border border-[#14b8a6]/20 bg-gradient-to-br from-[#0f3a35] via-[#0d3230] to-[#0a2a26] p-6 text-white shadow-[0_25px_60px_rgba(20,184,166,0.15)] backdrop-blur-xl';
 const summaryCardBaseClass =
-  'rounded-lg border border-white/5 bg-[#10322e] p-6 text-white shadow-[0_25px_45px_rgba(0,0,0,0.25)] backdrop-blur-sm';
-const modalCardClass = 'rounded-2xl border border-border/30 bg-background px-5 py-5';
+  'rounded-2xl border border-[#14b8a6]/20 bg-gradient-to-br from-[#0f3a35] via-[#0d3230] to-[#0a2a26] p-6 text-white shadow-[0_25px_60px_rgba(20,184,166,0.15)] backdrop-blur-xl';
+const modalCardClass = 'rounded-2xl border border-[#14b8a6]/30 bg-gradient-to-br from-[#0f3a35] to-[#0a2a26] px-6 py-6';
 const cardLabelClass = 'text-2xs uppercase tracking-[0.3em] text-foreground-muted';
 
 export default function Bancas() {
@@ -732,4 +732,3 @@ const copyToClipboard = async (value?: string) => {
     console.error('Não foi possível copiar o valor.', err);
   }
 };
-

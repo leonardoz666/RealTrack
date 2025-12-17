@@ -689,11 +689,11 @@ export default function Dashboard() {
                 const positive = status === 'GANHOU';
                 const negative = status === 'PERDEU';
                 const statusClass = positive
-                  ? 'border border-emerald-500/20 bg-emerald-500/10 text-emerald-400'
+                  ? 'border border-emerald-500/30 bg-gradient-to-br from-emerald-500/20 to-emerald-500/10 text-emerald-300'
                   : negative
-                    ? 'border border-red-500/30 bg-red-500/15 text-red-500'
-                    : 'border border-white/10 bg-white/5 text-white/70';
-                const valueClass = positive ? 'text-emerald-400' : negative ? 'text-rose-400' : 'text-foreground';
+                    ? 'border border-red-500/30 bg-gradient-to-br from-red-500/20 to-red-500/10 text-red-400'
+                    : 'border border-white/15 bg-gradient-to-br from-white/10 to-white/5 text-white/70';
+                const valueClass = positive ? 'text-emerald-300' : negative ? 'text-rose-400' : 'text-foreground';
                 const rawDate = aposta.dataEvento ? new Date(aposta.dataEvento) : null;
                 const formattedDate = rawDate && !Number.isNaN(rawDate.getTime())
                   ? rawDate.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })
@@ -705,7 +705,7 @@ export default function Dashboard() {
                 return (
                   <div
                     key={aposta.id}
-                    className="flex items-center justify-between rounded-2xl border border-white/5 bg-white/5 px-4 py-3 text-sm"
+                    className="flex items-center justify-between rounded-2xl border border-[#14b8a6]/20 bg-gradient-to-br from-white/[0.08] to-white/[0.03] px-4 py-3 text-sm shadow-[0_8px_20px_rgba(20,184,166,0.08)] transition hover:border-[#14b8a6]/40 hover:shadow-[0_12px_30px_rgba(20,184,166,0.15)]"
                   >
                     <div className="space-y-0.5">
                       <p className="font-semibold text-foreground">{description}</p>

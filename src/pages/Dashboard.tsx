@@ -270,25 +270,29 @@ export default function Dashboard() {
   const filterInputClass =
     'mt-2 w-full rounded-2xl border border-border/40 bg-background px-4 py-3 text-sm text-foreground placeholder:text-foreground-muted transition focus-visible:border-brand-emerald focus-visible:ring-2 focus-visible:ring-brand-emerald/30';
 
-  const cardSurfaceClass = 'bg-[#10322e]';
-  const cardBorderClass = 'border-white/5';
-  const cardShadowClass = 'shadow-[0_25px_45px_rgba(0,0,0,0.25)]';
-  const sectionCardClass = `rounded-lg ${cardBorderClass} ${cardSurfaceClass} p-6 ${cardShadowClass} backdrop-blur-sm`;
+  const cardSurfaceClass = 'bg-gradient-to-br from-[#0f3a35] via-[#0d3230] to-[#0a2a26]';
+  const cardBorderClass = 'border-[#14b8a6]/20';
+  const cardShadowClass = 'shadow-[0_25px_60px_rgba(0,0,0,0.4)]';
+  const sectionCardClass = `rounded-2xl ${cardBorderClass} ${cardSurfaceClass} p-6 sm:p-8 ${cardShadowClass} backdrop-blur-xl border`;
   const evolutionCardClass =
-    'rounded-lg border border-white/5 bg-[#0f2d29] p-6 sm:p-8 text-white';
+    'rounded-2xl border border-[#14b8a6]/20 bg-gradient-to-br from-[#0f3a35] via-[#0d3230] to-[#0a2a26] p-6 sm:p-8 text-white shadow-[0_25px_60px_rgba(0,0,0,0.4)]';
   const evolutionMetricCardClassBase = [
     'relative',
     'rounded-2xl',
     'p-6',
-    'bg-white/[0.06]',
-    'backdrop-blur-2xl',
+    'bg-gradient-to-br',
+    'from-white/[0.08]',
+    'via-white/[0.04]',
+    'to-transparent',
+    'backdrop-blur-xl',
     'border',
-    'border-white/20',
-    'shadow-[0_8px_40px_rgba(0,0,0,0.6)]',
+    'border-[#14b8a6]/30',
+    'shadow-[0_15px_50px_rgba(20,184,166,0.15)]',
     'transition-all',
     'duration-300',
-    'hover:scale-[1.015]',
-    'hover:border-white/30',
+    'hover:scale-[1.02]',
+    'hover:border-[#14b8a6]/50',
+    'hover:shadow-[0_20px_60px_rgba(20,184,166,0.25)]',
   ].join(' ');
   const evolutionMetricCardClassMelhor = evolutionMetricCardClassBase;
   const evolutionMetricCardClassPior = evolutionMetricCardClassBase;

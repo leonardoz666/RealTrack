@@ -43,7 +43,7 @@ const COLOR_STYLES: Record<StatCardColor, { icon: string; helper: string; card?:
 };
 
 const STAT_CARD_BASE =
-  'rounded-lg border border-white/5 bg-[#10322e] p-5 text-white shadow-[0_25px_45px_rgba(0,0,0,0.25)] backdrop-blur-sm transition hover:-translate-y-0.5 hover:shadow-glow';
+  'rounded-2xl border border-[#14b8a6]/20 bg-gradient-to-br from-[#0f3a35] via-[#0d3230] to-[#0a2a26] p-6 text-white shadow-[0_20px_50px_rgba(20,184,166,0.15)] backdrop-blur-xl transition hover:-translate-y-1 hover:border-[#14b8a6]/40 hover:shadow-[0_25px_60px_rgba(20,184,166,0.25)]';
 
 function StatCard({ title, value, helper, icon, color = 'purple' }: StatCardProps) {
   const style = COLOR_STYLES[color];
@@ -71,4 +71,3 @@ function StatCard({ title, value, helper, icon, color = 'purple' }: StatCardProp
 
 // Memoizar para evitar re-renders desnecessários quando props não mudam
 export default memo(StatCard);
-

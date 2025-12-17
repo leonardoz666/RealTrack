@@ -277,13 +277,13 @@ export default function Dashboard() {
   const evolutionCardClass =
     'rounded-lg border border-white/5 bg-[#0f2d29] p-6 sm:p-8 text-white';
   const evolutionMetricCardClassBase =
-    'rounded-2xl p-5 text-white shadow-none border-0';
+    'rounded-2xl p-5 text-white shadow-none border-0 backdrop-blur-md';
   const evolutionMetricCardClassMelhor =
-    `${evolutionMetricCardClassBase} bg-gradient-to-br from-[rgba(34,197,94,0.7)] to-[rgba(16,185,129,0.6)]`;
+    `${evolutionMetricCardClassBase} bg-gradient-to-br from-[rgba(34,197,94,0.35)] to-[rgba(16,185,129,0.35)]`;
   const evolutionMetricCardClassPior =
-    `${evolutionMetricCardClassBase} bg-gradient-to-br from-[rgba(239,68,68,0.7)] to-[rgba(220,38,38,0.6)]`;
+    `${evolutionMetricCardClassBase} bg-gradient-to-br from-[rgba(239,68,68,0.35)] to-[rgba(220,38,38,0.35)]`;
   const evolutionMetricCardClassMedia =
-    `${evolutionMetricCardClassBase} bg-gradient-to-br from-[rgba(168,85,247,0.7)] to-[rgba(109,40,217,0.6)]`;
+    `${evolutionMetricCardClassBase} bg-gradient-to-br from-[rgba(168,85,247,0.35)] to-[rgba(109,40,217,0.35)]`;
   const timeframeSwitchBaseClass =
     'rounded-full px-4 py-1.5 text-xs font-semibold uppercase tracking-wide transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1fe7cb]/40';
   const evolutionChartShellClass =

@@ -520,12 +520,12 @@ const Sidebar = ({ collapsed, onToggle }: SidebarProps) => {
                   <span className="text-sm text-[#6b9692]">Limite Diário</span>
                   <span className="text-white">{isLoading ? 'Carregando...' : consumoInfo.label}</span>
                 </div>
-                <div className="h-1.5 w-full overflow-hidden rounded-full bg-[#0a2e2a]">
+                <div className="h-2 w-full overflow-hidden rounded-full bg-gradient-to-r from-white/5 to-white/10 border border-white/10">
                   {consumoInfo.isUnlimited ? (
-                    <div className="h-full w-full rounded-full bg-[#14b8a6]" />
+                    <div className="h-full w-full rounded-full bg-gradient-to-r from-[#14b8a6] to-[#10b981] shadow-[0_0_15px_rgba(20,184,166,0.4)]" />
                   ) : (
                     <div
-                      className="h-full rounded-full bg-[#14b8a6] transition-all"
+                      className="h-full rounded-full bg-gradient-to-r from-[#14b8a6] to-[#10b981] shadow-[0_0_15px_rgba(20,184,166,0.4)] transition-all duration-500"
                       style={{ width: `${Math.min(consumoInfo.percent, 100)}%` }}
                     />
                   )}

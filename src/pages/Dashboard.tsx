@@ -611,7 +611,7 @@ export default function Dashboard() {
             </div>
             <div ref={evolucaoChartRef} className="mt-6 h-72 w-full">
               {!evolucaoChartReady ? (
-                <div className="flex h-full items-center justify-center rounded-2xl border border-dashed border-white/10 text-xs font-medium text-white/60">
+                <div className="flex h-full items-center justify-center rounded-2xl border border-dashed border-[#14b8a6]/40 bg-[#14b8a6]/5 text-xs font-medium text-[#14b8a6]/60">
                   Preparando gráfico...
                 </div>
               ) : evolucaoBancaChart.length > 0 ? (

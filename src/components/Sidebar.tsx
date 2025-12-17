@@ -382,7 +382,7 @@ const Sidebar = ({ collapsed, onToggle }: SidebarProps) => {
           <div className={`mb-6 ${sectionPadding}`} ref={bancaDropdownRef}>
             <button
               type="button"
-              className="flex w-full items-center justify-between rounded-lg bg-[#0f3d38] px-3 py-3 transition-colors hover:bg-[#11433d]"
+              className="flex w-full items-center justify-between rounded-xl bg-gradient-to-br from-[#0f3d38] to-[#0a2a26] px-3 py-3 border border-[#14b8a6]/20 transition-all hover:border-[#14b8a6]/40 hover:shadow-[0_8px_20px_rgba(20,184,166,0.15)]"
               onClick={toggleBancaDropdown}
               aria-expanded={isBancaDropdownOpen}
             >

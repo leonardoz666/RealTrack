@@ -304,15 +304,15 @@ export default function Dashboard() {
   const lucroLineGradientId = 'lucroLineGradient';
 
   return (
-    <div className="space-y-8 text-foreground">
-      <div className="mb-4">
+    <div className="space-y-10 text-foreground">
+      <div className="mb-8">
         <div className="flex items-center justify-between gap-6">
           <div>
-            <p className={cn('text-2xs uppercase tracking-[0.3em]', softLabelTextClass)}>Visão geral</p>
-            <h1 className="text-3xl font-semibold">
+            <p className={cn('text-2xs uppercase tracking-[0.35em] font-semibold text-[#14b8a6]/80', softLabelTextClass)}>Visão geral</p>
+            <h1 className="text-4xl font-bold mt-2 bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">
               Bem-vindo de volta, {profile ? getFirstName(profile.nomeCompleto) : 'Usuário'} 👋
             </h1>
-            <p className={cn('text-sm', labelTextClass)}>Acompanhe seus números mais importantes em tempo real.</p>
+            <p className={cn('text-sm mt-2 text-white/60')}>Acompanhe seus números mais importantes em tempo real.</p>
           </div>
           <div className="flex items-center gap-3 mt-6 relative">
             {loading && (

@@ -76,20 +76,20 @@ const createDefaultFormData = (bancaId = '', date = getTodayDateISO()): Financei
 });
 
 const sectionCardClass =
-  'rounded-3xl border border-border/30 bg-background-card/80 p-6 shadow-card backdrop-blur-sm';
+  'rounded-2xl border border-[#14b8a6]/30 bg-gradient-to-br from-[#0f3a35] via-[#0d3230] to-[#0a2a26] p-6 sm:p-8 shadow-[0_25px_60px_rgba(20,184,166,0.15)] backdrop-blur-xl';
 const dashboardCardShellClass =
-  'rounded-lg border border-white/5 bg-[#0f2d29] p-6 text-white shadow-[0_25px_45px_rgba(0,0,0,0.25)] backdrop-blur-sm';
-const sectionLabelClass = 'text-2xs uppercase tracking-[0.3em] text-foreground-muted';
+  'rounded-2xl border border-[#14b8a6]/20 bg-gradient-to-br from-[#0f3a35] via-[#0d3230] to-[#0a2a26] p-6 text-white shadow-[0_25px_60px_rgba(20,184,166,0.15)] backdrop-blur-xl';
+const sectionLabelClass = 'text-2xs uppercase tracking-widest text-[#14b8a6]/70 font-semibold';
 const inputClass =
-  'w-full rounded-2xl border border-border/40 bg-background px-4 py-2.5 text-sm text-foreground placeholder:text-foreground-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-emerald/30';
+  'w-full rounded-2xl border border-[#14b8a6]/30 bg-gradient-to-br from-[#0f3a35] to-[#0a2a26] px-4 py-2.5 text-sm text-foreground placeholder:text-foreground-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#14b8a6]/40 focus-visible:border-[#14b8a6]/60';
 const headerGhostButtonClass =
-  'inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white/80 transition hover:border-brand-emerald/50 hover:text-brand-emerald focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-emerald/30';
+  'inline-flex items-center gap-2 rounded-2xl border border-[#14b8a6]/40 bg-gradient-to-br from-[#0f3a35] to-[#0a2a26] px-4 py-2 text-sm font-semibold text-white shadow-[0_8px_20px_rgba(20,184,166,0.15)] transition hover:border-[#14b8a6]/60 hover:shadow-[0_12px_30px_rgba(20,184,166,0.25)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#14b8a6]/40';
 const headerPrimaryButtonClass =
-  'inline-flex items-center gap-2 rounded-full border border-brand-emerald/60 bg-brand-emerald/15 px-4 py-2 text-sm font-semibold text-brand-emerald transition hover:bg-brand-emerald/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-emerald/30';
+  'inline-flex items-center gap-2 rounded-2xl border border-[#14b8a6]/60 bg-gradient-to-r from-[#14b8a6] to-[#10b981] px-4 py-2 text-sm font-semibold text-white shadow-[0_10px_25px_rgba(20,184,166,0.3)] transition hover:shadow-[0_15px_35px_rgba(20,184,166,0.4)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#14b8a6]/40';
 const tableActionButtonClass =
-  'inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-white/15 bg-white/5 text-white/80 transition hover:border-brand-emerald/40 hover:bg-white/10 hover:text-brand-emerald focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-emerald/30';
+  'inline-flex h-10 w-10 items-center justify-center rounded-xl border border-[#14b8a6]/30 bg-[#14b8a6]/5 text-white/80 transition hover:border-[#14b8a6]/60 hover:bg-[#14b8a6]/10 hover:text-[#14b8a6] hover:shadow-[0_6px_15px_rgba(20,184,166,0.15)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#14b8a6]/40';
 const tableActionButtonDangerClass =
-  'inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-rose-400/40 bg-rose-500/10 text-rose-200 transition hover:bg-rose-500/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400/40';
+  'inline-flex h-10 w-10 items-center justify-center rounded-xl border border-rose-400/40 bg-rose-500/10 text-rose-200 transition hover:bg-rose-500/20 hover:shadow-[0_6px_15px_rgba(244,63,94,0.2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400/40';
 
 const emptyStats: ApiFinancialSummary = {
   totalDepositado: 0,
@@ -839,5 +839,3 @@ export default function Financeiro() {
     </div>
   );
 }
-
-

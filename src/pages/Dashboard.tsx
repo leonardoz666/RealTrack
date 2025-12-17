@@ -560,13 +560,13 @@ export default function Dashboard() {
             </div> */}
             <div className={evolutionMetricCardClassMelhor}>
               <p className="text-xs font-semibold uppercase tracking-[0.3em] text-white/80">Melhor dia</p>
-              <p className="mt-2 text-3xl font-semibold">{formatCurrency(melhorDia.valor)}</p>
-              <p className="mt-1 text-sm text-white/90">{melhorDia.data}</p>
+              <p className="mt-2 text-3xl font-semibold">{formatCurrency(melhorDia && melhorDia.valor ? melhorDia.valor : 0)}</p>
+              <p className="mt-1 text-sm text-white/90">{melhorDia && melhorDia.data ? melhorDia.data : ''}</p>
             </div>
             <div className={evolutionMetricCardClassPior}>
               <p className="text-xs font-semibold uppercase tracking-[0.3em] text-white/80">Pior dia</p>
-              <p className="mt-2 text-3xl font-semibold">{formatCurrency(piorDia.valor)}</p>
-              <p className="mt-1 text-sm text-white/90">{piorDia.data}</p>
+              <p className="mt-2 text-3xl font-semibold">{formatCurrency(piorDia && piorDia.valor ? piorDia.valor : 0)}</p>
+              <p className="mt-1 text-sm text-white/90">{piorDia && piorDia.data ? piorDia.data : ''}</p>
             </div>
             <div className={evolutionMetricCardClassMedia}>
               <p className="text-xs font-semibold uppercase tracking-[0.3em] text-white/80">Média diária</p>

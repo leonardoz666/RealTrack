@@ -608,7 +608,7 @@ const Sidebar = ({ collapsed, onToggle }: SidebarProps) => {
             </label>
             <textarea
               id="nova-descricao-banca"
-              className="h-20 w-full resize-none rounded-lg border border-white/10 bg-[#0f3d38] px-3 py-2 text-sm text-white placeholder:text-[#6b9692] focus:border-[#14b8a6] focus:outline-none"
+              className="h-20 w-full resize-none rounded-lg border border-[#14b8a6]/30 bg-gradient-to-br from-[#0f3d38] to-[#0a2a26] px-3 py-2 text-sm text-white placeholder:text-[#6b9692] focus:border-[#14b8a6]/60 focus:shadow-[0_0_15px_rgba(20,184,166,0.2)] focus:outline-none transition"
               value={createForm.descricao}
               onChange={(event) => handleCreateFormChange('descricao', event.target.value)}
             />

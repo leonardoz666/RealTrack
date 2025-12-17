@@ -142,6 +142,11 @@ export default function Dashboard() {
     fetchDashboardData,
   } = useDashboardData();
 
+  // Sempre que o período mudar, faz fetch dos dados
+  useEffect(() => {
+    fetchDashboardData();
+  }, [periodoGrafico]);
+
   const {
     containerRef: evolucaoChartRef,
     hasSize: evolucaoChartReady,
@@ -530,6 +535,7 @@ export default function Dashboard() {
                       : 'text-white/65 hover:text-white'
                   )}
                   onClick={() => setPeriodoGrafico(option.value)}
+                  disabled={loading}
                 >
                   {option.label}
                 </button>

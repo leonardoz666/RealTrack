@@ -404,7 +404,7 @@ const Sidebar = ({ collapsed, onToggle }: SidebarProps) => {
             </button>
 
             {isBancaDropdownOpen && (
-              <div className="mt-3 space-y-3 rounded-xl border border-[#14b8a6]/30 bg-[#0c2f2b] p-3 shadow-lg shadow-black/30">
+              <div className="mt-3 space-y-3 rounded-xl border border-[#14b8a6]/30 bg-gradient-to-br from-[#0c2f2b] to-[#091f1c] p-3 shadow-[0_15px_40px_rgba(20,184,166,0.2)]">
                 {bancaPanelLoading ? (
                   <div className="flex h-20 items-center justify-center text-sm text-[#6b9692]">
                     Carregando bancas...

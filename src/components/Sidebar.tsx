@@ -449,7 +449,7 @@ const Sidebar = ({ collapsed, onToggle }: SidebarProps) => {
 
                 <button
                   type="button"
-                  className="flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-[#14b8a6]/50 px-3 py-2 text-sm font-medium text-[#14b8a6] transition-colors hover:border-[#14b8a6] hover:bg-[#14b8a6]/10"
+                  className="flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-[#14b8a6]/60 px-3 py-2 text-sm font-medium text-[#14b8a6] transition-all hover:border-[#14b8a6] hover:bg-gradient-to-br hover:from-[#14b8a6]/20 hover:to-[#14b8a6]/5 hover:shadow-[0_8px_20px_rgba(20,184,166,0.15)]"
                   onClick={handleCreateBanca}
                 >
                   + Nova Banca

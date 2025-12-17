@@ -496,7 +496,7 @@ const Sidebar = ({ collapsed, onToggle }: SidebarProps) => {
 
         {!collapsed && (
           <div className={`mb-6 ${sectionPadding}`}>
-            <div className="rounded-lg border border-[#14b8a6]/20 bg-[#0f3d38] p-4">
+            <div className="rounded-xl border border-[#14b8a6]/30 bg-gradient-to-br from-[#0f3d38] to-[#0a2a26] p-4 shadow-[0_10px_30px_rgba(20,184,166,0.15)]">
               <div className="mb-3 flex items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
                   <div className={`flex h-7 w-7 items-center justify-center rounded-lg ${planVisual.badgeClass}`}>

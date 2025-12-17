@@ -280,10 +280,10 @@ export default function Dashboard() {
     'relative',
     'rounded-2xl',
     'p-6',
-    'bg-white/[0.08]',
+    'bg-white/[0.06]',
     'backdrop-blur-2xl',
     'border',
-    'border-white/15',
+    'border-white/20',
     'shadow-[0_8px_40px_rgba(0,0,0,0.6)]',
     'transition-all',
     'duration-300',
@@ -571,7 +571,7 @@ export default function Dashboard() {
               {/* Glow interno */}
               <div className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-br from-white/20 via-white/5 to-transparent opacity-30" />
               {/* Overlay de cor fintech */}
-              <div className="pointer-events-none absolute inset-0 rounded-2xl bg-emerald-500/10" />
+              <div className="pointer-events-none absolute inset-0 rounded-2xl bg-emerald-500/8" />
               <div className="relative z-10">
                 <p className="text-xs font-medium tracking-widest text-white/60 uppercase">Melhor dia</p>
                 <p className="mt-2 text-3xl font-semibold text-white">{formatCurrency(melhorDia && melhorDia.valor ? melhorDia.valor : 0)}</p>
@@ -580,7 +580,7 @@ export default function Dashboard() {
             </div>
             <div className={evolutionMetricCardClassPior}>
               <div className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-br from-white/20 via-white/5 to-transparent opacity-30" />
-              <div className="pointer-events-none absolute inset-0 rounded-2xl bg-zinc-500/10" />
+              <div className="pointer-events-none absolute inset-0 rounded-2xl bg-zinc-500/8" />
               <div className="relative z-10">
                 <p className="text-xs font-medium tracking-widest text-white/60 uppercase">Pior dia</p>
                 <p className="mt-2 text-3xl font-semibold text-white">{formatCurrency(piorDia && piorDia.valor ? piorDia.valor : 0)}</p>
@@ -589,7 +589,7 @@ export default function Dashboard() {
             </div>
             <div className={evolutionMetricCardClassMedia}>
               <div className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-br from-white/20 via-white/5 to-transparent opacity-30" />
-              <div className="pointer-events-none absolute inset-0 rounded-2xl bg-indigo-500/10" />
+              <div className="pointer-events-none absolute inset-0 rounded-2xl bg-indigo-500/8" />
               <div className="relative z-10">
                 <p className="text-xs font-medium tracking-widest text-white/60 uppercase">Média diária</p>
                 <p className="mt-2 text-3xl font-semibold text-white">{formatCurrency(mediaDiaria || 0)}</p>

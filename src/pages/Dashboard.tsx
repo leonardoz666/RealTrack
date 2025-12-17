@@ -543,7 +543,7 @@ export default function Dashboard() {
                 <p className="text-sm text-white/70">Acompanhe o desempenho financeiro do seu negócio.</p>
               </div>
             </div>
-            <div className="flex items-center gap-2 rounded-full border border-white/10 bg-black/20 p-1">
+            <div className="flex items-center gap-2 rounded-full border border-[#14b8a6]/20 bg-gradient-to-br from-white/[0.08] to-white/[0.03] p-1.5 backdrop-blur-sm">
               {timeframeOptions.map((option) => (
                 <button
                   key={option.value}
@@ -551,7 +551,7 @@ export default function Dashboard() {
                   className={cn(
                     timeframeSwitchBaseClass,
                     periodoGrafico === option.value
-                      ? 'bg-[#1fe7cb] text-[#031d1a] shadow-[0_15px_30px_rgba(31,231,203,0.35)]'
+                      ? 'bg-gradient-to-r from-[#14b8a6] to-[#10b981] text-[#031d1a] shadow-[0_15px_35px_rgba(20,184,166,0.4)] font-bold'
                       : 'text-white/65 hover:text-white'
                   )}
                   onClick={() => setPeriodoGrafico(option.value)}

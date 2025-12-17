@@ -544,13 +544,13 @@ export default function Dashboard() {
           </div>
 
           <div className="grid gap-4 md:grid-cols-3">
-            <div className={evolutionMetricCardClass}>
+            {/* <div className={evolutionMetricCardClass}>
               <p className="text-xs font-semibold uppercase tracking-[0.3em] text-white/60">Total acumulado</p>
               <p className="mt-2 text-3xl font-semibold text-white">{formatCurrency(lucroPeriodo)}</p>
               <p className={cn('mt-3 flex items-center gap-2 text-sm font-semibold', growthColorClass)}>
                 <GrowthTrendIcon className="h-4 w-4" /> {crescimentoLabel} vs período anterior
               </p>
-            </div>
+            </div> */}
             <div className={evolutionMetricCardClass}>
               <p className="text-xs font-semibold uppercase tracking-[0.3em] text-white/60">Melhor dia</p>
               <p className="mt-2 text-3xl font-semibold text-white">{formatCurrency(melhorDia.valor)}</p>

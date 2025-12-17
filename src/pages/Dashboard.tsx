@@ -487,7 +487,7 @@ export default function Dashboard() {
               <span>Total investido: {formatCurrency(metricas.totalInvestido)}</span>
               <span>ROI médio: {formatSignedPercent(metricas.roi)}</span>
             </div>
-            <button className="inline-flex items-center gap-2 rounded-2xl border border-white/30 bg-white/10 px-4 py-2 text-sm font-semibold text-[#f2f2f2] transition hover:bg-white/20">
+            <button className="inline-flex items-center gap-2 rounded-2xl border border-white/40 bg-gradient-to-br from-white/15 to-white/5 px-4 py-2 text-sm font-semibold text-white shadow-[0_8px_20px_rgba(255,255,255,0.1)] transition hover:border-white/60 hover:bg-gradient-to-br hover:from-white/25 hover:to-white/10 hover:shadow-[0_12px_30px_rgba(255,255,255,0.2)]">
               Ver detalhes <ArrowUpRight size={16} />
             </button>
           </div>

@@ -422,10 +422,10 @@ const Sidebar = ({ collapsed, onToggle }: SidebarProps) => {
                         <button
                           key={banca.id}
                           type="button"
-                        className={`flex flex-col rounded-lg border px-3 py-2 text-left transition-colors ${
+                        className={`flex flex-col rounded-lg border px-3 py-2 text-left transition-all ${
                           banca.padrao
-                            ? 'border-[#14b8a6] bg-[#14b8a6]/5'
-                            : 'border-white/5 bg-[#0f3d38] hover:border-[#14b8a6]/60'
+                            ? 'border-[#14b8a6]/40 bg-gradient-to-br from-[#14b8a6]/15 to-[#14b8a6]/5 shadow-[0_8px_20px_rgba(20,184,166,0.15)]'
+                            : 'border-white/10 bg-gradient-to-br from-white/5 to-transparent hover:border-[#14b8a6]/60 hover:shadow-[0_8px_20px_rgba(20,184,166,0.15)]'
                         }`}
                         onClick={() => handleSelectBanca(banca.id)}
                         disabled={updatingBancaId === banca.id}

@@ -138,6 +138,7 @@ export default function Dashboard() {
     evolucaoBancaChart,
     crescimentoPercentual,
     melhorDia,
+    piorDia,
     mediaDiaria,
     fetchDashboardData,
   } = useDashboardData();
@@ -554,7 +555,12 @@ export default function Dashboard() {
             <div className={evolutionMetricCardClass}>
               <p className="text-xs font-semibold uppercase tracking-[0.3em] text-white/60">Melhor dia</p>
               <p className="mt-2 text-3xl font-semibold text-white">{formatCurrency(melhorDia.valor)}</p>
-              <p className="mt-1 text-sm text-white/65">{melhorDiaFormatado}</p>
+              <p className="mt-1 text-sm text-white/65">{melhorDia.data}</p>
+            </div>
+            <div className={evolutionMetricCardClass}>
+              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-white/60">Pior dia</p>
+              <p className="mt-2 text-3xl font-semibold text-white">{formatCurrency(piorDia.valor)}</p>
+              <p className="mt-1 text-sm text-white/65">{piorDia.data}</p>
             </div>
             <div className={evolutionMetricCardClass}>
               <p className="text-xs font-semibold uppercase tracking-[0.3em] text-white/60">Média diária</p>

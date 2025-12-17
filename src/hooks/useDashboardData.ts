@@ -349,6 +349,7 @@ interface UseDashboardDataResult {
   evolucaoBancaChart: EvolucaoBancaChartItem[];
   crescimentoPercentual: number;
   melhorDia: { valor: number; data: string };
+  piorDia: { valor: number; data: string };
   mediaDiaria: number;
 
   // Ações
@@ -631,6 +632,31 @@ export function useDashboardData(
     [lucroAcumulado, periodoGrafico]
   );
 
+  // Novo: cálculo do pior dia
+  const findWorstDay = (
+    lucroAcumulado: LucroAcumuladoItem[],
+    periodoGrafico?: string
+  ): { valor: number; data: string } => {
+    const dataset = periodoGrafico ? sliceByPeriod(lucroAcumulado, periodoGrafico) : lucroAcumulado;
+    if (dataset.length === 0) return { valor: 0, data: '' };
+    const pior = dataset.reduce(
+      (min, item) => (item.lucro < min.lucro ? item : min),
+      dataset[0]
+    );
+    return {
+      valor: pior.lucro,
+      data: new Date(pior.date).toLocaleDateString('pt-BR', {
+        day: 'numeric',
+        month: 'long',
+      }),
+    };
+  };
+
+  const piorDia = useMemo(
+    () => findWorstDay(lucroAcumulado, periodoGrafico),
+    [lucroAcumulado, periodoGrafico]
+  );
+
   const mediaDiaria = useMemo(
     () => calculateDailyAverage(lucroAcumulado, periodoGrafico),
     [lucroAcumulado, periodoGrafico]
@@ -667,6 +693,7 @@ export function useDashboardData(
     crescimentoPercentual,
     melhorDia,
     mediaDiaria,
+    piorDia,
 
     // Ações
     fetchDashboardData,

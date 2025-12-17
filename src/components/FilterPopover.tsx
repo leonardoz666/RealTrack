@@ -32,7 +32,7 @@ function FilterPopover({ open, onClose, onClear, children, footer, maxWidth = '7
   return (
     <div
       ref={popoverRef}
-      className="absolute right-0 top-full mt-2 z-50 w-full max-w-none rounded-xl border border-border/30 bg-background-card p-4 shadow-lg"
+      className="absolute right-0 top-full mt-2 z-50 w-full max-w-none rounded-2xl border border-[#14b8a6]/30 bg-gradient-to-br from-[#0f3a35] via-[#0d3230] to-[#0a2a26] p-6 shadow-[0_25px_60px_rgba(20,184,166,0.25)]"
       style={{ minWidth: 400, maxWidth }}
       role="dialog"
       aria-modal="true"
@@ -68,4 +68,3 @@ function FilterPopover({ open, onClose, onClear, children, footer, maxWidth = '7
 }
 
 export default memo(FilterPopover);
-

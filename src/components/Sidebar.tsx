@@ -44,12 +44,12 @@ const CONSUMO_MAX_RETRIES = 2;
 const CONSUMO_RETRY_BASE_DELAY = 1200;
 
 const navLinkClasses = (isActive: boolean, collapsed: boolean) =>
-  `flex items-center gap-3 py-3 rounded-lg transition-all ${
+  `flex items-center gap-3 py-3 rounded-xl transition-all duration-300 ${
     collapsed ? 'justify-center px-0' : 'px-3'
   } ${
     isActive
-      ? 'bg-[#14b8a6] text-white shadow-lg shadow-[#14b8a6]/20'
-      : 'text-[#7a9995] hover:text-white hover:bg-[#0f3d38]'
+      ? 'bg-gradient-to-r from-[#14b8a6] to-[#10b981] text-white shadow-lg shadow-[#14b8a6]/30 font-semibold'
+      : 'text-[#7a9995] hover:text-white hover:bg-gradient-to-r hover:from-[#0f3d38] hover:to-[#0a2a26] hover:shadow-[0_8px_20px_rgba(20,184,166,0.15)]'
   }`;
 
 const PLAN_VISUALS: Record<string, { icon: LucideIcon; badgeClass: string; iconClass: string }> = {

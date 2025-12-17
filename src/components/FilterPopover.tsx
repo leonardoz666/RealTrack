@@ -37,13 +37,13 @@ function FilterPopover({ open, onClose, onClear, children, footer, maxWidth = '7
       role="dialog"
       aria-modal="true"
     >
-      <div className="flex items-center justify-between gap-3 border-b border-border/20 pb-3">
-        <p className="text-sm font-semibold uppercase tracking-[0.3em] text-foreground-muted">Filtros</p>
+      <div className="flex items-center justify-between gap-3 border-b border-[#14b8a6]/20 pb-4 mb-4">
+        <p className="text-sm font-semibold uppercase tracking-widest text-[#14b8a6]">Filtros</p>
         <div className="flex items-center gap-3 text-sm font-semibold">
           {onClear && (
             <button
               type="button"
-              className="text-foreground-muted transition hocus:text-brand-emerald"
+              className="text-foreground-muted transition hover:text-[#14b8a6] duration-300"
               onClick={() => onClear()}
             >
               Limpar

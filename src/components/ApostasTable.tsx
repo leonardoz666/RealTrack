@@ -149,7 +149,7 @@ function ApostaRow({ aposta, onOpenStatusModal, onEdit, onDelete }: ApostaRowPro
   const statusVariant = betStatusPillVariants[aposta.status] ?? betStatusPillVariants.default;
 
   return (
-    <tr className="text-sm text-white">
+    <tr className="text-sm text-white border-[#14b8a6]/10 hover:bg-white/[0.03] transition-colors">
       <td className="px-4 py-4 font-medium text-white">{formatOptionalText(aposta.casaDeAposta)}</td>
       <td className="px-4 py-4 text-white/80">{formatOptionalText(aposta.tipster)}</td>
       <td className="px-4 py-4 text-white/60">{formatDate(aposta.dataEvento)}</td>

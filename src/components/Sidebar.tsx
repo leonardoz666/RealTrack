@@ -634,7 +634,7 @@ const Sidebar = ({ collapsed, onToggle }: SidebarProps) => {
           <div className="flex items-center justify-end gap-3 pt-2">
             <button
               type="button"
-              className="rounded-lg border border-white/10 px-4 py-2 text-sm text-white transition-colors hover:border-white/40"
+              className="rounded-lg border border-white/20 bg-gradient-to-br from-white/5 to-transparent px-4 py-2 text-sm text-white transition-all hover:border-white/40 hover:bg-white/10 hover:shadow-[0_8px_20px_rgba(255,255,255,0.1)]"
               onClick={closeCreateModal}
               disabled={creatingBanca}
             >
@@ -642,7 +642,7 @@ const Sidebar = ({ collapsed, onToggle }: SidebarProps) => {
             </button>
             <button
               type="submit"
-              className="rounded-lg bg-[#14b8a6] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#0f9d90] disabled:opacity-60"
+              className="rounded-lg bg-gradient-to-r from-[#14b8a6] to-[#10b981] px-4 py-2 text-sm font-semibold text-white shadow-[0_10px_25px_rgba(20,184,166,0.3)] transition-all hover:shadow-[0_15px_35px_rgba(20,184,166,0.4)] hover:scale-[1.02] disabled:opacity-60 disabled:scale-100"
               disabled={creatingBanca}
             >
               {creatingBanca ? 'Criando...' : 'Criar banca'}

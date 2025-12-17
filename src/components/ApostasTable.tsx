@@ -74,7 +74,7 @@ export default function ApostasTable({
           {showDevButton && onSeedTestBets && (
             <button
               type="button"
-              className="inline-flex items-center justify-center rounded-2xl border border-white/15 px-4 py-2 text-sm font-semibold text-white/80 transition hocus:border-brand-emerald/60 hocus:text-brand-emerald"
+              className="inline-flex items-center justify-center rounded-2xl border border-[#14b8a6]/40 bg-gradient-to-br from-[#0f3a35] to-[#0a2a26] px-4 py-2 text-sm font-semibold text-white shadow-[0_8px_20px_rgba(20,184,166,0.15)] transition hover:border-[#14b8a6]/60 hover:shadow-[0_12px_30px_rgba(20,184,166,0.25)]"
               onClick={onSeedTestBets}
               title="Gerar 200 apostas de teste (apenas desenvolvimento)"
             >
@@ -83,7 +83,7 @@ export default function ApostasTable({
           )}
           <button
             type="button"
-            className="inline-flex items-center justify-center rounded-2xl border border-white/15 px-4 py-2 text-sm font-semibold text-white/80 transition hocus:border-brand-emerald/60 hocus:text-brand-emerald"
+            className="inline-flex items-center justify-center rounded-2xl border border-[#14b8a6]/40 bg-gradient-to-br from-[#0f3a35] to-[#0a2a26] px-4 py-2 text-sm font-semibold text-white shadow-[0_8px_20px_rgba(20,184,166,0.15)] transition hover:border-[#14b8a6]/60 hover:shadow-[0_12px_30px_rgba(20,184,166,0.25)]"
             onClick={onToggleExpand}
           >
             {expanded ? 'Recolher' : 'Expandir'}

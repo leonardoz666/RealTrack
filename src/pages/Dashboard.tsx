@@ -276,14 +276,23 @@ export default function Dashboard() {
   const sectionCardClass = `rounded-lg ${cardBorderClass} ${cardSurfaceClass} p-6 ${cardShadowClass} backdrop-blur-sm`;
   const evolutionCardClass =
     'rounded-lg border border-white/5 bg-[#0f2d29] p-6 sm:p-8 text-white';
-  const evolutionMetricCardClassBase =
-    'relative rounded-2xl p-6 text-white border border-white/20 shadow-lg backdrop-blur-lg';
-  const evolutionMetricCardClassMelhor =
-    `${evolutionMetricCardClassBase} bg-gradient-to-br from-green-400/20 to-green-700/20`;
-  const evolutionMetricCardClassPior =
-    `${evolutionMetricCardClassBase} bg-gradient-to-br from-red-400/20 to-red-700/20`;
-  const evolutionMetricCardClassMedia =
-    `${evolutionMetricCardClassBase} bg-gradient-to-br from-purple-400/20 to-purple-700/20`;
+  const evolutionMetricCardClassBase = [
+    'relative',
+    'rounded-2xl',
+    'p-6',
+    'bg-white/[0.08]',
+    'backdrop-blur-2xl',
+    'border',
+    'border-white/15',
+    'shadow-[0_8px_40px_rgba(0,0,0,0.6)]',
+    'transition-all',
+    'duration-300',
+    'hover:scale-[1.015]',
+    'hover:border-white/30',
+  ].join(' ');
+  const evolutionMetricCardClassMelhor = evolutionMetricCardClassBase;
+  const evolutionMetricCardClassPior = evolutionMetricCardClassBase;
+  const evolutionMetricCardClassMedia = evolutionMetricCardClassBase;
   const timeframeSwitchBaseClass =
     'rounded-full px-4 py-1.5 text-xs font-semibold uppercase tracking-wide transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1fe7cb]/40';
   const evolutionChartShellClass =

@@ -276,8 +276,14 @@ export default function Dashboard() {
   const sectionCardClass = `rounded-lg ${cardBorderClass} ${cardSurfaceClass} p-6 ${cardShadowClass} backdrop-blur-sm`;
   const evolutionCardClass =
     'rounded-lg border border-white/5 bg-[#0f2d29] p-6 sm:p-8 text-white';
-  const evolutionMetricCardClass =
-    'rounded-2xl border border-white/10 bg-white/5 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-sm';
+  const evolutionMetricCardClassBase =
+    'rounded-2xl border-0 p-5 text-white shadow-none';
+  const evolutionMetricCardClassMelhor =
+    `${evolutionMetricCardClassBase} bg-gradient-to-br from-green-600 to-green-800`;
+  const evolutionMetricCardClassPior =
+    `${evolutionMetricCardClassBase} bg-gradient-to-br from-red-600 to-red-800`;
+  const evolutionMetricCardClassMedia =
+    `${evolutionMetricCardClassBase} bg-gradient-to-br from-purple-600 to-purple-800`;
   const timeframeSwitchBaseClass =
     'rounded-full px-4 py-1.5 text-xs font-semibold uppercase tracking-wide transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1fe7cb]/40';
   const evolutionChartShellClass =
@@ -552,20 +558,20 @@ export default function Dashboard() {
                 <GrowthTrendIcon className="h-4 w-4" /> {crescimentoLabel} vs período anterior
               </p>
             </div> */}
-            <div className={evolutionMetricCardClass}>
-              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-white/60">Melhor dia</p>
-              <p className="mt-2 text-3xl font-semibold text-white">{formatCurrency(melhorDia.valor)}</p>
-              <p className="mt-1 text-sm text-white/65">{melhorDia.data}</p>
+            <div className={evolutionMetricCardClassMelhor}>
+              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-white/80">Melhor dia</p>
+              <p className="mt-2 text-3xl font-semibold">{formatCurrency(melhorDia.valor)}</p>
+              <p className="mt-1 text-sm text-white/90">{melhorDia.data}</p>
             </div>
-            <div className={evolutionMetricCardClass}>
-              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-white/60">Pior dia</p>
-              <p className="mt-2 text-3xl font-semibold text-white">{formatCurrency(piorDia.valor)}</p>
-              <p className="mt-1 text-sm text-white/65">{piorDia.data}</p>
+            <div className={evolutionMetricCardClassPior}>
+              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-white/80">Pior dia</p>
+              <p className="mt-2 text-3xl font-semibold">{formatCurrency(piorDia.valor)}</p>
+              <p className="mt-1 text-sm text-white/90">{piorDia.data}</p>
             </div>
-            <div className={evolutionMetricCardClass}>
-              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-white/60">Média diária</p>
-              <p className="mt-2 text-3xl font-semibold text-white">{formatCurrency(mediaDiaria || 0)}</p>
-              <p className="mt-1 text-sm text-white/65">Últimos {periodoDiasLabel}</p>
+            <div className={evolutionMetricCardClassMedia}>
+              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-white/80">Média diária</p>
+              <p className="mt-2 text-3xl font-semibold">{formatCurrency(mediaDiaria || 0)}</p>
+              <p className="mt-1 text-sm text-white/90">Últimos {periodoDiasLabel}</p>
             </div>
           </div>
 

@@ -45,7 +45,7 @@ export default function Modal({ isOpen, title, onClose, children, size = 'md' }:
 
   return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm animate-fade"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4 backdrop-blur-sm animate-fade"
       onClick={onClose}
     >
       <div
@@ -53,18 +53,18 @@ export default function Modal({ isOpen, title, onClose, children, size = 'md' }:
         aria-modal="true"
         aria-labelledby={titleId}
         className={cn(
-          'relative w-full rounded-3xl border border-border/30 bg-background-card/95 p-6 shadow-glass backdrop-blur-3xl animate-slide-up',
+          'relative w-full rounded-3xl border border-[#14b8a6]/30 bg-gradient-to-br from-[#0f3a35] via-[#0d3230] to-[#0a2a26] p-8 shadow-[0_30px_80px_rgba(20,184,166,0.25)] backdrop-blur-3xl animate-slide-up',
           SIZE_MAP[size]
         )}
         onClick={(event) => event.stopPropagation()}
       >
-        <header id={titleId} className="flex items-start justify-between gap-4 border-b border-border/20 pb-4">
+        <header id={titleId} className="flex items-start justify-between gap-4 border-b border-[#14b8a6]/20 pb-4">
           <div>
-            <h3 className="text-xl font-semibold text-foreground">{title}</h3>
+            <h3 className="text-2xl font-bold bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">{title}</h3>
           </div>
           <button
             type="button"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-border/40 bg-background text-foreground transition hocus:border-brand-emerald/50 hocus:text-brand-emerald"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-[#14b8a6]/30 bg-gradient-to-br from-[#0f3a35] to-[#0a2a26] text-white transition hover:border-[#14b8a6]/60 hover:shadow-[0_8px_20px_rgba(20,184,166,0.2)]"
             onClick={onClose}
             aria-label="Fechar modal"
           >
@@ -77,4 +77,3 @@ export default function Modal({ isOpen, title, onClose, children, size = 'md' }:
     document.body
   );
 }
-

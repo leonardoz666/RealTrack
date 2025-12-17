@@ -275,7 +275,7 @@ export default function Dashboard() {
   const cardShadowClass = 'shadow-[0_25px_45px_rgba(0,0,0,0.25)]';
   const sectionCardClass = `rounded-lg ${cardBorderClass} ${cardSurfaceClass} p-6 ${cardShadowClass} backdrop-blur-sm`;
   const evolutionCardClass =
-    'rounded-[32px] border border-white/5 bg-gradient-to-br from-[#031d1a] via-[#042722] to-[#021213] p-6 sm:p-8 text-white shadow-[0_35px_70px_rgba(0,0,0,0.6)]';
+    'rounded-[32px] border border-white/5 bg-[#0d2424] p-6 sm:p-8 text-white shadow-[0_35px_70px_rgba(0,0,0,0.6)]';
   const evolutionMetricCardClass =
     'rounded-2xl border border-white/10 bg-white/5 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-sm';
   const timeframeSwitchBaseClass =

@@ -97,10 +97,10 @@ export default function ApostasTable({
           description="Cadastre uma nova aposta para começar a acompanhar resultados."
         />
       ) : (
-        <div className={cn('mt-4 overflow-hidden rounded-2xl border border-white/10', expanded ? '' : 'max-h-[420px]')}>
+        <div className={cn('mt-6 overflow-hidden rounded-2xl border border-[#14b8a6]/20', expanded ? '' : 'max-h-[420px]')}>
           <div className={cn('overflow-x-auto', expanded ? 'overflow-y-auto' : 'overflow-y-auto')}>
-            <table className="min-w-full divide-y divide-white/10 text-sm text-white">
-              <thead className="bg-white/5 text-left text-xs font-semibold uppercase tracking-[0.3em] text-white/60">
+            <table className="min-w-full divide-y divide-[#14b8a6]/15 text-sm text-white bg-gradient-to-br from-white/[0.05] to-white/[0.02]">
+              <thead className="bg-gradient-to-r from-[#14b8a6]/10 to-transparent text-left text-xs font-semibold uppercase tracking-widest text-[#14b8a6]/80 border-b border-[#14b8a6]/20">
                 <tr>
                   <th className="px-4 py-3">Casa de Aposta</th>
                   <th className="px-4 py-3">Tipster</th>

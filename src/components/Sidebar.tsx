@@ -566,7 +566,7 @@ const Sidebar = ({ collapsed, onToggle }: SidebarProps) => {
               <div className="flex items-center gap-2">
                 <button
                   type="button"
-                  className="flex h-8 w-8 items-center justify-center text-[#7a9995] transition-colors hover:text-white"
+                  className="flex h-8 w-8 items-center justify-center text-[#7a9995] transition-all duration-300 hover:text-[#14b8a6] hover:bg-[#14b8a6]/10 rounded-lg"
                   aria-label="Configurações"
                   onClick={handleOpenSettings}
                 >
@@ -574,7 +574,7 @@ const Sidebar = ({ collapsed, onToggle }: SidebarProps) => {
                 </button>
                 <button
                   type="button"
-                  className="flex h-8 w-8 items-center justify-center text-[#ef4444] transition-colors hover:text-[#dc2626]"
+                  className="flex h-8 w-8 items-center justify-center text-[#ef4444] transition-all duration-300 hover:text-[#ff6b6b] hover:bg-red-500/10 rounded-lg"
                   aria-label="Sair"
                   onClick={handleLogout}
                 >

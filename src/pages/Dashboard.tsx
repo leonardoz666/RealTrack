@@ -322,14 +322,14 @@ export default function Dashboard() {
             )}
             <button
               type="button"
-              className="inline-flex items-center gap-2 rounded-2xl border border-border/40 bg-background px-4 py-2 text-sm font-semibold text-foreground transition hocus:border-brand-emerald/60 hocus:text-brand-emerald"
+              className="inline-flex items-center gap-2 rounded-2xl border border-[#14b8a6]/40 bg-gradient-to-br from-[#0f3a35] to-[#0a2a26] px-4 py-2 text-sm font-semibold text-white shadow-[0_10px_25px_rgba(20,184,166,0.15)] transition hover:border-[#14b8a6]/60 hover:shadow-[0_15px_35px_rgba(20,184,166,0.25)] hover:scale-[1.02] active:scale-[0.98]"
               onClick={handleNovaAposta}
             >
               <Plus size={16} /> Nova aposta
             </button>
             <button
               type="button"
-              className="inline-flex items-center gap-2 rounded-2xl border border-border/40 bg-background px-4 py-2 text-sm font-semibold text-foreground transition hocus:border-brand-emerald/60 hocus:text-brand-emerald"
+              className="inline-flex items-center gap-2 rounded-2xl border border-[#14b8a6]/40 bg-gradient-to-br from-[#0f3a35] to-[#0a2a26] px-4 py-2 text-sm font-semibold text-white shadow-[0_10px_25px_rgba(20,184,166,0.15)] transition hover:border-[#14b8a6]/60 hover:shadow-[0_15px_35px_rgba(20,184,166,0.25)] hover:scale-[1.02] active:scale-[0.98]"
               onClick={() => setImportModalOpen(true)}
             >
               <Download size={16} /> Importar dados
@@ -337,7 +337,7 @@ export default function Dashboard() {
             <div className="relative">
               <button
                 type="button"
-                className="inline-flex items-center gap-2 rounded-2xl border border-border/40 bg-background px-4 py-2 text-sm font-semibold text-foreground transition hocus:border-brand-emerald/60 hocus:text-brand-emerald"
+                className="inline-flex items-center gap-2 rounded-2xl border border-[#14b8a6]/40 bg-gradient-to-br from-[#0f3a35] to-[#0a2a26] px-4 py-2 text-sm font-semibold text-white shadow-[0_10px_25px_rgba(20,184,166,0.15)] transition hover:border-[#14b8a6]/60 hover:shadow-[0_15px_35px_rgba(20,184,166,0.25)] hover:scale-[1.02] active:scale-[0.98]"
                 onClick={() => setFiltersOpen((prev) => !prev)}
                 aria-expanded={filtersOpen}
               >

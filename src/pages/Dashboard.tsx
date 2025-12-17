@@ -298,9 +298,9 @@ export default function Dashboard() {
   const evolutionMetricCardClassPior = evolutionMetricCardClassBase;
   const evolutionMetricCardClassMedia = evolutionMetricCardClassBase;
   const timeframeSwitchBaseClass =
-    'rounded-full px-4 py-1.5 text-xs font-semibold uppercase tracking-wide transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1fe7cb]/40';
+    'rounded-full px-4 py-1.5 text-xs font-semibold uppercase tracking-wider transition duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#14b8a6]/50';
   const evolutionChartShellClass =
-    'rounded-[28px] border border-white/10 bg-black/10 p-4 sm:p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] backdrop-blur';
+    'rounded-2xl border border-[#14b8a6]/25 bg-gradient-to-br from-white/[0.05] via-white/[0.02] to-transparent p-6 sm:p-8 shadow-[0_20px_50px_rgba(20,184,166,0.1)] backdrop-blur-xl';
   const lucroLineGradientId = 'lucroLineGradient';
 
   return (

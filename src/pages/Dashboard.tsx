@@ -559,19 +559,33 @@ export default function Dashboard() {
               </p>
             </div> */}
             <div className={evolutionMetricCardClassMelhor}>
-              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-white/80">Melhor dia</p>
-              <p className="mt-2 text-3xl font-semibold">{formatCurrency(melhorDia && melhorDia.valor ? melhorDia.valor : 0)}</p>
-              <p className="mt-1 text-sm text-white/90">{melhorDia && melhorDia.data ? melhorDia.data : ''}</p>
+              {/* Glow interno */}
+              <div className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-br from-white/20 via-white/5 to-transparent opacity-30" />
+              {/* Overlay de cor fintech */}
+              <div className="pointer-events-none absolute inset-0 rounded-2xl bg-emerald-500/10" />
+              <div className="relative z-10">
+                <p className="text-xs font-medium tracking-widest text-white/60 uppercase">Melhor dia</p>
+                <p className="mt-2 text-3xl font-semibold text-white">{formatCurrency(melhorDia && melhorDia.valor ? melhorDia.valor : 0)}</p>
+                <p className="mt-1 text-sm text-white/50">{melhorDia && melhorDia.data ? melhorDia.data : ''}</p>
+              </div>
             </div>
             <div className={evolutionMetricCardClassPior}>
-              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-white/80">Pior dia</p>
-              <p className="mt-2 text-3xl font-semibold">{formatCurrency(piorDia && piorDia.valor ? piorDia.valor : 0)}</p>
-              <p className="mt-1 text-sm text-white/90">{piorDia && piorDia.data ? piorDia.data : ''}</p>
+              <div className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-br from-white/20 via-white/5 to-transparent opacity-30" />
+              <div className="pointer-events-none absolute inset-0 rounded-2xl bg-zinc-500/10" />
+              <div className="relative z-10">
+                <p className="text-xs font-medium tracking-widest text-white/60 uppercase">Pior dia</p>
+                <p className="mt-2 text-3xl font-semibold text-white">{formatCurrency(piorDia && piorDia.valor ? piorDia.valor : 0)}</p>
+                <p className="mt-1 text-sm text-white/50">{piorDia && piorDia.data ? piorDia.data : ''}</p>
+              </div>
             </div>
             <div className={evolutionMetricCardClassMedia}>
-              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-white/80">Média diária</p>
-              <p className="mt-2 text-3xl font-semibold">{formatCurrency(mediaDiaria || 0)}</p>
-              <p className="mt-1 text-sm text-white/90">Últimos {periodoDiasLabel}</p>
+              <div className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-br from-white/20 via-white/5 to-transparent opacity-30" />
+              <div className="pointer-events-none absolute inset-0 rounded-2xl bg-indigo-500/10" />
+              <div className="relative z-10">
+                <p className="text-xs font-medium tracking-widest text-white/60 uppercase">Média diária</p>
+                <p className="mt-2 text-3xl font-semibold text-white">{formatCurrency(mediaDiaria || 0)}</p>
+                <p className="mt-1 text-sm text-white/50">Últimos {periodoDiasLabel}</p>
+              </div>
             </div>
           </div>
 

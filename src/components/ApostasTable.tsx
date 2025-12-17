@@ -67,7 +67,7 @@ export default function ApostasTable({
   onSeedTestBets,
 }: ApostasTableProps) {
   return (
-    <div className="rounded-lg border border-white/5 bg-[#0f2d29] p-6 text-white shadow-[0_25px_45px_rgba(0,0,0,0.25)] backdrop-blur-sm">
+    <div className="rounded-2xl border border-[#14b8a6]/20 bg-gradient-to-br from-[#0f3a35] via-[#0d3230] to-[#0a2a26] p-6 sm:p-8 text-white shadow-[0_25px_60px_rgba(20,184,166,0.15)] backdrop-blur-xl">
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <h3 className="text-xl font-semibold">Apostas</h3>
         <div className="flex flex-wrap gap-2">

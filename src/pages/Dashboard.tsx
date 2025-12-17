@@ -277,13 +277,13 @@ export default function Dashboard() {
   const evolutionCardClass =
     'rounded-lg border border-white/5 bg-[#0f2d29] p-6 sm:p-8 text-white';
   const evolutionMetricCardClassBase =
-    'rounded-2xl border-0 p-5 text-white shadow-none';
+    'rounded-2xl p-5 text-white shadow-none border-0';
   const evolutionMetricCardClassMelhor =
-    `${evolutionMetricCardClassBase} bg-gradient-to-br from-green-600 to-green-800`;
+    `${evolutionMetricCardClassBase} bg-gradient-to-br from-green-400/60 to-green-900/80`;
   const evolutionMetricCardClassPior =
-    `${evolutionMetricCardClassBase} bg-gradient-to-br from-red-600 to-red-800`;
+    `${evolutionMetricCardClassBase} bg-gradient-to-br from-red-400/60 to-red-900/80`;
   const evolutionMetricCardClassMedia =
-    `${evolutionMetricCardClassBase} bg-gradient-to-br from-purple-600 to-purple-800`;
+    `${evolutionMetricCardClassBase} bg-gradient-to-br from-purple-400/60 to-purple-900/80`;
   const timeframeSwitchBaseClass =
     'rounded-full px-4 py-1.5 text-xs font-semibold uppercase tracking-wide transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1fe7cb]/40';
   const evolutionChartShellClass =

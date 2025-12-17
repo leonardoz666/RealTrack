@@ -92,7 +92,7 @@ export default function DateInput({
         readOnly
         onClick={handleInputClick}
         className={cn(
-          'w-full cursor-pointer rounded-2xl border border-border/50 bg-background px-4 py-3 text-sm text-foreground placeholder:text-foreground-muted transition focus-visible:border-brand-emerald focus-visible:ring-2 focus-visible:ring-brand-emerald/30',
+          'w-full cursor-pointer rounded-2xl border border-[#14b8a6]/30 bg-gradient-to-br from-[#0f3a35] to-[#0a2a26] px-4 py-3 text-sm text-foreground placeholder:text-foreground-muted transition hover:border-[#14b8a6]/50 focus-visible:border-[#14b8a6]/60 focus-visible:ring-2 focus-visible:ring-[#14b8a6]/30 focus-visible:shadow-[0_0_15px_rgba(20,184,166,0.2)]',
           className
         )}
         style={style}
@@ -110,4 +110,3 @@ export default function DateInput({
     </div>
   );
 }
-

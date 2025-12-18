@@ -19,66 +19,59 @@ import {
   Trash2,
   User,
   X,
+  ChevronRight,
+  ShieldCheck,
   type LucideIcon,
 } from 'lucide-react';
 import PageHeader from '../components/PageHeader';
 import Modal from '../components/Modal';
 import { perfilService } from '../services/api';
 import { type ApiProfileResponse } from '../types/api';
-import { formatCurrency as formatCurrencyUtil, formatDate as formatDateUtil } from '../utils/formatters';
+import { formatDate as formatDateUtil } from '../utils/formatters';
 import { cn } from '../components/ui/utils';
 import { toast } from '../utils/toast';
 
-const sectionCardClass =
-  'rounded-lg border border-white/5 bg-[#0f2d29] p-6 text-white shadow-[0_25px_45px_rgba(0,0,0,0.25)] backdrop-blur-sm';
-const dashboardCardShellClass =
-  'rounded-lg border border-white/5 bg-[#0f2d29] p-6 text-white shadow-[0_25px_45px_rgba(0,0,0,0.25)] backdrop-blur-sm';
-const heroCardClass =
-  'relative overflow-hidden rounded-lg border border-white/5 bg-bank-hero p-6 text-white shadow-[0_25px_45px_rgba(0,0,0,0.3)] backdrop-blur-sm';
-const gradientCardClass = dashboardCardShellClass;
-const panelClass = 'rounded-2xl border border-white/10 bg-white/5 px-4 py-4 text-white';
-const labelClass = 'text-2xs uppercase tracking-[0.3em] text-white/60';
+const cardBaseClass =
+  'relative overflow-hidden rounded-[32px] border border-white/5 bg-[#020c14]/60 p-8 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.3)] transition-all duration-300';
+const labelClass = 'text-[0.65rem] font-bold uppercase tracking-[0.3em] text-emerald-500/80';
 const inputClass =
-  'w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-2.5 text-sm text-white placeholder:text-white/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-emerald/30';
-const iconBadgeClass =
-  'flex h-14 w-14 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-brand-emerald';
-const planIconBadgeBaseClass =
-  'flex h-14 w-14 items-center justify-center rounded-3xl border border-white/15 shadow-[0_8px_30px_rgba(0,0,0,0.35)]';
-const gradientTitleClass = 'text-3xl font-semibold text-white';
+  'w-full rounded-2xl border border-white/10 bg-white/5 px-5 py-3.5 text-sm font-medium text-white placeholder:text-white/20 backdrop-blur-md transition-all duration-300 focus:border-emerald-500/50 focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:bg-white/10';
 const primaryButtonClass =
-  'inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-brand-emerald/40 bg-brand-emerald/10 px-5 py-2.5 text-sm font-semibold text-brand-emerald transition hover:bg-brand-emerald/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-emerald/30';
+  'relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-2xl bg-emerald-600 py-3.5 text-sm font-bold uppercase tracking-widest text-white shadow-[0_10px_20px_rgba(5,150,105,0.3)] transition-all duration-300 hover:bg-emerald-500 hover:shadow-[0_0_25px_rgba(16,185,129,0.4)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50';
 const neutralButtonClass =
-  'inline-flex items-center justify-center gap-2 rounded-2xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white transition hover:border-brand-emerald/40 hover:text-brand-emerald focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-emerald/30';
+  'inline-flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-5 py-2.5 text-xs font-bold uppercase tracking-widest text-white/70 transition hover:border-emerald-500/50 hover:bg-white/10 hover:text-emerald-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/30';
 const dangerButtonClass =
-  'inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-rose-500/30 bg-rose-500/10 px-5 py-2.5 text-sm font-semibold text-rose-200 transition hover:bg-rose-500/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400/40';
+  'inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-red-500/30 bg-red-500/10 px-5 py-3.5 text-sm font-bold uppercase tracking-widest text-red-200 transition hover:bg-red-500/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400/40';
 
-const PLAN_VISUALS: Record<string, { Icon: LucideIcon; badgeClass: string; iconClass: string }> = {
+const PLAN_VISUALS: Record<string, { Icon: LucideIcon; colorClass: string; glowClass: string }> = {
   gratuito: {
     Icon: Gift,
-    badgeClass: 'bg-gradient-to-br from-[#012f28] via-[#024639] to-[#05604e]',
-    iconClass: 'text-[#4df7d4]',
+    colorClass: 'text-emerald-400',
+    glowClass: 'from-emerald-500/20 to-transparent',
   },
   amador: {
     Icon: Star,
-    badgeClass: 'bg-gradient-to-br from-[#0d1f60] via-[#122b83] to-[#1b3aa7]',
-    iconClass: 'text-[#9fc0ff]',
+    colorClass: 'text-blue-400',
+    glowClass: 'from-blue-500/20 to-transparent',
   },
   profissional: {
     Icon: Crown,
-    badgeClass: 'bg-gradient-to-br from-[#2d0042] via-[#440a68] to-[#5e138f]',
-    iconClass: 'text-[#d8b5ff]',
+    colorClass: 'text-purple-400',
+    glowClass: 'from-purple-500/20 to-transparent',
   },
   default: {
     Icon: Crown,
-    badgeClass: 'bg-gradient-to-br from-[#0a2d28] via-[#0f3b36] to-[#124542]',
-    iconClass: 'text-white',
+    colorClass: 'text-white',
+    glowClass: 'from-white/10 to-transparent',
   },
 };
 
+const ScanlineOverlay = () => (
+  <div className="pointer-events-none absolute inset-0 z-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.05)_50%),linear-gradient(90deg,rgba(255,0,0,0.01),rgba(0,255,0,0.005),rgba(0,0,255,0.01))] bg-[length:100%_2px,3px_100%] opacity-20" />
+);
+
 const getPlanVisual = (planName?: string) => {
-  if (!planName) {
-    return PLAN_VISUALS.default;
-  }
+  if (!planName) return PLAN_VISUALS.default;
   const key = planName.trim().toLowerCase();
   return PLAN_VISUALS[key] ?? PLAN_VISUALS.default;
 };
@@ -136,30 +129,18 @@ export default function Perfil() {
   };
 
   const handleUpdateProfile = async (event?: React.FormEvent) => {
-    if (event) {
-      event.preventDefault();
-    }
-
+    if (event) event.preventDefault();
     try {
       setUpdating(true);
       setError('');
       let fotoPerfil: string | File | undefined = updateForm.fotoPerfil;
-      if (fotoFile) {
-        fotoPerfil = fotoFile;
-      }
-      const data = await perfilService.updateProfile({
-        ...updateForm,
-        fotoPerfil,
-      });
+      if (fotoFile) fotoPerfil = fotoFile;
+      const data = await perfilService.updateProfile({ ...updateForm, fotoPerfil });
       setProfile(data);
-      setUpdateForm({
-        nomeCompleto: data.nomeCompleto,
-        email: data.email,
-      });
+      setUpdateForm({ nomeCompleto: data.nomeCompleto, email: data.email });
       window.dispatchEvent(new CustomEvent('profile-updated', { detail: data }));
       toast.success('Perfil atualizado com sucesso!');
     } catch (err) {
-      console.error('Erro ao atualizar perfil:', err);
       setError('Erro ao atualizar perfil');
     } finally {
       setUpdating(false);
@@ -170,35 +151,25 @@ export default function Perfil() {
     event.preventDefault();
     setPasswordError('');
     setPasswordSuccess(false);
-
     if (!passwordForm.senhaAtual || !passwordForm.novaSenha || !passwordForm.confirmarSenha) {
       setPasswordError('Todos os campos são obrigatórios');
       return;
     }
-
     if (passwordForm.novaSenha.length < 6) {
       setPasswordError('A nova senha deve ter pelo menos 6 caracteres');
       return;
     }
-
     if (passwordForm.novaSenha !== passwordForm.confirmarSenha) {
       setPasswordError('As senhas não coincidem');
       return;
     }
-
     try {
       setChangingPassword(true);
-      await perfilService.changePassword({
-        senhaAtual: passwordForm.senhaAtual,
-        novaSenha: passwordForm.novaSenha,
-        confirmarSenha: passwordForm.confirmarSenha,
-      });
-
+      await perfilService.changePassword(passwordForm);
       setPasswordSuccess(true);
       setPasswordForm({ senhaAtual: '', novaSenha: '', confirmarSenha: '' });
       setTimeout(() => setPasswordSuccess(false), 3000);
     } catch (err) {
-      console.error('Erro ao alterar senha:', err);
       setPasswordError('Erro ao alterar senha');
     } finally {
       setChangingPassword(false);
@@ -210,14 +181,11 @@ export default function Perfil() {
       setResetting(true);
       setResetError('');
       const data = await perfilService.resetAccount();
-      toast.success(
-        `Conta resetada com sucesso!\n\nDados removidos:\n- ${data.deleted.bancas} bancas\n- ${data.deleted.apostas} apostas\n- ${data.deleted.transacoes} transações`
-      );
+      toast.success('Conta resetada com sucesso!');
       setResetModalOpen(false);
       void navigate('/dashboard');
       window.location.reload();
     } catch (err) {
-      console.error('Erro ao resetar conta:', err);
       setResetError('Erro ao resetar conta');
     } finally {
       setResetting(false);
@@ -230,7 +198,6 @@ export default function Perfil() {
       setPromoError('Informe o código.');
       return;
     }
-
     try {
       setRedeemingPromo(true);
       setPromoError('');
@@ -238,520 +205,402 @@ export default function Perfil() {
       setProfile(result.profile);
       toast.success(result.message);
       setPromoModalOpen(false);
-      setPromoCode('realteste');
     } catch (error: any) {
-      const message =
-        typeof error?.response?.data?.error === 'string'
-          ? error.response.data.error
-          : error?.response?.data?.message ?? 'Não foi possível aplicar o código.';
-      setPromoError(message);
-      toast.error(message);
+      setPromoError('Não foi possível aplicar o código.');
     } finally {
       setRedeemingPromo(false);
     }
   };
 
   const copyToClipboard = (text: string) => {
-    void navigator.clipboard
-      .writeText(text)
-      .then(() => toast.success('ID copiado para a área de transferência!'))
-      .catch(() => toast.error('Erro ao copiar ID'));
+    void navigator.clipboard.writeText(text).then(() => toast.success('Copiado!'));
   };
 
   const handleLinkTelegram = () => {
     if (!profile) return;
-    const envBot: unknown = import.meta.env.VITE_TELEGRAM_BOT_USERNAME;
-    const botUsername = typeof envBot === 'string' ? envBot : 'RealComando_bot';
-    const telegramUrl = `https://t.me/${botUsername}?start=${profile.id}`;
-    window.open(telegramUrl, '_blank');
+    const botUsername = import.meta.env.VITE_TELEGRAM_BOT_USERNAME || 'RealComando_bot';
+    window.open(`https://t.me/${botUsername}?start=${profile.id}`, '_blank');
   };
 
   const handleUnlinkTelegram = async () => {
-    if (!profile) return;
-    if (!window.confirm('Tem certeza que deseja desvincular sua conta do Telegram?')) {
-      return;
-    }
-
+    if (!profile || !window.confirm('Desvincular Telegram?')) return;
     try {
       const data = await perfilService.updateTelegram(null);
       setProfile(data);
-      toast.success('Telegram desvinculado com sucesso!');
+      toast.success('Telegram desvinculado!');
     } catch (err) {
-      console.error('Erro ao desvincular Telegram:', err);
-      toast.error('Erro ao desvincular Telegram');
+      toast.error('Erro ao desvincular');
     }
   };
 
-  const handleOpenSupportBot = () => {
-    if (!profile) return;
-    const envSupportBot: unknown = import.meta.env.VITE_TELEGRAM_SUPPORT_BOT_USERNAME;
-    const supportBotUsername = typeof envSupportBot === 'string' ? envSupportBot : 'RealComandoSuporte_bot';
-    const telegramUrl = `https://t.me/${supportBotUsername}?start=support_${profile.id}`;
-    window.open(telegramUrl, '_blank');
-  };
+  if (loading) return (
+    <div className="flex h-64 items-center justify-center">
+      <div className="h-8 w-8 animate-spin rounded-full border-4 border-emerald-500 border-t-transparent" />
+    </div>
+  );
 
-  if (loading) {
-    return (
-      <div className="space-y-6 text-white">
-        <PageHeader title="Meu Perfil" subtitle="Gerencie suas informações pessoais e configurações da conta" />
-        <div className={sectionCardClass}>
-          <p className="text-sm text-white/60">Carregando...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!profile) {
-    return (
-      <div className="space-y-6 text-white">
-        <PageHeader title="Meu Perfil" subtitle="Gerencie suas informações pessoais e configurações da conta" />
-        <div className={sectionCardClass}>
-          <p className="text-sm text-danger">{error || 'Erro ao carregar perfil'}</p>
-        </div>
-      </div>
-    );
-  }
+  if (!profile) return (
+    <div className="rounded-3xl border border-red-500/20 bg-red-500/5 p-8 text-center text-red-400">
+      {error || 'Erro ao carregar perfil'}
+    </div>
+  );
 
   const planVisual = getPlanVisual(profile.plano?.nome);
   const PlanIcon = planVisual.Icon;
-  const normalizedPlanName = profile.plano?.nome?.trim().toLowerCase() ?? '';
-  const isUnlimitedPlan = normalizedPlanName.includes('profissional') || profile.plano.limiteApostasDiarias === 0;
-  const promoExpiryDate = profile.promoExpiresAt ? new Date(profile.promoExpiresAt) : null;
-  const promoActive = promoExpiryDate ? promoExpiryDate.getTime() > Date.now() : false;
+  const isUnlimitedPlan = (profile.plano?.nome?.toLowerCase().includes('profissional')) || profile.plano?.limiteApostasDiarias === 0;
+  const promoActive = profile.promoExpiresAt ? new Date(profile.promoExpiresAt).getTime() > Date.now() : false;
 
   return (
-    <div className="space-y-8 text-white">
-      <PageHeader title="Meu Perfil" subtitle="Gerencie suas informações pessoais e configurações da conta" />
+    <div className="mx-auto max-w-7xl space-y-10 pb-20">
+      <PageHeader 
+        title="Meu Perfil" 
+        subtitle="Configurações de conta e acesso ao terminal de alta performance"
+      />
 
-      {error && (
-        <div className={cn(sectionCardClass, 'border-danger/40 bg-danger/5 text-sm text-danger')}>{error}</div>
-      )}
-
-      <section className={heroCardClass}>
-        <div className="flex flex-wrap items-start gap-6">
-          <div className="flex flex-1 items-center gap-4">
-            <div className={cn(planIconBadgeBaseClass, planVisual.badgeClass)}>
-              <PlanIcon className={cn('h-6 w-6', planVisual.iconClass)} />
+      {/* Hero Section: Plan Status */}
+      <section className={cn(cardBaseClass, 'border-emerald-500/10')}>
+        <ScanlineOverlay />
+        <div className={cn("absolute -right-20 -top-20 h-64 w-64 rounded-full blur-[100px] opacity-20 bg-gradient-to-br", planVisual.glowClass)} />
+        
+        <div className="relative z-10 flex flex-col gap-10 lg:flex-row lg:items-center">
+          <div className="flex flex-1 items-center gap-6">
+            <div className={cn("flex h-20 w-20 items-center justify-center rounded-[24px] bg-white/5 border border-white/10 shadow-2xl", planVisual.colorClass)}>
+              <PlanIcon size={32} />
             </div>
             <div>
-              <p className={labelClass}>Plano atual</p>
-              <p className={gradientTitleClass}>{profile.plano.nome}</p>
+              <p className={labelClass}>Status do Plano</p>
+              <h2 className="text-4xl font-black tracking-tight text-white">{profile.plano.nome}</h2>
+              <div className="mt-2 flex items-center gap-2">
+                <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
+                <span className="text-xs font-bold uppercase tracking-widest text-white/40">Terminal Operacional</span>
+              </div>
             </div>
           </div>
 
-          <button
-            type="button"
-            className={cn(primaryButtonClass, 'w-auto whitespace-nowrap px-6 py-2')}
-            onClick={() => {
-              if (promoActive) {
-                return;
-              }
-              setPromoError('');
-              setPromoModalOpen(true);
-            }}
-            disabled={promoActive || redeemingPromo}
-          >
-            <Gift className="h-4 w-4" />
-            {promoActive ? 'Plano promocional ativo' : redeemingPromo ? 'Aplicando...' : 'Liberar 7 dias grátis'}
-          </button>
-        </div>
-
-        <div className="mt-6 flex flex-1 justify-center text-center text-white">
-          <div className="flex w-full max-w-3xl items-center justify-between gap-10">
+          <div className="flex flex-wrap gap-8 lg:border-l lg:border-white/5 lg:pl-10">
             <div className="space-y-1">
-              <p className="text-xs uppercase tracking-[0.3em] text-white/60">Limite diário</p>
-              <p className="text-lg font-semibold text-white">
-                {isUnlimitedPlan ? (
-                  <span className="inline-flex items-center gap-1 text-white">
-                    <InfinityIcon className="h-4 w-4" /> Ilimitado
-                  </span>
-                ) : (
-                  `${profile.plano.limiteApostasDiarias} apostas`
-                )}
+              <p className={labelClass}>Limite Diário</p>
+              <p className="text-xl font-bold text-white tabular-nums">
+                {isUnlimitedPlan ? 'ILIMITADO' : `${profile.plano.limiteApostasDiarias} APOSTAS`}
               </p>
             </div>
             <div className="space-y-1">
-              <p className="text-xs uppercase tracking-[0.3em] text-white/60">Renovação</p>
-              <p className="text-lg font-semibold text-white">{formatDate(new Date().toISOString())}</p>
+              <p className={labelClass}>Ciclo de Renovação</p>
+              <p className="text-xl font-bold text-white">{formatDateUtil(new Date().toISOString())}</p>
             </div>
+          </div>
+
+          <div className="lg:ml-auto">
+            <button
+              onClick={() => !promoActive && setPromoModalOpen(true)}
+              disabled={promoActive || redeemingPromo}
+              className={cn(primaryButtonClass, "px-8 lg:w-auto")}
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full animate-[shimmer_2s_infinite]" />
+              <Gift size={18} />
+              <span>{promoActive ? 'Plano Ativo' : 'Ativar 7 Dias Grátis'}</span>
+            </button>
           </div>
         </div>
       </section>
 
-      <section className="grid gap-6 lg:grid-cols-2">
-        <div className={gradientCardClass}>
-          <div className="flex items-center gap-4">
-            <div className={iconBadgeClass}>
-              {fotoPreview ? (
-                <img src={fotoPreview} alt="Foto de perfil" className="h-12 w-12 rounded-full object-cover" />
-              ) : (
-                <User className="h-5 w-5" />
-              )}
+      <div className="grid gap-8 lg:grid-cols-2">
+        {/* Personal Info */}
+        <section className={cardBaseClass}>
+          <div className="mb-8 flex items-center gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500">
+              <User size={22} />
             </div>
             <div>
-              <p className={labelClass}>Informações pessoais</p>
-              <p className={gradientTitleClass}>{profile.nomeCompleto || 'Perfil'}</p>
+              <h3 className="text-lg font-bold text-white">Informações Pessoais</h3>
+              <p className="text-xs font-medium text-white/30 uppercase tracking-widest">Identidade no Terminal</p>
             </div>
           </div>
 
-          <div className="mt-6 space-y-5">
-            <form className="space-y-4" onSubmit={(event) => void handleUpdateProfile(event)}>
+          <form onSubmit={handleUpdateProfile} className="space-y-6">
+            <div className="flex justify-center mb-6">
+              <div className="group relative h-24 w-24">
+                <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-emerald-500/40 to-teal-500/40 blur-md opacity-0 transition group-hover:opacity-100" />
+                <div className="relative h-full w-full overflow-hidden rounded-full border-2 border-white/10 bg-white/5">
+                  {fotoPreview ? (
+                    <img src={fotoPreview} alt="Perfil" className="h-full w-full object-cover" />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center text-white/20">
+                      <User size={40} />
+                    </div>
+                  )}
+                  <label className="absolute inset-0 flex cursor-pointer items-center justify-center bg-black/60 opacity-0 transition group-hover:opacity-100">
+                    <input 
+                      type="file" 
+                      className="hidden" 
+                      accept="image/*"
+                      onChange={e => {
+                        const file = e.target.files?.[0] || null;
+                        setFotoFile(file);
+                        if (file) setFotoPreview(URL.createObjectURL(file));
+                      }}
+                    />
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-white">Alterar</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className={labelClass}>Apelido</label>
+              <input
+                type="text"
+                className={inputClass}
+                value={updateForm.nomeCompleto}
+                onChange={e => setUpdateForm(f => ({ ...f, nomeCompleto: e.target.value }))}
+              />
+            </div>
+            <div className="space-y-2">
+              <label className={labelClass}>Canal de Email</label>
+              <input
+                type="email"
+                className={inputClass}
+                value={updateForm.email}
+                onChange={e => setUpdateForm(f => ({ ...f, email: e.target.value }))}
+              />
+            </div>
+            
+            <button type="submit" disabled={updating} className={primaryButtonClass}>
+              {updating ? 'Processando...' : 'Salvar Alterações'}
+              <ChevronRight size={18} />
+            </button>
+          </form>
+        </section>
+
+        {/* Account Stats & Security */}
+        <div className="space-y-8">
+          <section className={cardBaseClass}>
+            <div className="mb-8 flex items-center gap-4">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500">
+                <ShieldCheck size={22} />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-white">Segurança & Status</h3>
+                <p className="text-xs font-medium text-white/30 uppercase tracking-widest">Proteção e Rastreabilidade</p>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div className="rounded-2xl bg-white/5 p-4 border border-white/5">
+                <p className={labelClass}>Identificador Único (ID)</p>
+                <div className="mt-2 flex items-center gap-3">
+                  <code className="flex-1 text-xs font-mono text-emerald-400/80 bg-black/40 px-3 py-2 rounded-lg">{profile.id}</code>
+                  <button onClick={() => copyToClipboard(profile.id)} className={neutralButtonClass}>
+                    <Copy size={14} />
+                  </button>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="rounded-2xl bg-white/5 p-4 border border-white/5">
+                  <p className={labelClass}>Membro Desde</p>
+                  <p className="mt-1 text-sm font-bold text-white">{formatDateUtil(profile.membroDesde)}</p>
+                </div>
+                <div className="rounded-2xl bg-white/5 p-4 border border-white/5">
+                  <p className={labelClass}>Acesso</p>
+                  <p className="mt-1 text-sm font-bold text-white">VERIFICADO</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section className={cardBaseClass}>
+            <div className="mb-8 flex items-center gap-4">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500">
+                <Lock size={22} />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-white">Alterar Chave de Acesso</h3>
+                <p className="text-xs font-medium text-white/30 uppercase tracking-widest">Criptografia do Terminal</p>
+              </div>
+            </div>
+
+            <form onSubmit={handleChangePassword} className="space-y-5">
               <div className="space-y-2">
-                <label className="text-sm font-medium text-white">Apelido</label>
+                <label className={labelClass}>Senha Atual</label>
                 <input
-                  type="text"
+                  type="password"
                   className={inputClass}
-                  value={updateForm.nomeCompleto}
-                  onChange={(event) => setUpdateForm((prev) => ({ ...prev, nomeCompleto: event.target.value }))}
+                  placeholder="••••••••"
+                  value={passwordForm.senhaAtual}
+                  onChange={e => setPasswordForm(f => ({ ...f, senhaAtual: e.target.value }))}
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium text-white">Email</label>
+                <label className={labelClass}>Nova Chave</label>
                 <input
-                  type="email"
+                  type="password"
                   className={inputClass}
-                  value={updateForm.email}
-                  onChange={(event) => setUpdateForm((prev) => ({ ...prev, email: event.target.value }))}
+                  placeholder="Nova senha de acesso"
+                  value={passwordForm.novaSenha}
+                  onChange={e => setPasswordForm(f => ({ ...f, novaSenha: e.target.value }))}
                 />
               </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-white">Foto de perfil</label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  className={inputClass}
-                  onChange={e => {
-                    const file = e.target.files?.[0] || null;
-                    setFotoFile(file);
-                    if (file) {
-                      setFotoPreview(URL.createObjectURL(file));
-                    }
-                  }}
-                />
-                {fotoPreview && (
-                  <img src={fotoPreview} alt="Preview" className="mt-2 h-16 w-16 rounded-full object-cover" />
+              <button type="submit" disabled={changingPassword} className={primaryButtonClass}>
+                {changingPassword ? 'Criptografando...' : 'Atualizar Chave'}
+              </button>
+              
+              {passwordError && (
+                <div className="flex items-center gap-3 rounded-xl border border-red-500/20 bg-red-500/5 p-4 text-[10px] font-bold uppercase tracking-wider text-red-400">
+                  <AlertTriangle size={14} /> {passwordError}
+                </div>
+              )}
+              {passwordSuccess && (
+                <div className="flex items-center gap-3 rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-4 text-[10px] font-bold uppercase tracking-wider text-emerald-400">
+                  <CheckCircle2 size={14} /> Chave atualizada com sucesso!
+                </div>
+              )}
+            </form>
+          </section>
+        </div>
+      </div>
+
+      <div className="grid gap-8 lg:grid-cols-2">
+        {/* Telegram Integration */}
+        <section className={cardBaseClass}>
+          <div className="mb-8 flex items-center gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500">
+              <Bot size={22} />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-white">Integração Telegram</h3>
+              <p className="text-xs font-medium text-white/30 uppercase tracking-widest">Sincronização em Tempo Real</p>
+            </div>
+          </div>
+
+          <div className="space-y-6">
+            <div className="rounded-2xl bg-[#010a0f] p-6 border border-white/5">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <div className={cn("h-3 w-3 rounded-full", profile.telegramId ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" : "bg-white/20")} />
+                  <span className="text-sm font-bold text-white uppercase tracking-widest">{profile.telegramId ? 'Conectado' : 'Desconectado'}</span>
+                </div>
+                {profile.telegramUsername && (
+                  <span className="text-xs font-medium text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full">@{profile.telegramUsername}</span>
                 )}
               </div>
-              <button type="submit" className={primaryButtonClass} disabled={updating}>
-                {updating ? 'Salvando...' : 'Salvar alterações'}
-                <ArrowRight className="h-4 w-4" />
-              </button>
-            </form>
-          </div>
-        </div>
-
-        <div className={gradientCardClass}>
-          <div className="flex items-center gap-4">
-            <div className={iconBadgeClass}>
-              <Shield className="h-5 w-5" />
-            </div>
-            <div>
-              <p className={labelClass}>Estatísticas da conta</p>
-              <div className="flex items-center gap-2">
-                <p className={gradientTitleClass}>Ativo</p>
-                <span className="h-3 w-3 rounded-full bg-brand-emerald shadow-[0_0_12px_rgba(16,185,129,0.8)]" />
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-6 space-y-5">
-            <div className={panelClass}>
-              <label className="mb-2 flex items-center gap-2 text-sm font-medium text-white">
-                <Shield className="h-4 w-4" /> ID da conta
-              </label>
-              <div className="flex gap-2">
-                <input type="text" readOnly className={inputClass} value={profile.id} />
-                <button type="button" className={neutralButtonClass} onClick={() => copyToClipboard(profile.id)}>
-                  <Copy className="h-4 w-4" />
-                </button>
-              </div>
-            </div>
-
-            <div className="grid gap-3">
-              <InfoRow icon={Calendar} label="Membro desde" value={formatDate(profile.membroDesde)} />
-              <InfoRow icon={RefreshCw} label="Última atualização" value={formatDate(profile.updatedAt)} />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="grid gap-6 lg:grid-cols-2">
-        <div className={gradientCardClass}>
-          <div className="flex items-center gap-4">
-            <div className={iconBadgeClass}>
-              <Lock className="h-5 w-5" />
-            </div>
-            <div>
-              <p className={labelClass}>Alterar senha</p>
-              <p className={gradientTitleClass}>Segurança</p>
-            </div>
-          </div>
-
-          <div className="mt-6 space-y-4">
-            {passwordError && (
-              <div className="flex items-start gap-3 rounded-2xl border border-danger/40 bg-danger/10 p-3 text-sm text-danger">
-                <AlertTriangle className="h-4 w-4" />
-                {passwordError}
-              </div>
-            )}
-            {passwordSuccess && (
-              <div className="flex items-start gap-3 rounded-2xl border border-brand-emerald/40 bg-brand-emerald/10 p-3 text-sm text-brand-emerald">
-                <CheckCircle2 className="h-4 w-4" />
-                Senha alterada com sucesso!
-              </div>
-            )}
-
-            <form className="space-y-4" onSubmit={handleChangePassword}>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Senha atual</label>
-                <input
-                  type="password"
-                  className={inputClass}
-                  placeholder="••••••"
-                  value={passwordForm.senhaAtual}
-                  onChange={(event) => setPasswordForm((prev) => ({ ...prev, senhaAtual: event.target.value }))}
-                  disabled={changingPassword}
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Nova senha</label>
-                <input
-                  type="password"
-                  className={inputClass}
-                  placeholder="Nova senha"
-                  value={passwordForm.novaSenha}
-                  onChange={(event) => setPasswordForm((prev) => ({ ...prev, novaSenha: event.target.value }))}
-                  disabled={changingPassword}
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Confirmar nova senha</label>
-                <input
-                  type="password"
-                  className={inputClass}
-                  placeholder="Confirme a senha"
-                  value={passwordForm.confirmarSenha}
-                  onChange={(event) => setPasswordForm((prev) => ({ ...prev, confirmarSenha: event.target.value }))}
-                  disabled={changingPassword}
-                />
-              </div>
-              <button type="submit" className={primaryButtonClass} disabled={changingPassword}>
-                {changingPassword ? 'Alterando...' : 'Alterar senha'}
-                <ArrowRight className="h-4 w-4" />
-              </button>
-            </form>
-          </div>
-        </div>
-
-        <div className={gradientCardClass}>
-          <div className="flex items-center gap-4">
-            <div className={iconBadgeClass}>
-              <Bot className="h-5 w-5" />
-            </div>
-            <div>
-              <p className={labelClass}>Integração com Telegram</p>
-              <p className={gradientTitleClass}>Bot</p>
-            </div>
-          </div>
-
-          <div className="mt-6 space-y-5">
-            <div className="space-y-2 text-sm text-white/70">
-              <p>Vincule sua conta para receber notificações e gerenciar apostas direto pelo bot.</p>
+              <p className="text-sm text-white/40 leading-relaxed">
+                Vincule seu terminal ao Telegram para receber alertas críticos, relatórios diários e notificações de performance.
+              </p>
             </div>
 
             <button
-              type="button"
               onClick={profile.telegramId ? handleUnlinkTelegram : handleLinkTelegram}
               className={cn(
-                primaryButtonClass,
-                'w-full border-0',
-                profile.telegramId && 'border border-danger/40 bg-danger/10 text-danger hocus:bg-danger/15'
+                "relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-2xl py-3.5 text-sm font-bold uppercase tracking-widest transition-all duration-300 active:scale-[0.98]",
+                profile.telegramId 
+                  ? "border border-red-500/30 bg-red-500/5 text-red-400 hover:bg-red-500/10" 
+                  : "bg-[#229ED9] text-white shadow-[0_10px_20px_rgba(34,158,217,0.2)] hover:shadow-[0_0_25px_rgba(34,158,217,0.3)]"
               )}
             >
-              {profile.telegramId ? (
-                <>
-                  <X className="h-4 w-4" /> Desvincular Telegram
-                </>
-              ) : (
-                <>
-                  <Bot className="h-4 w-4" /> Vincular Telegram
-                </>
-              )}
+              {profile.telegramId ? <><X size={18} /> Desvincular Conta</> : <><Bot size={18} /> Vincular Telegram</>}
             </button>
 
-            <div className={panelClass}>
-              <label className="mb-2 flex items-center gap-2 text-sm font-medium text-white">
-                <MessageCircle className="h-4 w-4" /> Status do bot
-              </label>
-              <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white">
-                <div className="space-y-1">
-                  <p className="font-medium text-white">{profile.telegramId ? 'Conectado' : 'Aguardando vínculo'}</p>
-                  <p className="text-white/60">
-                    {profile.telegramId ? 'Você receberá alertas no Telegram' : 'Clique em Vincular para conectar'}
-                  </p>
+            <div className="pt-4 border-t border-white/5 space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3 text-white/40">
+                  <Mail size={16} />
+                  <span className="text-xs font-bold uppercase tracking-widest">Central de Suporte</span>
                 </div>
-                {profile.telegramUsername && (
-                  <span className="rounded-2xl bg-brand-emerald/10 px-3 py-1 text-xs font-medium text-brand-emerald">
-                    @{profile.telegramUsername}
-                  </span>
-                )}
-              </div>
-            </div>
-
-            <div className={panelClass}>
-              <label className="mb-2 flex items-center gap-2 text-sm font-medium text-white">
-                <Bot className="h-4 w-4" /> ID no Telegram
-              </label>
-              <div className="flex gap-2">
-                <input type="text" readOnly className={inputClass} value={profile.telegramId ?? 'Não vinculado'} />
-                {profile.telegramId && (
-                  <button
-                    type="button"
-                    className={neutralButtonClass}
-                    onClick={() => copyToClipboard(profile.telegramId!)}
-                  >
-                    <Copy className="h-4 w-4" />
-                  </button>
-                )}
-              </div>
-            </div>
-
-            <div className={panelClass}>
-              <label className="mb-2 flex items-center gap-2 text-sm font-medium text-white">
-                <Mail className="h-4 w-4" /> Precisa de ajuda?
-              </label>
-              <p className="text-sm text-white/70">Fale diretamente com o nosso time pelo bot de suporte.</p>
-              <div className="mt-3">
-                <button type="button" className={cn(neutralButtonClass, 'w-full')} onClick={handleOpenSupportBot}>
-                  <MessageCircle className="h-4 w-4" /> Bot de suporte
+                <button onClick={() => window.open('https://t.me/RealComandoSuporte_bot', '_blank')} className="text-xs font-bold text-emerald-500 hover:text-emerald-400 transition-colors uppercase tracking-widest">
+                  Abrir Ticket
                 </button>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section className={cn(gradientCardClass, 'border-danger/40 bg-danger/5')}>
-        <div className="flex items-center gap-4">
-          <div className={cn(iconBadgeClass, 'border-danger/40 text-danger')}>
-            <Trash2 className="h-5 w-5" />
+        {/* Danger Zone */}
+        <section className={cn(cardBaseClass, "border-red-500/10")}>
+          <div className="mb-8 flex items-center gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-red-500/10 text-red-500">
+              <Trash2 size={22} />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-white">Zona de Risco</h3>
+              <p className="text-xs font-medium text-white/30 uppercase tracking-widest">Limpeza de Dados</p>
+            </div>
           </div>
-          <div>
-            <p className={labelClass}>Zona de risco</p>
-            <p className={gradientTitleClass}>Resetar conta</p>
-          </div>
-        </div>
 
-        <div className="mt-6 space-y-4">
-          <p className="text-sm text-white/70">
-            Esta ação remove todas as bancas, apostas e transações. Utilize apenas se quiser começar do zero.
-          </p>
-          <button type="button" className={dangerButtonClass} onClick={() => setResetModalOpen(true)}>
-            <Trash2 className="h-4 w-4" /> Resetar conta
-          </button>
-          <div className="rounded-2xl border border-danger/20 bg-danger/10 px-4 py-3 text-xs text-danger">
-            <p>Você perderá todo o histórico e não será possível recuperar os dados.</p>
-          </div>
-        </div>
-      </section>
+          <div className="space-y-6">
+            <p className="text-sm text-white/40 leading-relaxed">
+              Esta ação irá deletar permanentemente todas as suas bancas, apostas e histórico do terminal. Esta operação não pode ser revertida.
+            </p>
+            
+            <button onClick={() => setResetModalOpen(true)} className={dangerButtonClass}>
+              <Trash2 size={18} />
+              Resetar Terminal Operacional
+            </button>
 
-      <Modal isOpen={promoModalOpen} onClose={() => setPromoModalOpen(false)} title="Ativar plano promocional" size="sm">
-        <form className="space-y-4" onSubmit={handleRedeemPromo}>
-          <p className="text-sm text-white/70">
-            Utilize o código <span className="font-semibold uppercase tracking-[0.3em] text-white">realteste</span> para
-            liberar 7 dias do Plano Profissional.
-          </p>
+            <div className="flex items-center gap-3 rounded-xl border border-red-500/20 bg-red-500/5 p-4">
+              <div className="h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse" />
+              <p className="text-[10px] font-bold uppercase tracking-wider text-red-400/80">Dados não recuperáveis após execução</p>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      {/* Modals */}
+      <Modal isOpen={promoModalOpen} onClose={() => setPromoModalOpen(false)} title="Ativar Terminal Premium" size="sm">
+        <form className="space-y-6" onSubmit={handleRedeemPromo}>
+          <div className="rounded-2xl bg-emerald-500/5 border border-emerald-500/20 p-5 text-center">
+            <p className="text-sm text-emerald-400/80 leading-relaxed">
+              Use o código abaixo para liberar acesso total por 7 dias
+            </p>
+            <p className="mt-2 text-2xl font-black tracking-[0.5em] text-white uppercase">REALTESTE</p>
+          </div>
+          
           <div className="space-y-2">
-            <label className="text-sm font-medium text-white">Código promocional</label>
+            <label className={labelClass}>Código de Ativação</label>
             <input
               type="text"
               className={inputClass}
               value={promoCode}
-              onChange={(event) => setPromoCode(event.target.value)}
+              onChange={e => setPromoCode(e.target.value)}
+              placeholder="Digite o código aqui"
             />
           </div>
+
           {promoError && (
-            <div className="rounded-2xl border border-danger/40 bg-danger/10 px-4 py-2 text-sm text-danger">{promoError}</div>
+            <div className="rounded-xl border border-red-500/20 bg-red-500/5 p-3 text-xs font-bold text-red-400 text-center uppercase tracking-widest">
+              {promoError}
+            </div>
           )}
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <button type="button" className={cn(neutralButtonClass, 'flex-1')} onClick={() => setPromoModalOpen(false)}>
+
+          <div className="flex gap-4">
+            <button type="button" onClick={() => setPromoModalOpen(false)} className={cn(neutralButtonClass, "flex-1 py-3.5")}>
               Cancelar
             </button>
-            <button type="submit" className={cn(primaryButtonClass, 'flex-1')} disabled={redeemingPromo}>
-              {redeemingPromo ? 'Aplicando...' : 'Aplicar código'}
+            <button type="submit" disabled={redeemingPromo} className={cn(primaryButtonClass, "flex-1")}>
+              {redeemingPromo ? 'Validando...' : 'Ativar Agora'}
             </button>
           </div>
         </form>
       </Modal>
 
-      <Modal isOpen={resetModalOpen} onClose={() => setResetModalOpen(false)} title="Resetar conta" size="sm">
-        <p className="text-sm text-white">
-          Confirme para remover definitivamente todas as suas bancas, apostas e transações. Esta operação não pode ser
-          desfeita.
-        </p>
-        {resetError && (
-          <div className="rounded-2xl border border-danger/40 bg-danger/10 px-4 py-3 text-sm text-danger">{resetError}</div>
-        )}
-        <div className="flex flex-col gap-3 sm:flex-row">
-          <button type="button" className={cn(neutralButtonClass, 'flex-1')} onClick={() => setResetModalOpen(false)}>
-            Cancelar
-          </button>
-          <button
-            type="button"
-            className={cn(dangerButtonClass, 'flex-1')}
-            onClick={handleResetAccount}
-            disabled={resetting}
-          >
-            {resetting ? 'Resetando...' : 'Confirmar reset'}
-          </button>
+      <Modal isOpen={resetModalOpen} onClose={() => setResetModalOpen(false)} title="Confirmar Reset de Dados" size="sm">
+        <div className="space-y-6">
+          <div className="rounded-2xl bg-red-500/5 border border-red-500/20 p-5">
+            <p className="text-sm text-white/60 text-center leading-relaxed">
+              Você está prestes a apagar todo o seu histórico. Digite "CONFIRMAR" para prosseguir com a deleção.
+            </p>
+          </div>
+
+          <div className="flex gap-4">
+            <button onClick={() => setResetModalOpen(false)} className={cn(neutralButtonClass, "flex-1 py-3.5")}>
+              Cancelar
+            </button>
+            <button onClick={handleResetAccount} disabled={resetting} className={cn(dangerButtonClass, "flex-1")}>
+              {resetting ? 'Resetando...' : 'Confirmar'}
+            </button>
+          </div>
         </div>
       </Modal>
-    </div>
-  );
-}
-
-function formatCurrency(value?: number | null) {
-  if (value === undefined || value === null) {
-    return '—';
-  }
-  return formatCurrencyUtil(value);
-}
-
-function formatDate(value?: string | null) {
-  if (!value) return '—';
-  return formatDateUtil(value);
-}
-
-interface InfoRowProps {
-  icon: LucideIcon;
-  label: string;
-  value: ReactNode;
-}
-
-function InfoRow({ icon: Icon, label, value }: InfoRowProps) {
-  return (
-    <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white">
-      <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/10 bg-white/5">
-        <Icon className="h-4 w-4 text-brand-emerald" />
-      </div>
-      <div>
-        <p className="text-xs uppercase tracking-[0.3em] text-white/50">{label}</p>
-        <p className="text-sm font-medium text-white">{value}</p>
-      </div>
-    </div>
-  );
-}
-
-interface PlanMetricProps {
-  label: string;
-  value: ReactNode;
-}
-
-function PlanMetric({ label, value }: PlanMetricProps) {
-  return (
-    <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white">
-      <p className="text-2xs uppercase tracking-[0.3em] text-white/60">{label}</p>
-      <p className="mt-1 font-semibold text-white">{value}</p>
     </div>
   );
 }

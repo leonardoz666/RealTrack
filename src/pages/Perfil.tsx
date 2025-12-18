@@ -304,7 +304,7 @@ export default function Perfil() {
         </div>
       </section>
 
-      <div className="grid gap-8 lg:grid-cols-2">
+      <div className="grid gap-8 lg:grid-cols-2 items-start">
         {/* Personal Info */}
         <section className={cardBaseClass}>
           <div className="mb-8 flex items-center gap-4">
@@ -460,7 +460,7 @@ export default function Perfil() {
         </div>
       </div>
 
-      <div className="grid gap-8 lg:grid-cols-2">
+      <div className="grid gap-8 lg:grid-cols-2 items-start">
         {/* Telegram Integration */}
         <section className={cardBaseClass}>
           <div className="mb-8 flex items-center gap-4">

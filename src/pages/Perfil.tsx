@@ -233,6 +233,11 @@ export default function Perfil() {
     }
   };
 
+  const handleOpenSupport = () => {
+    const supportBot = import.meta.env.VITE_TELEGRAM_SUPPORT_BOT_USERNAME || 'RealComandoSuporte_bot';
+    window.open(`https://t.me/${supportBot}${profile?.id ? `?start=support_${profile.id}` : ''}`, '_blank');
+  };
+
   if (loading) return (
     <div className="flex h-64 items-center justify-center">
       <div className="h-8 w-8 animate-spin rounded-full border-4 border-emerald-500 border-t-transparent" />
@@ -255,6 +260,12 @@ export default function Perfil() {
       <PageHeader 
         title="Meu Perfil" 
         subtitle="Configurações de conta e acesso ao terminal de alta performance"
+        actions={
+          <button onClick={handleOpenSupport} className={neutralButtonClass}>
+            <MessageCircle size={16} />
+            <span>Suporte</span>
+          </button>
+        }
       />
 
       {/* Hero Section: Plan Status */}
@@ -305,231 +316,240 @@ export default function Perfil() {
       </section>
 
       <div className="grid gap-8 lg:grid-cols-2 items-start">
-        {/* Left Column */}
-        <div className="space-y-8">
-          {/* Personal Info */}
-          <section className={cardBaseClass}>
-            <div className="mb-8 flex items-center gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500">
-                <User size={22} />
-              </div>
-              <div>
-                <h3 className="text-lg font-bold text-white">Informações Pessoais</h3>
-                <p className="text-xs font-medium text-white/30 uppercase tracking-widest">Identidade no Terminal</p>
-              </div>
+        {/* Informações Pessoais */}
+        <section className={cardBaseClass}>
+          <div className="mb-8 flex items-center gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500">
+              <User size={22} />
             </div>
-
-            <form onSubmit={handleUpdateProfile} className="space-y-6">
-              <div className="flex justify-center mb-6">
-                <div className="group relative h-24 w-24">
-                  <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-emerald-500/40 to-teal-500/40 blur-md opacity-0 transition group-hover:opacity-100" />
-                  <div className="relative h-full w-full overflow-hidden rounded-full border-2 border-white/10 bg-white/5">
-                    {fotoPreview ? (
-                      <img src={fotoPreview} alt="Perfil" className="h-full w-full object-cover" />
-                    ) : (
-                      <div className="flex h-full w-full items-center justify-center text-white/20">
-                        <User size={40} />
-                      </div>
-                    )}
-                    <label className="absolute inset-0 flex cursor-pointer items-center justify-center bg-black/60 opacity-0 transition group-hover:opacity-100">
-                      <input 
-                        type="file" 
-                        className="hidden" 
-                        accept="image/*"
-                        onChange={e => {
-                          const file = e.target.files?.[0] || null;
-                          setFotoFile(file);
-                          if (file) setFotoPreview(URL.createObjectURL(file));
-                        }}
-                      />
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-white">Alterar</span>
-                    </label>
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <label className={labelClass}>Apelido</label>
-                <input
-                  type="text"
-                  className={inputClass}
-                  value={updateForm.nomeCompleto}
-                  onChange={e => setUpdateForm(f => ({ ...f, nomeCompleto: e.target.value }))}
-                />
-              </div>
-              <div className="space-y-2">
-                <label className={labelClass}>Canal de Email</label>
-                <input
-                  type="email"
-                  className={inputClass}
-                  value={updateForm.email}
-                  onChange={e => setUpdateForm(f => ({ ...f, email: e.target.value }))}
-                />
-              </div>
-              
-              <button type="submit" disabled={updating} className={primaryButtonClass}>
-                {updating ? 'Processando...' : 'Salvar Alterações'}
-                <ChevronRight size={18} />
-              </button>
-            </form>
-          </section>
-
-          {/* Account Stats & Security */}
-          <section className={cardBaseClass}>
-            <div className="mb-8 flex items-center gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500">
-                <ShieldCheck size={22} />
-              </div>
-              <div>
-                <h3 className="text-lg font-bold text-white">Segurança & Status</h3>
-                <p className="text-xs font-medium text-white/30 uppercase tracking-widest">Proteção e Rastreabilidade</p>
-              </div>
+            <div>
+              <h3 className="text-lg font-bold text-white">Informações Pessoais</h3>
+              <p className="text-xs font-medium text-white/30 uppercase tracking-widest">Identidade no Terminal</p>
             </div>
+          </div>
 
-            <div className="space-y-4">
-              <div className="rounded-2xl bg-white/5 p-4 border border-white/5">
-                <p className={labelClass}>Identificador Único (ID)</p>
-                <div className="mt-2 flex items-center gap-3">
-                  <code className="flex-1 text-xs font-mono text-emerald-400/80 bg-black/40 px-3 py-2 rounded-lg">{profile.id}</code>
-                  <button onClick={() => copyToClipboard(profile.id)} className={neutralButtonClass}>
-                    <Copy size={14} />
-                  </button>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="rounded-2xl bg-white/5 p-4 border border-white/5">
-                  <p className={labelClass}>Membro Desde</p>
-                  <p className="mt-1 text-sm font-bold text-white">{formatDateUtil(profile.membroDesde)}</p>
-                </div>
-                <div className="rounded-2xl bg-white/5 p-4 border border-white/5">
-                  <p className={labelClass}>Acesso</p>
-                  <p className="mt-1 text-sm font-bold text-white">VERIFICADO</p>
-                </div>
-              </div>
-            </div>
-          </section>
-        </div>
-
-        {/* Right Column */}
-        <div className="space-y-8">
-          {/* Change Password */}
-          <section className={cardBaseClass}>
-            <div className="mb-8 flex items-center gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500">
-                <Lock size={22} />
-              </div>
-              <div>
-                <h3 className="text-lg font-bold text-white">Alterar Chave de Acesso</h3>
-                <p className="text-xs font-medium text-white/30 uppercase tracking-widest">Criptografia do Terminal</p>
-              </div>
-            </div>
-
-            <form onSubmit={handleChangePassword} className="space-y-5">
-              <div className="space-y-2">
-                <label className={labelClass}>Senha Atual</label>
-                <input
-                  type="password"
-                  className={inputClass}
-                  placeholder="••••••••"
-                  value={passwordForm.senhaAtual}
-                  onChange={e => setPasswordForm(f => ({ ...f, senhaAtual: e.target.value }))}
-                />
-              </div>
-              <div className="space-y-2">
-                <label className={labelClass}>Nova Chave</label>
-                <input
-                  type="password"
-                  className={inputClass}
-                  placeholder="Nova senha de acesso"
-                  value={passwordForm.novaSenha}
-                  onChange={e => setPasswordForm(f => ({ ...f, novaSenha: e.target.value }))}
-                />
-              </div>
-              <button type="submit" disabled={changingPassword} className={primaryButtonClass}>
-                {changingPassword ? 'Criptografando...' : 'Atualizar Chave'}
-              </button>
-              
-              {passwordError && (
-                <div className="flex items-center gap-3 rounded-xl border border-red-500/20 bg-red-500/5 p-4 text-[10px] font-bold uppercase tracking-wider text-red-400">
-                  <AlertTriangle size={14} /> {passwordError}
-                </div>
-              )}
-              {passwordSuccess && (
-                <div className="flex items-center gap-3 rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-4 text-[10px] font-bold uppercase tracking-wider text-emerald-400">
-                  <CheckCircle2 size={14} /> Chave atualizada com sucesso!
-                </div>
-              )}
-            </form>
-          </section>
-
-          {/* Telegram Integration */}
-          <section className={cardBaseClass}>
-            <div className="mb-8 flex items-center gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500">
-                <Bot size={22} />
-              </div>
-              <div>
-                <h3 className="text-lg font-bold text-white">Integração Telegram</h3>
-                <p className="text-xs font-medium text-white/30 uppercase tracking-widest">Sincronização em Tempo Real</p>
-              </div>
-            </div>
-
-            <div className="space-y-6">
-              <div className="rounded-2xl bg-[#010a0f] p-6 border border-white/5">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    <div className={cn("h-3 w-3 rounded-full", profile.telegramId ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" : "bg-white/20")} />
-                    <span className="text-sm font-bold text-white uppercase tracking-widest">{profile.telegramId ? 'Conectado' : 'Desconectado'}</span>
-                  </div>
-                  {profile.telegramUsername && (
-                    <span className="text-xs font-medium text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full">@{profile.telegramUsername}</span>
+          <form onSubmit={handleUpdateProfile} className="space-y-6">
+            <div className="flex justify-center mb-6">
+              <div className="group relative h-24 w-24">
+                <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-emerald-500/40 to-teal-500/40 blur-md opacity-0 transition group-hover:opacity-100" />
+                <div className="relative h-full w-full overflow-hidden rounded-full border-2 border-white/10 bg-white/5">
+                  {fotoPreview ? (
+                    <img src={fotoPreview} alt="Perfil" className="h-full w-full object-cover" />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center text-white/20">
+                      <User size={40} />
+                    </div>
                   )}
+                  <label className="absolute inset-0 flex cursor-pointer items-center justify-center bg-black/60 opacity-0 transition group-hover:opacity-100">
+                    <input 
+                      type="file" 
+                      className="hidden" 
+                      accept="image/*"
+                      onChange={e => {
+                        const file = e.target.files?.[0] || null;
+                        setFotoFile(file);
+                        if (file) setFotoPreview(URL.createObjectURL(file));
+                      }}
+                    />
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-white">Alterar</span>
+                  </label>
                 </div>
-                <p className="text-sm text-white/40 leading-relaxed">
-                  Vincule seu terminal ao Telegram para receber alertas críticos, relatórios diários e notificações de performance.
-                </p>
               </div>
+            </div>
 
-              <button
-                onClick={profile.telegramId ? handleUnlinkTelegram : handleLinkTelegram}
-                className={cn(
-                  "relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-2xl py-3.5 text-sm font-bold uppercase tracking-widest transition-all duration-300 active:scale-[0.98]",
-                  profile.telegramId 
-                    ? "border border-red-500/30 bg-red-500/5 text-red-400 hover:bg-red-500/10" 
-                    : "bg-[#229ED9] text-white shadow-[0_10px_20px_rgba(34,158,217,0.2)] hover:shadow-[0_0_25px_rgba(34,158,217,0.3)]"
+            <div className="space-y-2">
+              <label className={labelClass}>Apelido</label>
+              <input
+                type="text"
+                className={inputClass}
+                value={updateForm.nomeCompleto}
+                onChange={e => setUpdateForm(f => ({ ...f, nomeCompleto: e.target.value }))}
+              />
+            </div>
+            <div className="space-y-2">
+              <label className={labelClass}>Canal de Email</label>
+              <input
+                type="email"
+                className={inputClass}
+                value={updateForm.email}
+                onChange={e => setUpdateForm(f => ({ ...f, email: e.target.value }))}
+              />
+            </div>
+            
+            <button type="submit" disabled={updating} className={primaryButtonClass}>
+              {updating ? 'Processando...' : 'Salvar Alterações'}
+              <ChevronRight size={18} />
+            </button>
+          </form>
+        </section>
+
+        {/* Segurança & Status */}
+        <section className={cardBaseClass}>
+          <div className="mb-8 flex items-center gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500">
+              <ShieldCheck size={22} />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-white">Segurança & Status</h3>
+              <p className="text-xs font-medium text-white/30 uppercase tracking-widest">Proteção e Rastreabilidade</p>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <div className="rounded-2xl bg-white/5 p-4 border border-white/5">
+              <p className={labelClass}>Identificador Único (ID)</p>
+              <div className="mt-2 flex items-center gap-3">
+                <code className="flex-1 text-xs font-mono text-emerald-400/80 bg-black/40 px-3 py-2 rounded-lg">{profile.id}</code>
+                <button onClick={() => copyToClipboard(profile.id)} className={neutralButtonClass}>
+                  <Copy size={14} />
+                </button>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="rounded-2xl bg-white/5 p-4 border border-white/5">
+                <p className={labelClass}>Membro Desde</p>
+                <p className="mt-1 text-sm font-bold text-white">{formatDateUtil(profile.membroDesde)}</p>
+              </div>
+              <div className="rounded-2xl bg-white/5 p-4 border border-white/5">
+                <p className={labelClass}>Acesso</p>
+                <p className="mt-1 text-sm font-bold text-white">VERIFICADO</p>
+              </div>
+            </div>
+
+            <div className="pt-4">
+              <button onClick={handleOpenSupport} className={cn(primaryButtonClass, "bg-white/5 border border-white/10 hover:bg-white/10 text-white shadow-none")}>
+                <MessageCircle size={18} />
+                <span>Chamar Suporte</span>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        {/* Alterar Chave de Acesso */}
+        <section className={cardBaseClass}>
+          <div className="mb-8 flex items-center gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500">
+              <Lock size={22} />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-white">Alterar Chave de Acesso</h3>
+              <p className="text-xs font-medium text-white/30 uppercase tracking-widest">Criptografia do Terminal</p>
+            </div>
+          </div>
+
+          <form onSubmit={handleChangePassword} className="space-y-5">
+            <div className="space-y-2">
+              <label className={labelClass}>Senha Atual</label>
+              <input
+                type="password"
+                className={inputClass}
+                placeholder="••••••••"
+                value={passwordForm.senhaAtual}
+                onChange={e => setPasswordForm(f => ({ ...f, senhaAtual: e.target.value }))}
+              />
+            </div>
+            <div className="space-y-2">
+              <label className={labelClass}>Nova Chave</label>
+              <input
+                type="password"
+                className={inputClass}
+                placeholder="Nova senha de acesso"
+                value={passwordForm.novaSenha}
+                onChange={e => setPasswordForm(f => ({ ...f, novaSenha: e.target.value }))}
+              />
+            </div>
+            <button type="submit" disabled={changingPassword} className={primaryButtonClass}>
+              {changingPassword ? 'Criptografando...' : 'Atualizar Chave'}
+            </button>
+            
+            {passwordError && (
+              <div className="flex items-center gap-3 rounded-xl border border-red-500/20 bg-red-500/5 p-4 text-[10px] font-bold uppercase tracking-wider text-red-400">
+                <AlertTriangle size={14} /> {passwordError}
+              </div>
+            )}
+            {passwordSuccess && (
+              <div className="flex items-center gap-3 rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-4 text-[10px] font-bold uppercase tracking-wider text-emerald-400">
+                <CheckCircle2 size={14} /> Chave atualizada com sucesso!
+              </div>
+            )}
+          </form>
+        </section>
+
+        {/* Integração Telegram */}
+        <section className={cardBaseClass}>
+          <div className="mb-8 flex items-center gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500">
+              <Bot size={22} />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-white">Integração Telegram</h3>
+              <p className="text-xs font-medium text-white/30 uppercase tracking-widest">Sincronização em Tempo Real</p>
+            </div>
+          </div>
+
+          <div className="space-y-6">
+            <div className="rounded-2xl bg-[#010a0f] p-6 border border-white/5">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <div className={cn("h-3 w-3 rounded-full", profile.telegramId ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" : "bg-white/20")} />
+                  <span className="text-sm font-bold text-white uppercase tracking-widest">{profile.telegramId ? 'Conectado' : 'Desconectado'}</span>
+                </div>
+                {profile.telegramUsername && (
+                  <span className="text-xs font-medium text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full">@{profile.telegramUsername}</span>
                 )}
-              >
-                {profile.telegramId ? <><X size={18} /> Desvincular Conta</> : <><Bot size={18} /> Vincular Telegram</>}
-              </button>
-            </div>
-          </section>
-
-          {/* Danger Zone */}
-          <section className={cn(cardBaseClass, "border-red-500/10")}>
-            <div className="mb-8 flex items-center gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-red-500/10 text-red-500">
-                <Trash2 size={22} />
               </div>
-              <div>
-                <h3 className="text-lg font-bold text-white">Zona de Risco</h3>
-                <p className="text-xs font-medium text-white/30 uppercase tracking-widest">Limpeza de Dados</p>
-              </div>
-            </div>
-
-            <div className="space-y-6">
               <p className="text-sm text-white/40 leading-relaxed">
-                Esta ação irá deletar permanentemente todas as suas bancas, apostas e histórico do terminal.
+                Vincule seu terminal ao Telegram para receber alertas críticos, relatórios diários e notificações de performance.
               </p>
-              
-              <button onClick={() => setResetModalOpen(true)} className={dangerButtonClass}>
-                <Trash2 size={18} />
-                Resetar Terminal
-              </button>
             </div>
-          </section>
-        </div>
+
+            <button
+              onClick={profile.telegramId ? handleUnlinkTelegram : handleLinkTelegram}
+              className={cn(
+                "relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-2xl py-3.5 text-sm font-bold uppercase tracking-widest transition-all duration-300 active:scale-[0.98]",
+                profile.telegramId 
+                  ? "border border-red-500/30 bg-red-500/5 text-red-400 hover:bg-red-500/10" 
+                  : "bg-[#229ED9] text-white shadow-[0_10px_20px_rgba(34,158,217,0.2)] hover:shadow-[0_0_25px_rgba(34,158,217,0.3)]"
+              )}
+            >
+              {profile.telegramId ? <><X size={18} /> Desvincular Conta</> : <><Bot size={18} /> Vincular Telegram</>}
+            </button>
+          </div>
+        </section>
       </div>
+
+      {/* Zona de Risco - Full Width */}
+      <section className={cn(cardBaseClass, "border-red-500/10 w-full")}>
+        <div className="mb-8 flex items-center gap-4">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-red-500/10 text-red-500">
+            <Trash2 size={22} />
+          </div>
+          <div>
+            <h3 className="text-lg font-bold text-white">Zona de Risco</h3>
+            <p className="text-xs font-medium text-white/30 uppercase tracking-widest">Limpeza Profunda de Dados</p>
+          </div>
+        </div>
+
+        <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
+          <div className="space-y-4">
+            <p className="text-sm text-white/40 leading-relaxed max-w-2xl">
+              Esta ação irá deletar permanentemente todas as suas bancas, apostas e histórico operacional do terminal. Esta operação é irreversível e resultará na perda total de dados estatísticos.
+            </p>
+            <div className="flex items-center gap-3 rounded-xl border border-red-500/20 bg-red-500/5 p-4 lg:inline-flex">
+              <div className="h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse" />
+              <p className="text-[10px] font-bold uppercase tracking-wider text-red-400/80">Protocolo de segurança: Dados não recuperáveis após execução</p>
+            </div>
+          </div>
+          
+          <div className="lg:flex lg:justify-end">
+            <button onClick={() => setResetModalOpen(true)} className={cn(dangerButtonClass, "lg:max-w-xs")}>
+              <Trash2 size={18} />
+              Resetar Terminal Operacional
+            </button>
+          </div>
+        </div>
+      </section>
 
       {/* Modals */}
       <Modal isOpen={promoModalOpen} onClose={() => setPromoModalOpen(false)} title="Ativar Terminal Premium" size="sm">

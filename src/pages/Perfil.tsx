@@ -520,19 +520,19 @@ export default function Perfil() {
 
       {/* Zona de Risco - Full Width */}
       <section className={cn(cardBaseClass, "border-red-500/10 w-full")}>
-        <div className="mb-8 flex items-center gap-4">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-red-500/10 text-red-500">
-            <Trash2 size={22} />
+        <div className="mb-6 flex items-center gap-4">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-500/10 text-red-500">
+            <Trash2 size={20} />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-white">Zona de Risco</h3>
-            <p className="text-xs font-medium text-white/30 uppercase tracking-widest">Limpeza Profunda de Dados</p>
+            <h3 className="text-base font-bold text-white">Zona de Risco</h3>
+            <p className="text-[10px] font-medium text-white/30 uppercase tracking-widest">Limpeza Profunda de Dados</p>
           </div>
         </div>
 
         <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
           <div className="space-y-4">
-            <p className="text-sm text-white/40 leading-relaxed max-w-2xl">
+            <p className="text-[11px] text-white/40 leading-relaxed max-w-2xl">
               Esta ação irá deletar permanentemente todas as suas bancas, apostas e histórico operacional do terminal. Esta operação é irreversível e resultará na perda total de dados estatísticos.
             </p>
             <div className="flex items-center gap-3 rounded-xl border border-red-500/20 bg-red-500/5 p-4 lg:inline-flex">

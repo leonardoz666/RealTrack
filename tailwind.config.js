@@ -139,12 +139,22 @@ export default {
           '0%': { transform: 'rotate(0deg)' },
           '100%': { transform: 'rotate(360deg)' },
         },
+        shake: {
+          '0%, 100%': { transform: 'translateX(0)' },
+          '25%': { transform: 'translateX(-4px)' },
+          '75%': { transform: 'translateX(4px)' },
+        },
+        shimmer: {
+          '100%': { transform: 'translateX(100%)' },
+        },
       },
       animation: {
         fade: 'fade 200ms ease-in-out',
         'slide-up': 'slide-up 240ms cubic-bezier(0.16, 1, 0.3, 1)',
         glow: 'glow 2.4s ease-in-out infinite',
         'spin-slow': 'spin-slow 3s linear infinite',
+        shake: 'shake 0.2s ease-in-out 0s 2',
+        shimmer: 'shimmer 2s infinite',
       },
       backgroundImage: {
         'brand-radial': 'radial-gradient(circle at 20% 20%, rgba(16, 185, 129, 0.3), transparent 55%)',

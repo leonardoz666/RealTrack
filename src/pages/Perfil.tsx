@@ -305,75 +305,76 @@ export default function Perfil() {
       </section>
 
       <div className="grid gap-8 lg:grid-cols-2 items-start">
-        {/* Personal Info */}
-        <section className={cardBaseClass}>
-          <div className="mb-8 flex items-center gap-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500">
-              <User size={22} />
-            </div>
-            <div>
-              <h3 className="text-lg font-bold text-white">Informações Pessoais</h3>
-              <p className="text-xs font-medium text-white/30 uppercase tracking-widest">Identidade no Terminal</p>
-            </div>
-          </div>
-
-          <form onSubmit={handleUpdateProfile} className="space-y-6">
-            <div className="flex justify-center mb-6">
-              <div className="group relative h-24 w-24">
-                <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-emerald-500/40 to-teal-500/40 blur-md opacity-0 transition group-hover:opacity-100" />
-                <div className="relative h-full w-full overflow-hidden rounded-full border-2 border-white/10 bg-white/5">
-                  {fotoPreview ? (
-                    <img src={fotoPreview} alt="Perfil" className="h-full w-full object-cover" />
-                  ) : (
-                    <div className="flex h-full w-full items-center justify-center text-white/20">
-                      <User size={40} />
-                    </div>
-                  )}
-                  <label className="absolute inset-0 flex cursor-pointer items-center justify-center bg-black/60 opacity-0 transition group-hover:opacity-100">
-                    <input 
-                      type="file" 
-                      className="hidden" 
-                      accept="image/*"
-                      onChange={e => {
-                        const file = e.target.files?.[0] || null;
-                        setFotoFile(file);
-                        if (file) setFotoPreview(URL.createObjectURL(file));
-                      }}
-                    />
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-white">Alterar</span>
-                  </label>
-                </div>
+        {/* Left Column */}
+        <div className="space-y-8">
+          {/* Personal Info */}
+          <section className={cardBaseClass}>
+            <div className="mb-8 flex items-center gap-4">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500">
+                <User size={22} />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-white">Informações Pessoais</h3>
+                <p className="text-xs font-medium text-white/30 uppercase tracking-widest">Identidade no Terminal</p>
               </div>
             </div>
 
-            <div className="space-y-2">
-              <label className={labelClass}>Apelido</label>
-              <input
-                type="text"
-                className={inputClass}
-                value={updateForm.nomeCompleto}
-                onChange={e => setUpdateForm(f => ({ ...f, nomeCompleto: e.target.value }))}
-              />
-            </div>
-            <div className="space-y-2">
-              <label className={labelClass}>Canal de Email</label>
-              <input
-                type="email"
-                className={inputClass}
-                value={updateForm.email}
-                onChange={e => setUpdateForm(f => ({ ...f, email: e.target.value }))}
-              />
-            </div>
-            
-            <button type="submit" disabled={updating} className={primaryButtonClass}>
-              {updating ? 'Processando...' : 'Salvar Alterações'}
-              <ChevronRight size={18} />
-            </button>
-          </form>
-        </section>
+            <form onSubmit={handleUpdateProfile} className="space-y-6">
+              <div className="flex justify-center mb-6">
+                <div className="group relative h-24 w-24">
+                  <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-emerald-500/40 to-teal-500/40 blur-md opacity-0 transition group-hover:opacity-100" />
+                  <div className="relative h-full w-full overflow-hidden rounded-full border-2 border-white/10 bg-white/5">
+                    {fotoPreview ? (
+                      <img src={fotoPreview} alt="Perfil" className="h-full w-full object-cover" />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center text-white/20">
+                        <User size={40} />
+                      </div>
+                    )}
+                    <label className="absolute inset-0 flex cursor-pointer items-center justify-center bg-black/60 opacity-0 transition group-hover:opacity-100">
+                      <input 
+                        type="file" 
+                        className="hidden" 
+                        accept="image/*"
+                        onChange={e => {
+                          const file = e.target.files?.[0] || null;
+                          setFotoFile(file);
+                          if (file) setFotoPreview(URL.createObjectURL(file));
+                        }}
+                      />
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-white">Alterar</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
 
-        {/* Account Stats & Security */}
-        <div className="space-y-8">
+              <div className="space-y-2">
+                <label className={labelClass}>Apelido</label>
+                <input
+                  type="text"
+                  className={inputClass}
+                  value={updateForm.nomeCompleto}
+                  onChange={e => setUpdateForm(f => ({ ...f, nomeCompleto: e.target.value }))}
+                />
+              </div>
+              <div className="space-y-2">
+                <label className={labelClass}>Canal de Email</label>
+                <input
+                  type="email"
+                  className={inputClass}
+                  value={updateForm.email}
+                  onChange={e => setUpdateForm(f => ({ ...f, email: e.target.value }))}
+                />
+              </div>
+              
+              <button type="submit" disabled={updating} className={primaryButtonClass}>
+                {updating ? 'Processando...' : 'Salvar Alterações'}
+                <ChevronRight size={18} />
+              </button>
+            </form>
+          </section>
+
+          {/* Account Stats & Security */}
           <section className={cardBaseClass}>
             <div className="mb-8 flex items-center gap-4">
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500">
@@ -408,7 +409,11 @@ export default function Perfil() {
               </div>
             </div>
           </section>
+        </div>
 
+        {/* Right Column */}
+        <div className="space-y-8">
+          {/* Change Password */}
           <section className={cardBaseClass}>
             <div className="mb-8 flex items-center gap-4">
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500">
@@ -457,92 +462,73 @@ export default function Perfil() {
               )}
             </form>
           </section>
-        </div>
-      </div>
 
-      <div className="grid gap-8 lg:grid-cols-2 items-start">
-        {/* Telegram Integration */}
-        <section className={cardBaseClass}>
-          <div className="mb-8 flex items-center gap-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500">
-              <Bot size={22} />
+          {/* Telegram Integration */}
+          <section className={cardBaseClass}>
+            <div className="mb-8 flex items-center gap-4">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500">
+                <Bot size={22} />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-white">Integração Telegram</h3>
+                <p className="text-xs font-medium text-white/30 uppercase tracking-widest">Sincronização em Tempo Real</p>
+              </div>
             </div>
-            <div>
-              <h3 className="text-lg font-bold text-white">Integração Telegram</h3>
-              <p className="text-xs font-medium text-white/30 uppercase tracking-widest">Sincronização em Tempo Real</p>
-            </div>
-          </div>
 
-          <div className="space-y-6">
-            <div className="rounded-2xl bg-[#010a0f] p-6 border border-white/5">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <div className={cn("h-3 w-3 rounded-full", profile.telegramId ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" : "bg-white/20")} />
-                  <span className="text-sm font-bold text-white uppercase tracking-widest">{profile.telegramId ? 'Conectado' : 'Desconectado'}</span>
+            <div className="space-y-6">
+              <div className="rounded-2xl bg-[#010a0f] p-6 border border-white/5">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className={cn("h-3 w-3 rounded-full", profile.telegramId ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" : "bg-white/20")} />
+                    <span className="text-sm font-bold text-white uppercase tracking-widest">{profile.telegramId ? 'Conectado' : 'Desconectado'}</span>
+                  </div>
+                  {profile.telegramUsername && (
+                    <span className="text-xs font-medium text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full">@{profile.telegramUsername}</span>
+                  )}
                 </div>
-                {profile.telegramUsername && (
-                  <span className="text-xs font-medium text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full">@{profile.telegramUsername}</span>
+                <p className="text-sm text-white/40 leading-relaxed">
+                  Vincule seu terminal ao Telegram para receber alertas críticos, relatórios diários e notificações de performance.
+                </p>
+              </div>
+
+              <button
+                onClick={profile.telegramId ? handleUnlinkTelegram : handleLinkTelegram}
+                className={cn(
+                  "relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-2xl py-3.5 text-sm font-bold uppercase tracking-widest transition-all duration-300 active:scale-[0.98]",
+                  profile.telegramId 
+                    ? "border border-red-500/30 bg-red-500/5 text-red-400 hover:bg-red-500/10" 
+                    : "bg-[#229ED9] text-white shadow-[0_10px_20px_rgba(34,158,217,0.2)] hover:shadow-[0_0_25px_rgba(34,158,217,0.3)]"
                 )}
+              >
+                {profile.telegramId ? <><X size={18} /> Desvincular Conta</> : <><Bot size={18} /> Vincular Telegram</>}
+              </button>
+            </div>
+          </section>
+
+          {/* Danger Zone */}
+          <section className={cn(cardBaseClass, "border-red-500/10")}>
+            <div className="mb-8 flex items-center gap-4">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-red-500/10 text-red-500">
+                <Trash2 size={22} />
               </div>
+              <div>
+                <h3 className="text-lg font-bold text-white">Zona de Risco</h3>
+                <p className="text-xs font-medium text-white/30 uppercase tracking-widest">Limpeza de Dados</p>
+              </div>
+            </div>
+
+            <div className="space-y-6">
               <p className="text-sm text-white/40 leading-relaxed">
-                Vincule seu terminal ao Telegram para receber alertas críticos, relatórios diários e notificações de performance.
+                Esta ação irá deletar permanentemente todas as suas bancas, apostas e histórico do terminal.
               </p>
+              
+              <button onClick={() => setResetModalOpen(true)} className={dangerButtonClass}>
+                <Trash2 size={18} />
+                Resetar Terminal
+              </button>
             </div>
-
-            <button
-              onClick={profile.telegramId ? handleUnlinkTelegram : handleLinkTelegram}
-              className={cn(
-                "relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-2xl py-3.5 text-sm font-bold uppercase tracking-widest transition-all duration-300 active:scale-[0.98]",
-                profile.telegramId 
-                  ? "border border-red-500/30 bg-red-500/5 text-red-400 hover:bg-red-500/10" 
-                  : "bg-[#229ED9] text-white shadow-[0_10px_20px_rgba(34,158,217,0.2)] hover:shadow-[0_0_25px_rgba(34,158,217,0.3)]"
-              )}
-            >
-              {profile.telegramId ? <><X size={18} /> Desvincular Conta</> : <><Bot size={18} /> Vincular Telegram</>}
-            </button>
-
-            <div className="pt-4 border-t border-white/5 space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3 text-white/40">
-                  <Mail size={16} />
-                  <span className="text-xs font-bold uppercase tracking-widest">Central de Suporte</span>
-                </div>
-                <button onClick={() => window.open('https://t.me/RealComandoSuporte_bot', '_blank')} className="text-xs font-bold text-emerald-500 hover:text-emerald-400 transition-colors uppercase tracking-widest">
-                  Abrir Ticket
-                </button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Danger Zone */}
-        <section className={cn(cardBaseClass, "border-red-500/10")}>
-          <div className="mb-8 flex items-center gap-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-red-500/10 text-red-500">
-              <Trash2 size={22} />
-            </div>
-            <div>
-              <h3 className="text-lg font-bold text-white">Zona de Risco</h3>
-              <p className="text-xs font-medium text-white/30 uppercase tracking-widest">Limpeza de Dados</p>
-            </div>
-          </div>
-
-          <div className="space-y-6">
-            <p className="text-sm text-white/40 leading-relaxed">
-              Esta ação irá deletar permanentemente todas as suas bancas, apostas e histórico do terminal. Esta operação não pode ser revertida.
-            </p>
-            
-            <button onClick={() => setResetModalOpen(true)} className={dangerButtonClass}>
-              <Trash2 size={18} />
-              Resetar Terminal Operacional
-            </button>
-
-            <div className="flex items-center gap-3 rounded-xl border border-red-500/20 bg-red-500/5 p-4">
-              <div className="h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse" />
-              <p className="text-[10px] font-bold uppercase tracking-wider text-red-400/80">Dados não recuperáveis após execução</p>
-            </div>
-          </div>
-        </section>
+          </section>
+        </div>
       </div>
 
       {/* Modals */}

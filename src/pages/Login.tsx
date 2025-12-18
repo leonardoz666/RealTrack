@@ -12,24 +12,45 @@ const heroStats = [
 ];
 
 const BrandMark = () => (
-  <div className="relative flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500/15 shadow-[0_15px_30px_rgba(0,0,0,0.35)]" aria-hidden="true">
-    <span className="absolute h-9 w-9 rounded-full border-2 border-emerald-300/60" />
-    <span className="absolute h-5 w-5 rounded-full border-2 border-emerald-200/50" />
-    <span className="absolute h-2 w-2 rounded-full bg-emerald-300" />
+  <div className="relative flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 shadow-[0_0_20px_rgba(16,185,129,0.2)] border border-emerald-500/20" aria-hidden="true">
+    <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-emerald-500/20 to-transparent opacity-50" />
+    <div className="relative flex flex-col items-center justify-center gap-0.5">
+      <div className="h-1 w-6 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.6)]" />
+      <div className="h-1 w-4 rounded-full bg-emerald-500/60" />
+      <div className="h-1 w-5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.6)]" />
+    </div>
   </div>
 );
 
 const inputClass =
-  'w-full rounded-[28px] border border-white/15 bg-white px-5 py-3 text-sm font-semibold text-slate-900 placeholder:text-slate-500 shadow-[0_4px_18px_rgba(7,15,25,0.12)] transition focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/20';
+  'w-full rounded-xl border border-white/10 bg-white/5 px-5 py-3.5 text-sm font-medium text-white placeholder:text-white/30 backdrop-blur-md transition-all duration-300 focus:border-emerald-500/50 focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:bg-white/10';
 
-const fieldLabelClass = 'text-sm font-semibold text-white/80';
-const fieldWrapperClass = 'flex flex-col gap-2';
+const fieldLabelClass = 'text-xs font-bold uppercase tracking-widest text-emerald-400/80';
+const fieldWrapperClass = 'flex flex-col gap-2.5';
 const formCardClass =
-  'relative z-10 w-full rounded-[40px] border border-white/5 bg-[#031320] p-10 shadow-[0_30px_60px_rgba(0,0,0,0.55)]';
+  'relative z-10 w-full rounded-3xl border border-white/10 bg-[#020c14]/80 p-8 md:p-10 backdrop-blur-2xl shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden';
 const primaryButtonClass =
-  'mt-6 flex w-full items-center justify-center gap-2 rounded-[26px] bg-emerald-500 py-3 text-base font-semibold text-white shadow-[0_18px_35px_rgba(16,185,129,0.35)] transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-80';
+  'relative mt-6 flex w-full items-center justify-center gap-2 overflow-hidden rounded-xl bg-emerald-600 py-4 text-sm font-bold uppercase tracking-widest text-white shadow-[0_10px_20px_rgba(5,150,105,0.3)] transition-all duration-300 hover:bg-emerald-500 hover:shadow-[0_0_25px_rgba(16,185,129,0.4)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50';
 const checkboxClass =
-  'h-4 w-4 rounded border border-white/30 bg-transparent text-emerald-400 focus:ring-emerald-400 focus:ring-offset-0';
+  'h-4 w-4 rounded border border-white/20 bg-white/5 text-emerald-500 focus:ring-emerald-500/50 focus:ring-offset-0 transition-colors';
+
+const GridBackground = () => (
+  <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+    <div
+      className="absolute inset-0 opacity-[0.15]"
+      style={{
+        backgroundImage: `linear-gradient(to right, #10b981 1px, transparent 1px), linear-gradient(to bottom, #10b981 1px, transparent 1px)`,
+        backgroundSize: '40px 40px'
+      }}
+    />
+    <div className="absolute inset-0 bg-gradient-to-t from-[#010a0f] via-transparent to-[#010a0f]" />
+    <div className="absolute inset-0 bg-gradient-to-r from-[#010a0f] via-transparent to-[#010a0f]" />
+
+    {/* Animated Glows */}
+    <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-emerald-500/20 rounded-full blur-[120px] animate-pulse" />
+    <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-teal-500/10 rounded-full blur-[100px] animate-pulse" style={{ animationDelay: '1s' }} />
+  </div>
+);
 
 export default function Login() {
   const navigate = useNavigate();
@@ -42,7 +63,6 @@ export default function Login() {
   const emailInputRef = useRef<HTMLInputElement>(null);
   const passwordInputRef = useRef<HTMLInputElement>(null);
 
-  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -50,10 +70,7 @@ export default function Login() {
 
     try {
       const response = await authService.login(email, senha);
-      
       if (response.success) {
-        // Tokens são gerenciados automaticamente via httpOnly cookies
-        // Backend já configurou os cookies na resposta
         void navigate('/dashboard');
       }
     } catch (err) {
@@ -66,145 +83,144 @@ export default function Login() {
   };
 
   return (
-    <div className="login-page relative flex min-h-screen w-full flex-col overflow-hidden bg-gradient-to-br from-[#01302d] via-[#033831] to-[#011a16] text-slate-100 lg:flex-row">
-      <div className="pointer-events-none absolute -right-24 -top-24 h-[25rem] w-[25rem] rounded-full bg-emerald-500/25 blur-[160px]" aria-hidden="true" />
-      <div className="pointer-events-none absolute -bottom-16 -left-16 h-[24rem] w-[24rem] rounded-full bg-emerald-600/20 blur-[160px]" aria-hidden="true" />
+    <div className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden bg-[#010a0f] font-sans selection:bg-emerald-500/30 selection:text-emerald-200">
+      <GridBackground />
 
-      {/* Left Panel - Hero */}
-      <div className="relative z-10 flex flex-col justify-between px-6 py-12 sm:px-10 lg:w-1/2 lg:px-20 lg:py-20">
-        <div className="pt-4 lg:pt-6">
-          <div className="mb-14 flex items-center gap-3">
+      <div className="relative z-10 flex w-full max-w-[1200px] flex-col items-center justify-center px-6 py-12 lg:flex-row lg:gap-20 lg:px-10">
+
+        {/* Left Side - Branding & Info */}
+        <div className="mb-12 flex flex-col items-center text-center lg:mb-0 lg:w-1/2 lg:items-start lg:text-left">
+          <div className="mb-8 flex items-center gap-4">
             <BrandMark />
-            <div>
-              <p className="text-lg font-semibold text-white">Real Comando</p>
-              <p className="text-[0.65rem] uppercase tracking-[0.3em] text-emerald-200">Planilha Esportiva</p>
+            <div className="flex flex-col">
+              <span className="text-2xl font-black tracking-tighter text-white">REAL COMANDO</span>
+              <span className="text-[0.6rem] font-bold uppercase tracking-[0.4em] text-emerald-500/80">Sistemas de Alta Performance</span>
             </div>
           </div>
 
-          <div className="max-w-xl space-y-6">
-            <p className="text-[0.65rem] font-semibold uppercase tracking-[0.4em] text-emerald-200">
-              Plataforma oficial
-            </p>
-            <h1 className="text-4xl font-semibold leading-tight text-white lg:text-[3.75rem]">
-              Domine o jogo das
-              <span className="mt-2 block bg-gradient-to-r from-emerald-300 to-teal-300 bg-clip-text text-transparent">
-                apostas esportivas
-              </span>
-            </h1>
-            <p className="text-base leading-relaxed text-white/70">
-              Plataforma completa de análise, gestão e otimização de resultados para potencializar seus ganhos.
-            </p>
+          <h1 className="mb-6 text-4xl font-extrabold leading-[1.1] text-white md:text-6xl lg:text-7xl">
+            A Inteligência por trás do <span className="bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">Sucesso.</span>
+          </h1>
+
+          <p className="mb-10 max-w-md text-lg font-medium text-white/50 leading-relaxed">
+            Acesse a central de comando da sua planilha esportiva e transforme dados em resultados consistentes.
+          </p>
+
+          <div className="grid grid-cols-3 gap-8 border-t border-white/5 pt-10 w-full max-w-md">
+            {heroStats.map((stat) => (
+              <div key={stat.label} className="flex flex-col gap-1">
+                <span className="text-2xl font-bold text-white tabular-nums">{stat.value}</span>
+                <span className="text-[0.65rem] font-bold uppercase tracking-wider text-emerald-500/60">{stat.label}</span>
+              </div>
+            ))}
           </div>
         </div>
 
-        <div className="hidden gap-16 pt-24 text-white/80 lg:flex">
-          {heroStats.map((stat) => (
-            <div key={stat.label} className="space-y-2">
-              <p className="text-4xl font-semibold text-white">{stat.value}</p>
-              <p className="text-sm text-white/70">{stat.label}</p>
-            </div>
-          ))}
-        </div>
-      </div>
+        {/* Right Side - Login Form */}
+        <div className="w-full max-w-md lg:w-1/2">
+          <div className="group relative">
+            {/* Decorative Border Glow */}
+            <div className="absolute -inset-0.5 rounded-[32px] bg-gradient-to-br from-emerald-500/20 via-transparent to-teal-500/20 opacity-50 blur-sm transition duration-1000 group-hover:opacity-100 group-hover:duration-200" />
 
-      {/* Right Panel - Login Form */}
-      <div className="relative z-10 flex w-full items-center justify-center px-6 py-12 sm:px-10 lg:w-1/2 lg:px-16 lg:py-16">
-        <div className="relative w-full max-w-md">
-          <div
-            className="pointer-events-none absolute -inset-4 rounded-[36px] bg-gradient-to-br from-emerald-400/10 via-transparent to-transparent blur-2xl"
-            aria-hidden="true"
-          />
+            <div className={formCardClass}>
+              {/* Scanline effect */}
+              <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%),linear-gradient(90deg,rgba(255,0,0,0.02),rgba(0,255,0,0.01),rgba(0,0,255,0.02))] bg-[length:100%_2px,3px_100%] opacity-20" />
 
-          <div className={formCardClass}>
-            <div className="mb-8">
-              <h2 className="mb-2 text-3xl font-semibold text-white">Acessar conta</h2>
-              <p className="text-sm text-white/60">Faça login para continuar</p>
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <div className={fieldWrapperClass}>
-                <label htmlFor="email" className={fieldLabelClass}>
-                  Endereço de e-mail
-                </label>
-                <input
-                  ref={emailInputRef}
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className={inputClass}
-                  required
-                  autoComplete="email"
-                />
+              <div className="relative mb-10">
+                <h2 className="text-2xl font-bold text-white">Acessar Terminal</h2>
+                <p className="mt-1 text-sm font-medium text-white/40">Insira suas credenciais para autenticação</p>
+                <div className="mt-4 h-1 w-12 rounded-full bg-emerald-500" />
               </div>
 
-              <div className={fieldWrapperClass}>
-                <label htmlFor="password" className={fieldLabelClass}>
-                  Senha
-                </label>
-                <div className="relative">
+              <form onSubmit={handleSubmit} className="relative space-y-6">
+                <div className={fieldWrapperClass}>
+                  <label htmlFor="email" className={fieldLabelClass}>Identificação</label>
                   <input
-                    ref={passwordInputRef}
-                    id="password"
-                    type={showPassword ? 'text' : 'password'}
-                    value={senha}
-                    onChange={(e) => setSenha(e.target.value)}
-                    className={`${inputClass} pr-11`}
+                    ref={emailInputRef}
+                    id="email"
+                    type="email"
+                    placeholder="seu@email.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className={inputClass}
                     required
-                    autoComplete="current-password"
                   />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 flex items-center pr-4 text-slate-500 transition hover:text-slate-200"
-                  >
-                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                  </button>
                 </div>
-              </div>
 
-              <div className="flex items-center justify-between pt-1 text-sm text-white/70">
-                <label className="group flex cursor-pointer items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={lembrarMe}
-                    onChange={(e) => setLembrarMe(e.target.checked)}
-                    className={checkboxClass}
-                  />
-                  <span className="transition group-hover:text-white">Lembrar-me</span>
-                </label>
-                <Link to="/recuperar-senha" className="font-medium text-emerald-400 transition hover:text-emerald-200">
-                  Esqueceu a senha?
-                </Link>
-              </div>
-
-              {error && (
-                <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400" role="alert">
-                  {error}
+                <div className={fieldWrapperClass}>
+                  <div className="flex items-center justify-between">
+                    <label htmlFor="password" className={fieldLabelClass}>Chave de Acesso</label>
+                    <Link to="/recuperar-senha" tabIndex={-1} className="text-[0.65rem] font-bold uppercase tracking-wider text-emerald-500/60 hover:text-emerald-400 transition-colors">
+                      Esqueceu?
+                    </Link>
+                  </div>
+                  <div className="relative">
+                    <input
+                      ref={passwordInputRef}
+                      id="password"
+                      type={showPassword ? 'text' : 'password'}
+                      placeholder="••••••••"
+                      value={senha}
+                      onChange={(e) => setSenha(e.target.value)}
+                      className={inputClass}
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute inset-y-0 right-0 flex items-center pr-4 text-white/20 transition hover:text-emerald-400"
+                    >
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
                 </div>
-              )}
 
-              <button type="submit" disabled={loading} className={`${primaryButtonClass} group`}>
-                <span>{loading ? 'Entrando...' : 'Entrar agora'}</span>
-                <ChevronRight size={18} className="transition-transform group-hover:translate-x-0.5" />
-              </button>
-            </form>
+                <div className="flex items-center justify-between pt-2">
+                  <label className="group flex cursor-pointer items-center gap-3">
+                    <div className="relative flex items-center justify-center">
+                      <input
+                        type="checkbox"
+                        checked={lembrarMe}
+                        onChange={(e) => setLembrarMe(e.target.checked)}
+                        className={checkboxClass}
+                      />
+                    </div>
+                    <span className="text-xs font-bold uppercase tracking-wider text-white/40 transition group-hover:text-white/60">Manter Conectado</span>
+                  </label>
+                </div>
 
-            <div className="mt-6 text-center text-sm text-white/70">
-              <span>Não possui uma conta? </span>
-              <Link
-                to="/cadastro"
-                className="inline-flex items-center gap-1 font-semibold text-emerald-300 transition hover:text-emerald-200"
-              >
-                Criar uma conta gratuita
-                <ChevronRight size={16} />
-              </Link>
+                {error && (
+                  <div className="flex items-center gap-3 rounded-xl border border-red-500/20 bg-red-500/5 p-4 text-xs font-bold uppercase tracking-wider text-red-400 animate-shake" role="alert">
+                    <div className="h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse" />
+                    {error}
+                  </div>
+                )}
+
+                <button type="submit" disabled={loading} className={primaryButtonClass}>
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full animate-[shimmer_2s_infinite]" />
+                  <span className="relative">{loading ? 'Autenticando...' : 'Iniciar Sessão'}</span>
+                  <ChevronRight size={18} className="relative transition-transform group-hover:translate-x-1" />
+                </button>
+              </form>
+
+              <div className="relative mt-10 text-center">
+                <p className="text-xs font-bold uppercase tracking-widest text-white/30">
+                  Novo por aqui?{' '}
+                  <Link to="/cadastro" className="text-emerald-500 hover:text-emerald-400 transition-colors">
+                    Criar Conta
+                  </Link>
+                </p>
+              </div>
             </div>
+          </div>
 
-            <div className="mt-6 flex items-center justify-center gap-2 border-t border-white/5 pt-4 text-xs text-white/60">
-              <Lock className="h-4 w-4 text-emerald-300" />
-              Seus dados estão protegidos com criptografia de ponta
+          <div className="mt-8 flex items-center justify-center gap-4 text-[0.6rem] font-bold uppercase tracking-[0.2em] text-white/20">
+            <div className="h-px flex-1 bg-white/5" />
+            <div className="flex items-center gap-2">
+              <Lock size={10} className="text-emerald-500/40" />
+              <span>Conexão Segura SSL</span>
             </div>
+            <div className="h-px flex-1 bg-white/5" />
           </div>
         </div>
       </div>

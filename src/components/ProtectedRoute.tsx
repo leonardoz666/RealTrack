@@ -39,28 +39,7 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
 
   if (isLoading) {
     return (
-      <div className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden bg-[#010a0f] font-sans selection:bg-emerald-500/30 selection:text-emerald-200">
-        <GridBackground />
-        
-        <div className="relative z-10 flex flex-col items-center gap-8">
-          <BrandMark />
-          
-          <div className="flex flex-col items-center gap-3 text-center px-6">
-            <div className="flex items-center gap-3">
-              <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-ping" />
-              <span className="text-sm font-bold uppercase tracking-[0.3em] text-emerald-500/80">Autenticando</span>
-            </div>
-            <p className="text-xs font-medium text-white/40 max-w-[280px]">Aguarde enquanto validamos seu acesso ao terminal de alta performance</p>
-          </div>
 
-          {/* Loading bar */}
-          <div className="relative h-1 w-48 overflow-hidden rounded-full bg-white/5">
-            <div className="absolute inset-0 h-full w-full -translate-x-full animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent" />
-          </div>
-        </div>
-
-        {/* Scanline effect */}
-        <div className="pointer-events-none absolute inset-0 z-20 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%),linear-gradient(90deg,rgba(255,0,0,0.02),rgba(0,255,0,0.01),rgba(0,0,255,0.02))] bg-[length:100%_2px,3px_100%] opacity-20" />
       </div>
     );
   }

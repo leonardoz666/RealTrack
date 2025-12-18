@@ -519,32 +519,27 @@ export default function Perfil() {
       </div>
 
       {/* Zona de Risco - Full Width */}
-      <section className={cn(cardBaseClass, "border-red-500/10 w-full")}>
-        <div className="mb-6 flex items-center gap-4">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-500/10 text-red-500">
-            <Trash2 size={20} />
-          </div>
-          <div>
-            <h3 className="text-base font-bold text-white">Zona de Risco</h3>
-            <p className="text-[10px] font-medium text-white/30 uppercase tracking-widest">Limpeza Profunda de Dados</p>
-          </div>
-        </div>
-
-        <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
-          <div className="space-y-4">
-            <p className="text-[11px] text-white/40 leading-relaxed max-w-2xl">
-              Esta ação irá deletar permanentemente todas as suas bancas, apostas e histórico operacional do terminal. Esta operação é irreversível e resultará na perda total de dados estatísticos.
-            </p>
-            <div className="flex items-center gap-3 rounded-xl border border-red-500/20 bg-red-500/5 p-4 lg:inline-flex">
-              <div className="h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse" />
-              <p className="text-[10px] font-bold uppercase tracking-wider text-red-400/80">Protocolo de segurança: Dados não recuperáveis após execução</p>
+      <section className={cn(cardBaseClass, "border-red-500/10 w-full py-6 px-8")}>
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+          <div className="flex items-center gap-4">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-500/10 text-red-500">
+              <Trash2 size={20} />
+            </div>
+            <div>
+              <h3 className="text-base font-bold text-white">Zona de Risco</h3>
+              <p className="text-[10px] font-medium text-white/30 uppercase tracking-widest">Limpeza Profunda de Dados</p>
             </div>
           </div>
-          
-          <div className="lg:flex lg:justify-end">
-            <button onClick={() => setResetModalOpen(true)} className={cn(dangerButtonClass, "lg:max-w-xs")}>
-              <Trash2 size={18} />
-              Resetar Terminal Operacional
+
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center flex-1 lg:justify-end">
+            <div className="flex items-center gap-3 rounded-xl border border-red-500/20 bg-red-500/5 px-4 py-2.5">
+              <div className="h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse" />
+              <p className="text-[9px] font-bold uppercase tracking-wider text-red-400/70">Protocolo de segurança: Dados irreversíveis</p>
+            </div>
+
+            <button onClick={() => setResetModalOpen(true)} className={cn(dangerButtonClass, "lg:w-auto px-6 py-2.5 text-xs")}>
+              <Trash2 size={16} />
+              Resetar Terminal
             </button>
           </div>
         </div>

@@ -91,7 +91,7 @@ export default function Cadastro() {
     <div className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden bg-[#010a0f] font-sans selection:bg-emerald-500/30 selection:text-emerald-200">
       <GridBackground />
 
-      <div className="relative z-10 flex w-full max-w-[1200px] flex-col items-center justify-center px-6 py-12 lg:flex-row lg:gap-20 lg:px-10">
+      <div className="relative z-10 flex w-full max-w-[1600px] flex-col items-center justify-center px-6 py-12 lg:flex-row lg:gap-20 lg:px-10 lg:justify-between">
 
         {/* Left Side - Branding & Info */}
         <div className="mb-12 flex flex-col items-center text-center lg:mb-0 lg:w-1/2 lg:items-start lg:text-left">
@@ -126,7 +126,7 @@ export default function Cadastro() {
         </div>
 
         {/* Right Side - Register Form */}
-        <div className="w-full max-w-md lg:w-1/2">
+        <div className="w-full max-w-md lg:w-1/3 lg:ml-auto">
           <div className="group relative">
             <div className="absolute -inset-0.5 rounded-[32px] bg-gradient-to-br from-emerald-500/20 via-transparent to-teal-500/20 opacity-50 blur-sm transition duration-1000 group-hover:opacity-100 group-hover:duration-200" />
 

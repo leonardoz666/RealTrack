@@ -315,35 +315,35 @@ export default function Perfil() {
         </div>
       </section>
 
-      <div className="grid gap-8 lg:grid-cols-2 items-start">
+      <div className="grid gap-8 lg:grid-cols-2">
         {/* Informações Pessoais */}
         <section className={cardBaseClass}>
-          <div className="mb-8 flex items-center gap-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500">
-              <User size={22} />
+          <div className="mb-6 flex items-center gap-4">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500">
+              <User size={20} />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-white">Informações Pessoais</h3>
-              <p className="text-xs font-medium text-white/30 uppercase tracking-widest">Identidade no Terminal</p>
+              <h3 className="text-base font-bold text-white">Informações Pessoais</h3>
+              <p className="text-[10px] font-medium text-white/30 uppercase tracking-widest">Identidade no Terminal</p>
             </div>
           </div>
 
-          <form onSubmit={handleUpdateProfile} className="space-y-6">
-            <div className="flex justify-center mb-6">
-              <div className="group relative h-24 w-24">
+          <form onSubmit={handleUpdateProfile} className="space-y-4">
+            <div className="flex items-center gap-6">
+              <div className="group relative h-16 w-16 shrink-0">
                 <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-emerald-500/40 to-teal-500/40 blur-md opacity-0 transition group-hover:opacity-100" />
                 <div className="relative h-full w-full overflow-hidden rounded-full border-2 border-white/10 bg-white/5">
                   {fotoPreview ? (
                     <img src={fotoPreview} alt="Perfil" className="h-full w-full object-cover" />
                   ) : (
                     <div className="flex h-full w-full items-center justify-center text-white/20">
-                      <User size={40} />
+                      <User size={24} />
                     </div>
                   )}
                   <label className="absolute inset-0 flex cursor-pointer items-center justify-center bg-black/60 opacity-0 transition group-hover:opacity-100">
-                    <input 
-                      type="file" 
-                      className="hidden" 
+                    <input
+                      type="file"
+                      className="hidden"
                       accept="image/*"
                       onChange={e => {
                         const file = e.target.files?.[0] || null;
@@ -351,126 +351,125 @@ export default function Perfil() {
                         if (file) setFotoPreview(URL.createObjectURL(file));
                       }}
                     />
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-white">Alterar</span>
+                    <span className="text-[8px] font-bold uppercase tracking-widest text-white">Alterar</span>
                   </label>
+                </div>
+              </div>
+              <div className="flex-1 space-y-4">
+                <div className="space-y-1.5">
+                  <label className={labelClass}>Apelido</label>
+                  <input
+                    type="text"
+                    className={cn(inputClass, "py-2 px-4")}
+                    value={updateForm.nomeCompleto}
+                    onChange={e => setUpdateForm(f => ({ ...f, nomeCompleto: e.target.value }))}
+                  />
                 </div>
               </div>
             </div>
 
-            <div className="space-y-2">
-              <label className={labelClass}>Apelido</label>
-              <input
-                type="text"
-                className={inputClass}
-                value={updateForm.nomeCompleto}
-                onChange={e => setUpdateForm(f => ({ ...f, nomeCompleto: e.target.value }))}
-              />
-            </div>
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <label className={labelClass}>Canal de Email</label>
               <input
                 type="email"
-                className={inputClass}
+                className={cn(inputClass, "py-2 px-4")}
                 value={updateForm.email}
                 onChange={e => setUpdateForm(f => ({ ...f, email: e.target.value }))}
               />
             </div>
-            
-            <button type="submit" disabled={updating} className={primaryButtonClass}>
+
+            <button type="submit" disabled={updating} className={cn(primaryButtonClass, "py-2.5")}>
               {updating ? 'Processando...' : 'Salvar Alterações'}
-              <ChevronRight size={18} />
+              <ChevronRight size={16} />
             </button>
           </form>
         </section>
 
         {/* Segurança & Status */}
         <section className={cardBaseClass}>
-          <div className="mb-8 flex items-center gap-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500">
-              <ShieldCheck size={22} />
+          <div className="mb-6 flex items-center gap-4">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500">
+              <ShieldCheck size={20} />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-white">Segurança & Status</h3>
-              <p className="text-xs font-medium text-white/30 uppercase tracking-widest">Proteção e Rastreabilidade</p>
+              <h3 className="text-base font-bold text-white">Segurança & Status</h3>
+              <p className="text-[10px] font-medium text-white/30 uppercase tracking-widest">Proteção e Rastreabilidade</p>
             </div>
           </div>
 
-          <div className="space-y-4">
-            <div className="rounded-2xl bg-white/5 p-4 border border-white/5">
-              <p className={labelClass}>Identificador Único (ID)</p>
-              <div className="mt-2 flex items-center gap-3">
-                <code className="flex-1 text-xs font-mono text-emerald-400/80 bg-black/40 px-3 py-2 rounded-lg">{profile.id}</code>
-                <button onClick={() => copyToClipboard(profile.id)} className={neutralButtonClass}>
-                  <Copy size={14} />
+          <div className="space-y-3">
+            <div className="rounded-xl bg-white/5 p-3 border border-white/5">
+              <p className={labelClass}>ID Operacional</p>
+              <div className="mt-1.5 flex items-center gap-2">
+                <code className="flex-1 text-[10px] font-mono text-emerald-400/80 bg-black/40 px-2 py-1.5 rounded-lg truncate">{profile.id}</code>
+                <button onClick={() => copyToClipboard(profile.id)} className={cn(neutralButtonClass, "p-1.5 min-h-0")}>
+                  <Copy size={12} />
                 </button>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="rounded-2xl bg-white/5 p-4 border border-white/5">
+            <div className="grid grid-cols-2 gap-3">
+              <div className="rounded-xl bg-white/5 p-3 border border-white/5">
                 <p className={labelClass}>Membro Desde</p>
-                <p className="mt-1 text-sm font-bold text-white">{formatDateUtil(profile.membroDesde)}</p>
+                <p className="mt-0.5 text-xs font-bold text-white">{formatDateUtil(profile.membroDesde)}</p>
               </div>
-              <div className="rounded-2xl bg-white/5 p-4 border border-white/5">
-                <p className={labelClass}>Acesso</p>
-                <p className="mt-1 text-sm font-bold text-white">VERIFICADO</p>
+              <div className="rounded-xl bg-white/5 p-3 border border-white/5">
+                <p className={labelClass}>Status</p>
+                <p className="mt-0.5 text-xs font-bold text-emerald-500">VERIFICADO</p>
               </div>
             </div>
 
-            <div className="pt-4">
-              <button onClick={handleOpenSupport} className={cn(primaryButtonClass, "bg-white/5 border border-white/10 hover:bg-white/10 text-white shadow-none")}>
-                <MessageCircle size={18} />
-                <span>Chamar Suporte</span>
-              </button>
-            </div>
+            <button onClick={handleOpenSupport} className={cn(primaryButtonClass, "mt-1 bg-white/5 border border-white/10 hover:bg-white/10 text-white shadow-none py-2.5")}>
+              <MessageCircle size={16} />
+              <span className="text-xs">Chamar Suporte</span>
+            </button>
           </div>
         </section>
 
         {/* Alterar Chave de Acesso */}
         <section className={cardBaseClass}>
-          <div className="mb-8 flex items-center gap-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500">
-              <Lock size={22} />
+          <div className="mb-6 flex items-center gap-4">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500">
+              <Lock size={20} />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-white">Alterar Chave de Acesso</h3>
-              <p className="text-xs font-medium text-white/30 uppercase tracking-widest">Criptografia do Terminal</p>
+              <h3 className="text-base font-bold text-white">Chave de Acesso</h3>
+              <p className="text-[10px] font-medium text-white/30 uppercase tracking-widest">Criptografia do Terminal</p>
             </div>
           </div>
 
-          <form onSubmit={handleChangePassword} className="space-y-5">
-            <div className="space-y-2">
+          <form onSubmit={handleChangePassword} className="space-y-3">
+            <div className="space-y-1.5">
               <label className={labelClass}>Senha Atual</label>
               <input
                 type="password"
-                className={inputClass}
+                className={cn(inputClass, "py-2 px-4")}
                 placeholder="••••••••"
                 value={passwordForm.senhaAtual}
                 onChange={e => setPasswordForm(f => ({ ...f, senhaAtual: e.target.value }))}
               />
             </div>
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <label className={labelClass}>Nova Chave</label>
               <input
                 type="password"
-                className={inputClass}
-                placeholder="Nova senha de acesso"
+                className={cn(inputClass, "py-2 px-4")}
+                placeholder="Nova senha"
                 value={passwordForm.novaSenha}
                 onChange={e => setPasswordForm(f => ({ ...f, novaSenha: e.target.value }))}
               />
             </div>
-            <button type="submit" disabled={changingPassword} className={primaryButtonClass}>
-              {changingPassword ? 'Criptografando...' : 'Atualizar Chave'}
+            <button type="submit" disabled={changingPassword} className={cn(primaryButtonClass, "mt-1 py-2.5")}>
+              {changingPassword ? 'Processando...' : 'Atualizar Chave'}
             </button>
-            
-            {passwordError && (
-              <div className="flex items-center gap-3 rounded-xl border border-red-500/20 bg-red-500/5 p-4 text-[10px] font-bold uppercase tracking-wider text-red-400">
-                <AlertTriangle size={14} /> {passwordError}
-              </div>
-            )}
-            {passwordSuccess && (
-              <div className="flex items-center gap-3 rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-4 text-[10px] font-bold uppercase tracking-wider text-emerald-400">
-                <CheckCircle2 size={14} /> Chave atualizada com sucesso!
+
+            {(passwordError || passwordSuccess) && (
+              <div className={cn(
+                "flex items-center gap-2 rounded-lg border p-2 text-[9px] font-bold uppercase tracking-wider",
+                passwordError ? "border-red-500/20 bg-red-500/5 text-red-400" : "border-emerald-500/20 bg-emerald-500/5 text-emerald-400"
+              )}>
+                {passwordError ? <AlertTriangle size={12} /> : <CheckCircle2 size={12} />}
+                {passwordError || 'Atualizado!'}
               </div>
             )}
           </form>
@@ -478,42 +477,42 @@ export default function Perfil() {
 
         {/* Integração Telegram */}
         <section className={cardBaseClass}>
-          <div className="mb-8 flex items-center gap-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500">
-              <Bot size={22} />
+          <div className="mb-6 flex items-center gap-4">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500">
+              <Bot size={20} />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-white">Integração Telegram</h3>
-              <p className="text-xs font-medium text-white/30 uppercase tracking-widest">Sincronização em Tempo Real</p>
+              <h3 className="text-base font-bold text-white">Bot Telegram</h3>
+              <p className="text-[10px] font-medium text-white/30 uppercase tracking-widest">Sincronização em Tempo Real</p>
             </div>
           </div>
 
-          <div className="space-y-6">
-            <div className="rounded-2xl bg-[#010a0f] p-6 border border-white/5">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <div className={cn("h-3 w-3 rounded-full", profile.telegramId ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" : "bg-white/20")} />
-                  <span className="text-sm font-bold text-white uppercase tracking-widest">{profile.telegramId ? 'Conectado' : 'Desconectado'}</span>
+          <div className="space-y-4">
+            <div className="rounded-xl bg-[#010a0f] p-4 border border-white/5">
+              <div className="flex items-center justify-between mb-2.5">
+                <div className="flex items-center gap-2">
+                  <div className={cn("h-2 w-2 rounded-full", profile.telegramId ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" : "bg-white/20")} />
+                  <span className="text-[10px] font-bold text-white uppercase tracking-widest">{profile.telegramId ? 'Conectado' : 'Desconectado'}</span>
                 </div>
                 {profile.telegramUsername && (
-                  <span className="text-xs font-medium text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full">@{profile.telegramUsername}</span>
+                  <span className="text-[9px] font-medium text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full">@{profile.telegramUsername}</span>
                 )}
               </div>
-              <p className="text-sm text-white/40 leading-relaxed">
-                Vincule seu terminal ao Telegram para receber alertas críticos, relatórios diários e notificações de performance.
+              <p className="text-[11px] text-white/40 leading-relaxed">
+                Vincule seu terminal ao Telegram para receber alertas críticos e relatórios diários.
               </p>
             </div>
 
             <button
               onClick={profile.telegramId ? handleUnlinkTelegram : handleLinkTelegram}
               className={cn(
-                "relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-2xl py-3.5 text-sm font-bold uppercase tracking-widest transition-all duration-300 active:scale-[0.98]",
-                profile.telegramId 
-                  ? "border border-red-500/30 bg-red-500/5 text-red-400 hover:bg-red-500/10" 
-                  : "bg-[#229ED9] text-white shadow-[0_10px_20px_rgba(34,158,217,0.2)] hover:shadow-[0_0_25px_rgba(34,158,217,0.3)]"
+                "relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-xl py-2.5 text-[11px] font-bold uppercase tracking-widest transition-all duration-300 active:scale-[0.98]",
+                profile.telegramId
+                  ? "border border-red-500/30 bg-red-500/5 text-red-400 hover:bg-red-500/10"
+                  : "bg-[#229ED9] text-white shadow-[0_8px_15px_rgba(34,158,217,0.2)] hover:shadow-[0_0_20px_rgba(34,158,217,0.3)]"
               )}
             >
-              {profile.telegramId ? <><X size={18} /> Desvincular Conta</> : <><Bot size={18} /> Vincular Telegram</>}
+              {profile.telegramId ? <><X size={16} /> Desvincular</> : <><Bot size={16} /> Vincular Bot</>}
             </button>
           </div>
         </section>

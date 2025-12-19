@@ -531,7 +531,7 @@ export default function Perfil() {
                 </div>
               </div>
               <div className="mt-6">
-                <button onClick={() => setResetModalOpen(true)} className={cn(dangerButtonClass, 'w-full rounded-full py-3')}>Excluir Dados</button>
+                <button onClick={() => setResetModalOpen(true)} className={cn(dangerButtonClass, 'rounded-xl py-3')}>Excluir Dados</button>
               </div>
             </div>
 
@@ -546,7 +546,7 @@ export default function Perfil() {
                 </div>
               </div>
               <div className="mt-6">
-                <button onClick={() => setResetModalOpen(true)} className={cn(dangerButtonClass, 'w-full rounded-full py-3')}>Resetar Sistema</button>
+                <button onClick={() => setResetModalOpen(true)} className={cn(dangerButtonClass, 'rounded-xl py-3')}>Resetar Sistema</button>
               </div>
             </div>
           </div>

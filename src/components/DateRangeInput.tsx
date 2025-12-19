@@ -1,33 +1,38 @@
 import { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import DatePicker from './DatePicker';
+import DateRangePicker from './DateRangePicker';
 import { cn } from './ui/utils';
 
 const FILTER_CONTEXT_SELECTOR = '[data-filter-context="true"], [class*="filter"]';
 
-interface DateInputProps {
-  value: string;
-  onChange: (value: string) => void;
+interface DateRangeInputProps {
+  start: string; // YYYY-MM-DD
+  end: string; // YYYY-MM-DD
+  onChange: (start: string, end: string) => void;
   placeholder?: string;
   className?: string;
   style?: React.CSSProperties;
-  onFocus?: (e: React.FocusEvent<HTMLInputElement>) => void;
-  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
 }
 
-export default function DateInput({
-  value,
-  onChange,
-  placeholder = 'dd/mm/aaaa',
-  className = '',
-  style,
-  onFocus,
-  onBlur,
-}: DateInputProps) {
+const formatDisplay = (start: string, end: string) => {
+  if (!start && !end) return '';
+  const toDisplay = (s: string) => {
+    if (!s) return '';
+    const parts = s.split('-');
+    if (parts.length < 3) return '';
+    const y = Number(parts[0]);
+    const m = Number(parts[1]);
+    const d = Number(parts[2]);
+    return `${String(d).padStart(2,'0')}/${String(m).padStart(2,'0')}/${y}`;
+  };
+  if (start && end) return `${toDisplay(start)} — ${toDisplay(end)}`;
+  if (start) return `${toDisplay(start)} — `;
+  return ` — ${toDisplay(end)}`;
+};
+
+export default function DateRangeInput({ start, end, onChange, placeholder = 'dd/mm/aaaa — dd/mm/aaaa', className = '', style }: DateRangeInputProps) {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-
-  // Verificar se está dentro de um filtro
   const [isInFilter, setIsInFilter] = useState(false);
 
   useEffect(() => {
@@ -37,19 +42,13 @@ export default function DateInput({
         setIsInFilter(!!filterParent);
       }
     };
-    
     checkFilterContext();
-    // Re-verificar apenas quando o componente for montado ou quando isOpen mudar
-    if (isOpen) {
-      checkFilterContext();
-    }
+    if (isOpen) checkFilterContext();
   }, [isOpen]);
 
-  // Fechar quando clicar fora
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const node = event.target as Node | null;
-
       const isInIgnored = (n: Node | null): boolean => {
         let cur: Node | null = n;
         while (cur) {
@@ -66,71 +65,31 @@ export default function DateInput({
 
     if (isOpen) {
       document.addEventListener('mousedown', handleClickOutside);
-      return () => {
-        document.removeEventListener('mousedown', handleClickOutside);
-      };
+      return () => document.removeEventListener('mousedown', handleClickOutside);
     }
   }, [isOpen]);
 
-  const formatDisplayValue = (dateString: string) => {
-    if (!dateString) return '';
-    // Parse YYYY-MM-DD without timezone issues
-    const parts = dateString.split('-');
-    if (parts.length < 3) return '';
-    const y = Number(parts[0]);
-    const m = Number(parts[1]);
-    const d = Number(parts[2]);
-    if (!Number.isFinite(y) || !Number.isFinite(m) || !Number.isFinite(d)) return '';
-    const date = new Date(y, m - 1, d);
-    if (isNaN(date.getTime())) return '';
-
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const year = String(date.getFullYear());
-    return `${day}/${month}/${year}`;
-  };
-
-  const handleInputClick = () => {
-    setIsOpen(true);
-  };
-
-  const handleDateChange = (newValue: string) => {
-    onChange(newValue);
-  };
-
-  const handlePickerClose = () => {
-    setIsOpen(false);
-  };
-  // Portal positioning state
   const [portalStyle, setPortalStyle] = useState<React.CSSProperties | null>(null);
-
   useEffect(() => {
     if (!isOpen) {
       setPortalStyle(null);
       return;
     }
-
     const updatePosition = () => {
       if (!containerRef.current) return;
       const rect = containerRef.current.getBoundingClientRect();
       const pickerWidth = Math.min(360, window.innerWidth * 0.9);
-      // Prefer below the input
       let left = rect.left;
-      // If picker would overflow right edge, shift left
       if (left + pickerWidth > window.innerWidth - 8) {
         left = Math.max(8, window.innerWidth - pickerWidth - 8);
       }
       let top = rect.bottom + 8;
-
-      // If not enough space below, open above
-      const pickerHeightEstimate = 320; // rough estimate
+      const pickerHeightEstimate = 320;
       if (top + pickerHeightEstimate > window.innerHeight - 8) {
         top = Math.max(8, rect.top - pickerHeightEstimate - 8);
       }
-
       setPortalStyle({ position: 'absolute', left: Math.round(left), top: Math.round(top), zIndex: 1000 });
     };
-
     updatePosition();
     window.addEventListener('resize', updatePosition);
     window.addEventListener('scroll', updatePosition, true);
@@ -140,36 +99,28 @@ export default function DateInput({
     };
   }, [isOpen]);
 
+  const handlePickerChange = (s: string, e: string) => {
+    onChange(s, e);
+  };
+
   return (
     <div ref={containerRef} className="relative w-full">
       <input
         type="text"
-        value={formatDisplayValue(value)}
+        value={formatDisplay(start, end)}
         placeholder={placeholder}
         readOnly
-        onClick={handleInputClick}
-        className={cn(
-          'w-full cursor-pointer rounded-2xl border border-border/50 bg-background px-4 py-3 text-sm text-foreground placeholder:text-foreground-muted transition focus-visible:border-brand-emerald focus-visible:ring-2 focus-visible:ring-brand-emerald/30',
-          className
-        )}
+        onClick={() => setIsOpen(true)}
+        className={cn('w-full cursor-pointer rounded-2xl border border-border/50 bg-background px-4 py-3 text-sm text-foreground placeholder:text-foreground-muted transition focus-visible:border-brand-emerald focus-visible:ring-2 focus-visible:ring-brand-emerald/30', className)}
         style={style}
-        onFocus={onFocus}
-        onBlur={onBlur}
       />
 
-      {isOpen && portalStyle &&
-        createPortal(
-          <div style={portalStyle} data-ignore-click-outside="true">
-            <DatePicker
-              value={value}
-              onChange={handleDateChange}
-              onClose={handlePickerClose}
-              alignLeft={false}
-            />
-          </div>,
-          document.body
-        )}
+      {isOpen && portalStyle && createPortal(
+        <div style={portalStyle} data-ignore-click-outside="true">
+          <DateRangePicker start={start} end={end} onChange={handlePickerChange} onClose={() => setIsOpen(false)} />
+        </div>,
+        document.body
+      )}
     </div>
   );
 }
-

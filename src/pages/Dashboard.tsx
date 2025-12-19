@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import FilterPopover from '../components/FilterPopover';
+import DropdownSelect from '../components/DropdownSelect';
 import DateInput from '../components/DateInput';
 import { CASAS_APOSTAS } from '../constants/casasApostas';
 import { STATUS_APOSTAS } from '../constants/statusApostas';
@@ -268,7 +269,7 @@ export default function Dashboard() {
   );
 
   const filterInputClass =
-    'mt-2 w-full rounded-2xl border border-border/40 bg-background px-4 py-3 text-sm text-foreground placeholder:text-foreground-muted transition focus-visible:border-brand-emerald focus-visible:ring-2 focus-visible:ring-brand-emerald/30';
+    'mt-2 w-full rounded-2xl border border-border/40 bg-background px-3 py-2 text-sm text-foreground placeholder:text-foreground-muted transition focus-visible:border-brand-emerald focus-visible:ring-2 focus-visible:ring-brand-emerald/30';
 
   const cardSurfaceClass = 'bg-[#10322e]';
   const cardBorderClass = 'border-white/5';
@@ -349,6 +350,7 @@ export default function Dashboard() {
                     open={filtersOpen}
                     onClose={() => setFiltersOpen(false)}
                     onClear={handleClearFilters}
+                    maxWidth="900px"
                     footer={
                       <button
                         type="button"
@@ -362,80 +364,53 @@ export default function Dashboard() {
                     <div className="grid gap-4 md:grid-cols-2">
                       <label className="text-sm font-medium text-foreground">
                         <span>Status</span>
-                        <select
+                        <DropdownSelect
+                          options={[{ value: '', label: 'Todos' }, ...STATUS_APOSTAS.map((s) => ({ value: s, label: s }))]}
                           value={filters.status}
-                          onChange={(event) => handleFilterChange('status', event.target.value)}
+                          onChange={(val) => handleFilterChange('status', val)}
                           className={filterInputClass}
-                        >
-                          <option value="">Todos</option>
-                          {STATUS_APOSTAS.map((status) => (
-                            <option key={status} value={status}>
-                              {status}
-                            </option>
-                          ))}
-                        </select>
+                        />
                       </label>
                       <label className="text-sm font-medium text-foreground">
                         <span>Tipster</span>
-                        <select
+                        <DropdownSelect
+                          options={[{ value: '', label: 'Todos' }, ...tipsters.filter((t) => t.ativo).map((t) => ({ value: t.nome, label: t.nome }))]}
                           value={filters.tipster}
-                          onChange={(event) => handleFilterChange('tipster', event.target.value)}
+                          onChange={(val) => handleFilterChange('tipster', val)}
                           className={filterInputClass}
-                        >
-                          <option value="">Todos</option>
-                          {tipsters
-                            .filter((tipster) => tipster.ativo)
-                            .map((tipster) => (
-                              <option key={tipster.id} value={tipster.nome}>
-                                {tipster.nome}
-                              </option>
-                            ))}
-                        </select>
+                        />
                       </label>
                       <label className="text-sm font-medium text-foreground">
                         <span>Casa de aposta</span>
-                        <select
+                        <DropdownSelect
+                          options={[{ value: '', label: 'Todas' }, ...CASAS_APOSTAS.map((casa) => ({ value: casa, label: casa }))]}
                           value={filters.casa}
-                          onChange={(event) => handleFilterChange('casa', event.target.value)}
+                          onChange={(val) => handleFilterChange('casa', val)}
                           className={filterInputClass}
-                        >
-                          <option value="">Todas</option>
-                          {CASAS_APOSTAS.map((casa) => (
-                            <option key={casa} value={casa}>
-                              {casa}
-                            </option>
-                          ))}
-                        </select>
+                          searchable
+                        />
                       </label>
                       <label className="text-sm font-medium text-foreground">
                         <span>Banca</span>
-                        <select
+                        <DropdownSelect
+                          options={[{ value: '', label: 'Todas' }, ...userBancas.map((banca) => ({ value: banca.id, label: banca.nome }))]}
                           value={filters.bancaId}
-                          onChange={(event) => handleFilterChange('bancaId', event.target.value)}
+                          onChange={(val) => handleFilterChange('bancaId', val)}
                           className={filterInputClass}
-                          disabled={bancasLoading}
-                        >
-                          <option value="">Todas</option>
-                          {userBancas.map((banca) => (
-                            <option key={banca.id} value={banca.id}>
-                              {banca.nome}
-                            </option>
-                          ))}
-                        </select>
+                          searchable
+                        />
                       </label>
-                      <div className="space-y-4">
-                        <label className="text-sm font-medium text-foreground">
-                          <span>Data (de)</span>
-                          <DateInput value={filters.dataInicio} onChange={(value) => handleFilterChange('dataInicio', value)} className={filterInputClass} />
-                        </label>
-                        <label className="text-sm font-medium text-foreground">
-                          <span>Data (até)</span>
-                          <DateInput value={filters.dataFim} onChange={(value) => handleFilterChange('dataFim', value)} className={filterInputClass} />
-                          <p className="mt-2 text-xs text-foreground-muted">
-                            Deixe o campo vazio para considerar todo o histórico.
-                          </p>
-                        </label>
-                      </div>
+                      <label className="text-sm font-medium text-foreground">
+                        <span>Data (de)</span>
+                        <DateInput value={filters.dataInicio} onChange={(value) => handleFilterChange('dataInicio', value)} className={filterInputClass} />
+                      </label>
+                      <label className="text-sm font-medium text-foreground">
+                        <span>Data (até)</span>
+                        <DateInput value={filters.dataFim} onChange={(value) => handleFilterChange('dataFim', value)} className={filterInputClass} />
+                      </label>
+                      <p className="col-span-2 mt-2 text-xs text-foreground-muted">
+                        Deixe o campo vazio para considerar todo o histórico.
+                      </p>
                     </div>
                   </FilterPopover>
                 </div>

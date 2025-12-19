@@ -6,6 +6,8 @@ import { useTipsters } from '../../hooks/useTipsters';
 import { useBancas } from '../../hooks/useBancas';
 import DateInput from '../DateInput';
 import FilterPopover from '../FilterPopover';
+import FilterPopoverAnalise from '../FilterPopoverAnalise';
+import DropdownSelect from '../DropdownSelect';
 import type { AnaliseFilters } from '../../types/AnaliseFilters';
 
 interface AnaliseFiltersProps {
@@ -36,11 +38,11 @@ export function AnaliseFilters({ value, onChange }: AnaliseFiltersProps) {
     'inline-flex items-center gap-2 rounded-full border border-border/20 bg-gradient-to-r from-brand-emerald to-brand-teal px-4 py-2 text-sm font-semibold text-white shadow-[0_12px_25px_rgba(16,185,129,0.35)] transition hover:from-brand-hover hover:to-brand-teal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-emerald/40';
   const filterCountClass =
     'rounded-full bg-white/20 px-2 text-xs font-semibold tracking-wide text-white shadow-inner';
-  const panelClass = 'grid gap-4 md:grid-cols-2';
-  const fieldClass = 'flex flex-col gap-2 rounded-2xl border border-border/40 bg-background-card/40 p-4 shadow-sm shadow-black/0 backdrop-blur';
-  const labelClass = 'text-2xs font-semibold uppercase tracking-[0.4em] text-foreground-muted';
+  const panelClass = 'grid gap-2 sm:grid-cols-2 md:grid-cols-2';
+  const fieldClass = 'flex flex-col gap-2 rounded-2xl border border-border/40 bg-background-card/40 p-2 shadow-sm shadow-black/0 backdrop-blur';
+  const labelClass = 'text-2xs font-semibold uppercase tracking-[0.35em] text-foreground-muted';
   const inputClass =
-    'w-full rounded-2xl border border-border/50 bg-background px-4 py-3 text-sm text-foreground placeholder:text-foreground-muted shadow-sm transition focus-visible:border-brand-emerald focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-emerald/30';
+    'w-full rounded-2xl border border-border/50 bg-background px-3 py-2 text-sm text-foreground placeholder:text-foreground-muted shadow-sm transition focus-visible:border-brand-emerald focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-emerald/30';
   const hintClass = 'text-xs leading-relaxed text-foreground-muted';
 
   const handleFilterChange = useCallback(
@@ -83,7 +85,7 @@ export function AnaliseFilters({ value, onChange }: AnaliseFiltersProps) {
         <Filter size={16} /> Filtros{' '}
         {activeFiltersCount > 0 && <span className={filterCountClass}>{activeFiltersCount}</span>}
       </button>
-      <FilterPopover
+      <FilterPopoverAnalise
         open={open}
         onClose={() => {
           setOpen(false);
@@ -98,78 +100,54 @@ export function AnaliseFilters({ value, onChange }: AnaliseFiltersProps) {
             Aplicar filtros
           </button>
         }
-        maxWidth="1200px" // largura máxima ainda maior para filtros de análise
+        maxWidth="720px"
       >
         <div className={panelClass} data-filter-context="true">
           <div className={fieldClass}>
             <label className={labelClass}>Banca</label>
-            <select
+            <DropdownSelect
+              options={bancas.map((banca) => ({ value: banca.id, label: banca.nome }))}
               value={pendingFilters.bancaId}
-              onChange={(event) => handleFilterChange('bancaId', event.target.value)}
+              onChange={(val) => handleFilterChange('bancaId', val)}
+              placeholder={bancas.length > 0 ? 'Selecione a banca' : 'Nenhuma banca disponível'}
               className={inputClass}
-            >
-              <option value="" disabled hidden>
-                {bancas.length > 0 ? 'Selecione a banca' : 'Nenhuma banca disponível'}
-              </option>
-              {bancas.map((banca) => (
-                <option key={banca.id} value={banca.id}>
-                  {banca.nome}
-                </option>
-              ))}
-            </select>
+              useWrapperClass
+              searchable
+            />
           </div>
           <div className={fieldClass}>
             <label className={labelClass}>Status</label>
-            <select
+            <DropdownSelect
+              options={STATUS_APOSTAS.map((s) => ({ value: s, label: s }))}
               value={pendingFilters.status}
-              onChange={(event) => handleFilterChange('status', event.target.value)}
+              onChange={(val) => handleFilterChange('status', val)}
+              placeholder="Selecione um status"
               className={inputClass}
-            >
-              <option value="" disabled hidden>
-                Selecione um status
-              </option>
-              {STATUS_APOSTAS.map((status) => (
-                <option key={status} value={status}>
-                  {status}
-                </option>
-              ))}
-            </select>
+              useWrapperClass
+            />
           </div>
           <div className={fieldClass}>
             <label className={labelClass}>Tipsters</label>
-            <select
+            <DropdownSelect
+              options={tipsters.filter((t) => t.ativo).map((t) => ({ value: t.nome, label: t.nome }))}
               value={pendingFilters.tipster}
-              onChange={(event) => handleFilterChange('tipster', event.target.value)}
+              onChange={(val) => handleFilterChange('tipster', val)}
+              placeholder="Selecione…"
               className={inputClass}
-            >
-              <option value="" disabled hidden>
-                Selecione…
-              </option>
-              {tipsters
-                .filter((tipster) => tipster.ativo)
-                .map((tipster) => (
-                  <option key={tipster.id} value={tipster.nome}>
-                    {tipster.nome}
-                  </option>
-                ))}
-            </select>
+              useWrapperClass
+            />
           </div>
           <div className={fieldClass}>
             <label className={labelClass}>Casa de Apostas</label>
-            <select
+            <DropdownSelect
+              options={CASAS_APOSTAS.map((casa) => ({ value: casa, label: casa }))}
               value={pendingFilters.casa}
-              onChange={(event) => handleFilterChange('casa', event.target.value)}
+              onChange={(val) => handleFilterChange('casa', val)}
+              placeholder="Selecione a casa"
               className={inputClass}
-            >
-              <option value="" disabled hidden>
-                Selecione a casa
-              </option>
-              {CASAS_APOSTAS.map((casa) => (
-                <option key={casa} value={casa}>
-                  {casa}
-                </option>
-              ))}
-            </select>
+              useWrapperClass
+              searchable
+            />
           </div>
           <div className={fieldClass}>
             <label className={labelClass}>Evento, Mercado ou Aposta</label>
@@ -203,29 +181,9 @@ export function AnaliseFilters({ value, onChange }: AnaliseFiltersProps) {
               considerado como intervalo.
             </p>
           </div>
-          <div className={fieldClass}>
-            <label className={labelClass}>ODD</label>
-            <div className="grid gap-3 sm:grid-cols-2">
-              <input
-                type="number"
-                value={pendingFilters.oddMin}
-                onChange={(event) => handleFilterChange('oddMin', event.target.value)}
-                placeholder="Mínimo"
-                step="0.01"
-                className={inputClass}
-              />
-              <input
-                type="number"
-                value={pendingFilters.oddMax}
-                onChange={(event) => handleFilterChange('oddMax', event.target.value)}
-                placeholder="Máximo"
-                step="0.01"
-                className={inputClass}
-              />
-            </div>
-          </div>
+          {/* ODD fields removed per request to simplify filters */}
         </div>
-      </FilterPopover>
+      </FilterPopoverAnalise>
     </div>
   );
 }

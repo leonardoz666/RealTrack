@@ -94,6 +94,18 @@
 		@apply bg-transparent text-current;
 	}
 
+	/* dark select styling for native dropdowns inside datepickers */
+	.dark-select,
+	.dark-select option {
+		background-color: #042620; /* project calendar background */
+		color: #ffffff;
+	}
+	.dark-select {
+		-webkit-appearance: none;
+		-moz-appearance: none;
+		appearance: none;
+	}
+
 	input:-webkit-autofill,
 	input:-webkit-autofill:hover,
 	input:-webkit-autofill:focus {
@@ -102,6 +114,32 @@
 		-webkit-text-fill-color: #0f172a;
 		transition: background-color 5000s ease-in-out 0s;
 	}
+}
+
+/* thin, semi-transparent scrollbar for dropdown menus */
+.thin-scrollbar {
+  -ms-overflow-style: auto; /* IE and Edge, allow scrollbar */
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: rgba(255,255,255,0.18) transparent;
+}
+.thin-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.thin-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.thin-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.18);
+  border-radius: 8px;
+}
+.thin-scrollbar::-webkit-scrollbar-thumb:hover {
+	background: #ffffff;
+}
+
+/* ensure Firefox shows white thumb on hover */
+.thin-scrollbar:hover {
+	scrollbar-color: #ffffff transparent;
 }
 
 

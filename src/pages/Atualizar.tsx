@@ -7,8 +7,9 @@ import EmptyState from '../components/EmptyState';
 import Modal from '../components/Modal';
 import UploadTicketModal from '../components/UploadTicketModal';
 import ApostaForm, { type ApostaFormData, type ApostaFormErrors } from '../components/ApostaForm';
-import FilterPopover from '../components/FilterPopover';
+import FilterPopoverApostas from '../components/FilterPopoverApostas';
 import DateInput from '../components/DateInput';
+import DropdownSelect from '../components/DropdownSelect';
 import { CASAS_APOSTAS } from '../constants/casasApostas';
 import { STATUS_APOSTAS } from '../constants/statusApostas';
 import {
@@ -17,7 +18,6 @@ import {
   getBetStatusIcon,
 } from '../constants/betStatusStyles';
 import { ESPORTES, normalizarEsporteParaOpcao } from '../constants/esportes';
-import { STATUS_SALVAMENTO } from '../constants/statusSalvamento';
 import { TIPOS_APOSTA } from '../constants/tiposAposta';
 import { apostaService, type ApostasFilter, type ApostaStatus } from '../services/api';
 import { eventBus } from '../utils/eventBus';
@@ -206,7 +206,6 @@ interface FiltersState {
   bancaId: string;
   esporte: string;
   status: string;
-  statusSalvamento: string;
   tipster: string;
   casaDeAposta: string;
   dataDe: string;
@@ -247,7 +246,9 @@ const formGridClass = 'grid gap-4 md:grid-cols-2';
 const formFieldClass = 'flex flex-col gap-2';
 const labelClass = 'text-sm font-semibold text-foreground/80';
 const inputClass = 'w-full rounded-2xl border border-border/40 bg-background px-4 py-3 text-sm text-foreground placeholder:text-foreground/50 focus-visible:border-brand-emerald focus-visible:ring-2 focus-visible:ring-brand-emerald/30 outline-none transition';
+const compactInputClass = 'w-full rounded-lg border border-border/30 bg-background px-3 py-2 text-sm text-foreground placeholder:text-foreground/50 focus-visible:border-brand-emerald focus-visible:ring-2 focus-visible:ring-brand-emerald/30 outline-none transition';
 const inlineInputClass = 'grid gap-3 sm:grid-cols-2';
+const compactInlineInputClass = 'grid gap-2 sm:grid-cols-2';
 const errorTextClass = 'text-xs font-semibold text-rose-400';
 
 
@@ -260,7 +261,6 @@ export default function Atualizar() {
     bancaId: '',
     esporte: '',
     status: '',
-    statusSalvamento: '',
     tipster: '',
     casaDeAposta: '',
     dataDe: '',
@@ -1443,14 +1443,12 @@ ${limitReachedMessage}`);
       bancaId: filters.bancaId,
       esporte: filters.esporte,
       status: filters.status,
-      statusSalvamento: filters.statusSalvamento,
       tipster: filters.tipster,
       casaDeAposta: filters.casaDeAposta,
       dataDe: filters.dataDe,
       dataAte: filters.dataAte,
       searchText: filters.searchText,
-      oddMin: filters.oddMin,
-      oddMax: filters.oddMax
+      // oddMin/oddMax removed from UI
     }).filter((value) => value !== '').length;
   }, [filters]);
 
@@ -1505,7 +1503,7 @@ ${limitReachedMessage}`);
             </button>
             {filtersOpen && (
               <div className="absolute right-0 top-full mt-2 z-50">
-                <FilterPopover
+                <FilterPopoverApostas
                   open={filtersOpen}
                   onClose={() => setFiltersOpen(false)}
                   footer={
@@ -1514,135 +1512,11 @@ ${limitReachedMessage}`);
                     </button>
                   }
                 >
-                  <div className={cn(formGridClass, 'w-[min(560px,80vw)]')}>
-                    <div className={formFieldClass}>
-                      <label className={labelClass}>Banca</label>
-                      <select
-                        className={inputClass}
-                        value={filters.bancaId}
-                        onChange={(e) => {
-                          autoSyncBancaRef.current = false;
-                          setFilters((prev) => ({ ...prev, bancaId: e.target.value }));
-                        }}
-                      >
-                        <option value="" disabled hidden>Selecione uma banca</option>
-                        {bancas.map((banca) => (
-                          <option key={banca.id} value={banca.id}>
-                            {banca.nome}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div className={formFieldClass}>
-                      <label className={labelClass}>Esporte</label>
-                      <select
-                        className={inputClass}
-                        value={filters.esporte}
-                        onChange={(e) => setFilters((prev) => ({ ...prev, esporte: e.target.value }))}
-                      >
-                        <option value="" disabled hidden>Selecione…</option>
-                        {ESPORTES.map((esporte) => (
-                          <option key={esporte} value={esporte}>
-                            {esporte}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div className={formFieldClass}>
-                      <label className={labelClass}>Status</label>
-                      <select
-                        className={inputClass}
-                        value={filters.status}
-                        onChange={(e) => setFilters((prev) => ({ ...prev, status: e.target.value }))}
-                      >
-                        <option value="" disabled hidden>Selecione um status</option>
-                        {STATUS_APOSTAS.map((status) => (
-                          <option key={status} value={status}>
-                            {status}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div className={formFieldClass}>
-                      <label className={labelClass}>Status Salvamento</label>
-                      <select
-                        className={inputClass}
-                        value={filters.statusSalvamento}
-                        onChange={(e) => setFilters((prev) => ({ ...prev, statusSalvamento: e.target.value }))}
-                      >
-                        <option value="" disabled hidden>Selecione…</option>
-                        {STATUS_SALVAMENTO.map((status) => (
-                          <option key={status} value={status}>
-                            {status}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div className={formFieldClass}>
-                      <label className={labelClass}>Tipster</label>
-                      <select
-                        className={inputClass}
-                        value={filters.tipster}
-                        onChange={(e) => setFilters((prev) => ({ ...prev, tipster: e.target.value }))}
-                      >
-                        <option value="" disabled hidden>Selecione…</option>
-                        {tipsters
-                          .filter((tipster) => tipster.ativo)
-                          .map((tipster) => (
-                            <option key={tipster.id} value={tipster.nome}>
-                              {tipster.nome}
-                            </option>
-                          ))}
-                      </select>
-                    </div>
-
-                    <div className={formFieldClass}>
-                      <label className={labelClass}>Casa de Aposta</label>
-                      <select
-                        className={inputClass}
-                        value={filters.casaDeAposta}
-                        onChange={(e) => setFilters((prev) => ({ ...prev, casaDeAposta: e.target.value }))}
-                      >
-                        <option value="" disabled hidden>Selecione…</option>
-                        {CASAS_APOSTAS.map((casa) => (
-                          <option key={casa} value={casa}>
-                            {casa}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div className={formFieldClass}>
-                      <label className={labelClass}>Data do Evento (De)</label>
-                      <DateInput
-                        value={filters.dataDe}
-                        onChange={(value) => setFilters((prev) => ({ ...prev, dataDe: value }))}
-                        placeholder="dd/mm/aaaa"
-                        className={inputClass}
-                      />
-                    </div>
-
-                    <div className={formFieldClass}>
-                      <label className={labelClass}>Data do Evento (Até)</label>
-                      <DateInput
-                        value={filters.dataAte}
-                        onChange={(value) => setFilters((prev) => ({ ...prev, dataAte: value }))}
-                        placeholder="dd/mm/aaaa"
-                        className={inputClass}
-                      />
-                      <p className="text-xs text-foreground/60">
-                        Se só preencher "De", filtramos somente este dia. Com "Até", usamos o intervalo.
-                      </p>
-                    </div>
-
-                    <div className={formFieldClass}>
+                  <div className={cn(formGridClass, 'w-[min(440px,80vw)]')}>
+                    <div className={cn(formFieldClass, 'col-span-2')}>
                       <label className={labelClass}>Evento, Mercado, Aposta</label>
                       <input
-                        className={inputClass}
+                        className={compactInputClass}
                         type="text"
                         placeholder="Digite o nome do evento, mercado ou aposta"
                         value={filters.searchText}
@@ -1651,26 +1525,103 @@ ${limitReachedMessage}`);
                     </div>
 
                     <div className={formFieldClass}>
-                      <label className={labelClass}>ODD</label>
-                      <div className={inlineInputClass}>
-                        <input
-                          className={inputClass}
-                          type="number"
-                          placeholder="Mínimo"
-                          value={filters.oddMin}
-                          onChange={(e) => setFilters((prev) => ({ ...prev, oddMin: e.target.value }))}
-                        />
-                        <input
-                          className={inputClass}
-                          type="number"
-                          placeholder="Máximo"
-                          value={filters.oddMax}
-                          onChange={(e) => setFilters((prev) => ({ ...prev, oddMax: e.target.value }))}
+                      <label className={labelClass}>Banca</label>
+                      <DropdownSelect
+                        options={bancas.map((banca) => ({ value: banca.id, label: banca.nome }))}
+                        value={filters.bancaId}
+                        onChange={(val) => {
+                          autoSyncBancaRef.current = false;
+                          setFilters((prev) => ({ ...prev, bancaId: val }));
+                        }}
+                        placeholder="Selecione uma banca"
+                        className="w-full"
+                        useWrapperClass
+                      />
+                    </div>
+
+                    <div className={formFieldClass}>
+                      <label className={labelClass}>Esporte</label>
+                      <DropdownSelect
+                        options={ESPORTES.map((esporte) => ({ value: esporte, label: esporte }))}
+                        value={filters.esporte}
+                        onChange={(val) => setFilters((prev) => ({ ...prev, esporte: val }))}
+                        placeholder="Selecione…"
+                        className="w-full"
+                        searchable
+                        useWrapperClass
+                      />
+                    </div>
+
+                    <div className={formFieldClass}>
+                      <label className={labelClass}>Status</label>
+                      <DropdownSelect
+                        options={STATUS_APOSTAS.map((s) => ({ value: s, label: s }))}
+                        value={filters.status}
+                        onChange={(val) => setFilters((prev) => ({ ...prev, status: val }))}
+                        placeholder="Selecione um status"
+                        className="w-full"
+                        useWrapperClass
+                      />
+                    </div>
+
+                    {/** Status Salvamento removido per request */}
+
+                    <div className={formFieldClass}>
+                      <label className={labelClass}>Tipster</label>
+                      <DropdownSelect
+                        options={tipsters.filter((t) => t.ativo).map((t) => ({ value: t.nome, label: t.nome }))}
+                        value={filters.tipster}
+                        onChange={(val) => setFilters((prev) => ({ ...prev, tipster: val }))}
+                        placeholder="Selecione…"
+                        className="w-full"
+                        useWrapperClass
+                      />
+                    </div>
+
+                    <div className="col-span-2 grid grid-cols-3 gap-3 items-end">
+                      <div className={formFieldClass}>
+                        <label className={labelClass}>Casa de Aposta</label>
+                        <DropdownSelect
+                          options={CASAS_APOSTAS.map((casa) => ({ value: casa, label: casa }))}
+                          value={filters.casaDeAposta}
+                          onChange={(val) => setFilters((prev) => ({ ...prev, casaDeAposta: val }))}
+                          placeholder="Selecione…"
+                          className="w-full"
+                          searchable
+                          useWrapperClass
                         />
                       </div>
+
+                      <div className={formFieldClass}>
+                        <label className={labelClass}>Data do Evento (De)</label>
+                        <DateInput
+                          value={filters.dataDe}
+                          onChange={(value) => setFilters((prev) => ({ ...prev, dataDe: value }))}
+                          placeholder="dd/mm/aaaa"
+                          className={compactInputClass}
+                        />
+                      </div>
+
+                      <div className={formFieldClass}>
+                        <label className={cn(labelClass, 'whitespace-nowrap')}>Data do Evento (Até)</label>
+                        <DateInput
+                          value={filters.dataAte}
+                          onChange={(value) => setFilters((prev) => ({ ...prev, dataAte: value }))}
+                          placeholder="dd/mm/aaaa"
+                          className={compactInputClass}
+                        />
+                      </div>
+
+                      <p className="col-span-3 text-xs text-foreground/60 mt-1">
+                        Se só preencher "De", filtramos somente este dia. Com "Até", usamos o intervalo.
+                      </p>
                     </div>
+
+                    {/** Evento field moved to top */}
+
+                    {/** ODD filter removed per request */}
                   </div>
-                </FilterPopover>
+                </FilterPopoverApostas>
               </div>
             )}
           </div>

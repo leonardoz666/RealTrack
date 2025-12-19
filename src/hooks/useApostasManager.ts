@@ -16,7 +16,6 @@ import type { ApiBetWithBank } from '../types/api';
 export interface ApostasFilters {
   esporte: string;
   status: string;
-  statusSalvamento: string;
   tipster: string;
   casaDeAposta: string;
   dataDe: string;
@@ -66,7 +65,6 @@ export const STATUS_WITH_RETURNS = ['Ganha', 'Meio Ganha', 'Cashout'];
 const initialFilters: ApostasFilters = {
   esporte: '',
   status: '',
-  statusSalvamento: '',
   tipster: '',
   casaDeAposta: '',
   dataDe: '',

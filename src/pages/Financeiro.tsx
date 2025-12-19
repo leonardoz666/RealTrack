@@ -15,7 +15,9 @@ import {
 } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import DateInput from '../components/DateInput';
+import DateRangeInput from '../components/DateRangeInput';
 import FilterPopover from '../components/FilterPopover';
+import DropdownSelect from '../components/DropdownSelect';
 import Modal from '../components/Modal';
 import EmptyState from '../components/EmptyState';
 import { CASAS_APOSTAS } from '../constants/casasApostas';
@@ -501,14 +503,94 @@ export default function Financeiro() {
             <p className="text-sm text-foreground-muted">Gerencie transações e saldos por banca.</p>
           </div>
           <div className="flex gap-2">
-            <button
-              type="button"
-              className={headerGhostButtonClass}
-              onClick={() => setFiltersOpen(true)}
-            >
-              <Filter className="h-4 w-4" />
-              FILTROS
-            </button>
+            <div className="relative">
+              <button
+                type="button"
+                className={headerGhostButtonClass}
+                onClick={() => setFiltersOpen((prev) => !prev)}
+                aria-expanded={filtersOpen}
+              >
+                <Filter className="h-4 w-4" />
+                FILTROS
+              </button>
+              {filtersOpen && (
+                <div className="absolute right-0 top-full mt-2 z-50">
+                  <FilterPopover
+                    open={filtersOpen}
+                    onClose={() => setFiltersOpen(false)}
+                    onClear={handleClearFilters}
+                    maxWidth="420px"
+                    footer={
+                      <button
+                        type="button"
+                        className="w-full rounded-2xl bg-brand-linear px-4 py-2 text-sm font-semibold text-[#f2f2f2] shadow-glow transition active:scale-[0.99]"
+                        onClick={handleApplyFilters}
+                      >
+                        Aplicar filtros
+                      </button>
+                    }
+                  >
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <label className="text-sm font-medium text-foreground">
+                        <span>Banca</span>
+                        <DropdownSelect
+                          options={[{ value: '', label: 'Todas' }, ...bancas.map((b) => ({ value: b.id, label: b.nome }))]}
+                          value={pendingFilters.bancaId}
+                          onChange={(val) => handleFilterChange('bancaId', val)}
+                          className={inputClass}
+                        />
+                      </label>
+
+                      <label className="text-sm font-medium text-foreground">
+                        <span>Tipo</span>
+                        <DropdownSelect
+                          options={[{ value: '', label: 'Todos' }, { value: 'Depósito', label: 'Depósito' }, { value: 'Saque', label: 'Saque' }]}
+                          value={pendingFilters.tipo}
+                          onChange={(val) => handleFilterChange('tipo', val as TipoFiltro)}
+                          className={inputClass}
+                        />
+                      </label>
+
+                      <label className="text-sm font-medium text-foreground">
+                        <span>Casa</span>
+                        <DropdownSelect
+                          options={[{ value: '', label: 'Todas' }, ...CASAS_APOSTAS.map((c) => ({ value: c, label: c }))]}
+                          value={pendingFilters.casa}
+                          onChange={(val) => handleFilterChange('casa', val)}
+                          className={inputClass}
+                          searchable
+                        />
+                      </label>
+
+                      <label className="text-sm font-medium text-foreground">
+                        <span>Observação</span>
+                        <input
+                          className={inputClass}
+                          value={pendingFilters.observacao}
+                          onChange={(e) => handleFilterChange('observacao', e.target.value)}
+                          placeholder="Pesquisar observação"
+                        />
+                      </label>
+
+                      <label className="text-sm font-medium text-foreground col-span-2">
+                        <span>Período</span>
+                        <div className="w-full">
+                          <DateRangeInput
+                            start={pendingFilters.dataDe}
+                            end={pendingFilters.dataAte}
+                            onChange={(s, e) => {
+                              handleFilterChange('dataDe', s);
+                              handleFilterChange('dataAte', e);
+                            }}
+                            className={inputClass}
+                          />
+                        </div>
+                      </label>
+                    </div>
+                  </FilterPopover>
+                </div>
+              )}
+            </div>
             <button
               type="button"
               className={headerPrimaryButtonClass}

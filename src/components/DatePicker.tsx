@@ -1,4 +1,15 @@
 import { useState, useRef } from 'react';
+// Helper to parse YYYY-MM-DD into local Date (avoid UTC offset issues)
+const parseYMD = (s?: string | null) => {
+  if (!s) return null;
+  const parts = s.split('-');
+  if (parts.length < 3) return null;
+  const y = Number(parts[0]);
+  const m = Number(parts[1]);
+  const d = Number(parts[2]);
+  if (!Number.isFinite(y) || !Number.isFinite(m) || !Number.isFinite(d)) return null;
+  return new Date(y, m - 1, d);
+};
 import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths, getYear, getMonth, setYear, setMonth } from 'date-fns';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
@@ -10,8 +21,11 @@ interface DatePickerProps {
 }
 
 export default function DatePicker({ value, onChange, onClose, alignLeft = false }: DatePickerProps) {
-  const [currentMonth, setCurrentMonth] = useState(() => value ? new Date(value) : new Date());
-  const [selectedDate, setSelectedDate] = useState<Date | null>(() => value ? new Date(value) : null);
+  const [currentMonth, setCurrentMonth] = useState(() => {
+    const parsed = parseYMD(value);
+    return parsed ?? new Date();
+  });
+  const [selectedDate, setSelectedDate] = useState<Date | null>(() => parseYMD(value));
   const pickerRef = useRef<HTMLDivElement>(null);
 
   // Gerar dias do calendário
@@ -68,7 +82,8 @@ export default function DatePicker({ value, onChange, onClose, alignLeft = false
 
   // Gerar anos para o seletor
   const currentYear = getYear(currentMonth);
-  const years = Array.from({ length: 20 }, (_, i) => currentYear - 10 + i);
+  // Limitar opções de ano entre 2025 e 2030
+  const years = [2025, 2026, 2027, 2028, 2029, 2030];
 
   const handleYearSelect = (year: number) => {
     setCurrentMonth(setYear(currentMonth, year));
@@ -99,67 +114,35 @@ export default function DatePicker({ value, onChange, onClose, alignLeft = false
   return (
     <div
       ref={pickerRef}
-      className={`absolute z-[1000] flex w-[360px] max-w-[90vw] overflow-hidden rounded-xl border border-skin-border bg-skin-surface text-skin-text shadow-[0_20px_60px_rgba(0,0,0,0.2)] ${containerPositionClasses}`}
+      className={`absolute z-[1000] w-[320px] max-w-[90vw] overflow-hidden rounded-lg border border-skin-border text-skin-text shadow-[0_12px_30px_rgba(0,0,0,0.18)] ${containerPositionClasses}`}
+      style={{ backgroundColor: '#042620' }}
       onClick={(e) => {
         e.stopPropagation();
       }}
     >
-      {/* Seção Esquerda - Data Selecionada */}
-      <div className="flex w-[130px] flex-col justify-between bg-gradient-to-b from-bank-light/40 to-transparent p-3">
-        <div>
-          <div className="text-[0.6rem] font-semibold uppercase tracking-[0.5px] text-skin-muted">Selecione a data</div>
-          <div className="text-base font-bold leading-tight text-skin-text">{formattedSelectedDate}</div>
-        </div>
-      </div>
-
-      {/* Seção Direita - Calendário */}
-      <div className="flex flex-1 flex-col bg-skin-surface p-3">
-        {/* Header do Calendário */}
-        <div className="mb-2 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <select
-              value={getMonth(currentMonth)}
-              onChange={(e) => {
-                handleMonthSelect(Number(e.target.value));
-              }}
-              className="rounded-md border border-transparent bg-transparent px-1 text-sm font-semibold text-skin-text outline-none transition hover:border-skin-border"
-            >
-              {monthNames.map((month, index) => (
-                <option key={month} value={index}>
-                  {month}
-                </option>
-              ))}
-            </select>
-            <div className="relative">
-              <select
-                value={currentYear}
-                onChange={(e) => {
-                  handleYearSelect(Number(e.target.value));
-                }}
-                className="appearance-none rounded-md border border-transparent bg-transparent px-3 py-0.5 text-sm font-semibold text-skin-text outline-none transition hover:border-skin-border"
-              >
-                {years.map((year) => (
-                  <option key={year} value={year}>
-                    {year}
-                  </option>
-                ))}
-              </select>
-              <span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-[0.6rem] text-skin-muted">▼</span>
-            </div>
-          </div>
-          <div className="flex gap-1">
-            <button
-              type="button"
-              onClick={goToPreviousMonth}
-              className="rounded-md p-1 text-skin-muted transition hover:bg-bank-light/40"
-            >
+      <div className="w-full flex-1 flex-col p-2" style={{ backgroundColor: '#042620' }}>
+        {/* Header compacto reduzido */}
+        <div className="mb-2 flex items-center justify-center">
+          <div className="inline-flex items-center gap-2 rounded-md border border-white/10 bg-white/5 px-2 py-1.5">
+            <button type="button" onClick={goToPreviousMonth} className="rounded-md p-1 text-foreground-muted hover:text-foreground transition" aria-label="Mês anterior">
               <ChevronLeft size={16} />
             </button>
-            <button
-              type="button"
-              onClick={goToNextMonth}
-              className="rounded-md p-1 text-skin-muted transition hover:bg-bank-light/40"
-            >
+
+            <div className="flex items-center gap-1 text-xs font-semibold text-foreground">
+              <select value={getMonth(currentMonth)} onChange={(e) => handleMonthSelect(Number(e.target.value))} className="dark-select appearance-none bg-transparent px-1 py-0.5 outline-none text-foreground">
+                {monthNames.map((month, index) => (
+                  <option key={month} value={index} className="bg-transparent text-foreground">{month}</option>
+                ))}
+              </select>
+
+              <select value={currentYear} onChange={(e) => handleYearSelect(Number(e.target.value))} className="dark-select appearance-none bg-transparent px-1 py-0.5 outline-none text-foreground">
+                {years.map((year) => (
+                  <option key={year} value={year} className="bg-transparent text-foreground">{year}</option>
+                ))}
+              </select>
+            </div>
+
+            <button type="button" onClick={goToNextMonth} className="rounded-md p-1 text-foreground-muted hover:text-foreground transition" aria-label="Próximo mês">
               <ChevronRight size={16} />
             </button>
           </div>
@@ -168,9 +151,7 @@ export default function DatePicker({ value, onChange, onClose, alignLeft = false
         {/* Dias da Semana */}
         <div className="mb-1 grid grid-cols-7 gap-1">
           {weekDays.map((day) => (
-            <div key={day} className="py-1 text-center text-[0.6rem] font-semibold uppercase tracking-[0.3px] text-skin-muted">
-              {day}
-            </div>
+            <div key={day} className="py-0.5 text-center text-[0.55rem] font-semibold uppercase tracking-[0.3px] text-skin-muted">{day}</div>
           ))}
         </div>
 
@@ -181,9 +162,9 @@ export default function DatePicker({ value, onChange, onClose, alignLeft = false
             const isSelected = selectedDate && isSameDay(day, selectedDate);
             const isToday = isSameDay(day, new Date());
             const dayClasses = [
-              'h-9 rounded-md text-[0.75rem] transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-emerald',
+              'h-8 rounded-md text-[0.7rem] transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-emerald',
               isSelected
-                ? 'bg-bank text-white font-semibold shadow-[0_0_0_1px_rgba(255,255,255,0.1)]'
+                ? 'bg-bank text-white font-semibold shadow-[0_0_0_1px_rgba(255,255,255,0.08)]'
                 : isToday
                 ? 'bg-bank-light text-skin-text font-semibold'
                 : isCurrentMonth

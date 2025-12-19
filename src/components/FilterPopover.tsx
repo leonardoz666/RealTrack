@@ -1,4 +1,4 @@
-import { memo, useEffect, useRef, type ReactNode } from 'react';
+import { memo, useEffect, useRef, useState, useCallback, type ReactNode } from 'react';
 import { X } from 'lucide-react';
 
 interface FilterPopoverProps {
@@ -10,12 +10,41 @@ interface FilterPopoverProps {
   maxWidth?: string; // Novo parâmetro para controlar largura máxima
 }
 
-function FilterPopover({ open, onClose, onClear, children, footer, maxWidth = '700px' }: FilterPopoverProps) {
+function FilterPopover({ open, onClose, onClear, children, footer, maxWidth = '600px' }: FilterPopoverProps) {
   const popoverRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [showTopFade, setShowTopFade] = useState(false);
+  const [showBottomFade, setShowBottomFade] = useState(false);
+
+  const updateFade = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const hasScroll = el.scrollHeight > el.clientHeight + 1;
+    const atTop = el.scrollTop <= 1;
+    const atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 1;
+    setShowTopFade(hasScroll && !atTop);
+    setShowBottomFade(hasScroll && !atBottom);
+  }, []);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (popoverRef.current && !popoverRef.current.contains(event.target as Node)) {
+      const node = event.target as Node | null;
+
+      const isInIgnored = (n: Node | null): boolean => {
+        let cur: Node | null = n;
+        while (cur) {
+          if (cur instanceof Element && cur.hasAttribute('data-ignore-click-outside')) return true;
+          cur = cur.parentNode;
+        }
+        return false;
+      };
+
+      // If click is outside the popover and not inside an element that should be ignored (eg. portal calendar), close
+      if (
+        popoverRef.current &&
+        (!event.target || !popoverRef.current.contains(event.target as Node)) &&
+        !isInIgnored(node)
+      ) {
         onClose();
       }
     }
@@ -27,13 +56,28 @@ function FilterPopover({ open, onClose, onClear, children, footer, maxWidth = '7
     };
   }, [open, onClose]);
 
+  useEffect(() => {
+    if (!open) return;
+    updateFade();
+    const el = scrollRef.current;
+    const ro = new ResizeObserver(() => updateFade());
+    if (el) ro.observe(el);
+    window.addEventListener('resize', updateFade);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener('resize', updateFade);
+    };
+  }, [open, updateFade]);
+
   if (!open) return null;
+
+  const maxWidthStyle = `min(80vw, ${maxWidth})`;
 
   return (
     <div
       ref={popoverRef}
-      className="absolute right-0 top-full mt-2 z-50 w-full max-w-none rounded-xl border border-border/30 bg-background-card p-4 shadow-lg"
-      style={{ minWidth: 400, maxWidth }}
+      className="absolute right-0 top-full mt-2 z-50 w-auto max-w-none rounded-lg border border-border/30 bg-background-card p-3 shadow-lg overflow-hidden group"
+      style={{ minWidth: 280, maxWidth: maxWidthStyle }}
       role="dialog"
       aria-modal="true"
     >
@@ -59,9 +103,24 @@ function FilterPopover({ open, onClose, onClear, children, footer, maxWidth = '7
           </button>
         </div>
       </div>
-      <div className="mt-3 flex flex-col gap-3">
-        <div className="max-h-[75vh] space-y-3 overflow-y-auto pr-0">{children}</div>
-        {footer && <div className="border-t border-border/20 pt-3">{footer}</div>}
+      <div className="mt-2 flex flex-col gap-2 relative">
+        <div ref={scrollRef} onScroll={updateFade} className="max-h-[75vh] space-y-2 overflow-y-auto pr-0 thin-scrollbar relative">
+          {children}
+        </div>
+
+        {showTopFade ? (
+          <div className="pointer-events-none absolute left-3 right-3 top-3 h-4 rounded-t-md opacity-0 group-hover:opacity-100 transition-opacity duration-150"
+            style={{ background: 'linear-gradient(180deg, rgba(0,0,0,0.12), transparent)' }}
+          />
+        ) : null}
+
+        {showBottomFade ? (
+          <div className="pointer-events-none absolute left-3 right-3 bottom-3 h-4 rounded-b-md opacity-0 group-hover:opacity-100 transition-opacity duration-150"
+            style={{ background: 'linear-gradient(0deg, rgba(0,0,0,0.12), transparent)' }}
+          />
+        ) : null}
+
+        {footer && <div className="border-t border-border/20 pt-2">{footer}</div>}
       </div>
     </div>
   );

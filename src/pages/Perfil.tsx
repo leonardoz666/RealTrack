@@ -458,50 +458,60 @@ export default function Perfil() {
             </div>
 
             <div className="rounded-xl bg-emerald-900/10 p-6 border border-emerald-700/20">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
-                <div>
-                  <div className="flex flex-col">
-                    <div className="flex items-center gap-2">
-                      <div className={cn("h-2.5 w-2.5 rounded-full", profile.telegramId ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" : "bg-emerald-700/30")} />
-                      <span className="text-xs font-bold text-emerald-50 uppercase tracking-widest">{profile.telegramId ? 'Conectado' : 'Desconectado'}</span>
-                    </div>
-                    {profile.telegramUsername && (
-                      <div className="mt-2">
-                        <span className="text-xs font-medium text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full">@{profile.telegramUsername}</span>
-                      </div>
-                    )}
+              <div className="flex items-center justify-between mb-6 pb-6 border-b border-emerald-700/10">
+                <div className="space-y-1">
+                  <p className={labelClass}>Status da Conta</p>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 size={16} className="text-emerald-400" />
+                    <span className="text-lg font-bold text-emerald-300">VERIFICADO</span>
                   </div>
                 </div>
-
-                <div className="text-center">
-                  <p className={labelClass}>Status</p>
-                  <p className="mt-2 text-lg font-bold text-emerald-300">VERIFICADO</p>
-                </div>
-
-                <div className="text-right">
+                <div className="space-y-1 text-right">
                   <p className={labelClass}>Membro Desde</p>
-                  <p className="mt-2 text-lg font-bold text-emerald-50">{formatDateUtil(profile.membroDesde)}</p>
+                  <p className="text-lg font-bold text-emerald-50">{formatDateUtil(profile.membroDesde)}</p>
                 </div>
               </div>
 
-              <div className="mt-4 border-t border-emerald-700/10 pt-4">
-                <p className="text-sm text-emerald-200/70 leading-snug mb-4">
-                  Vincule seu terminal ao Telegram para receber alertas críticos e relatórios diários.
-                </p>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className={cn(
+                      "flex h-10 w-10 items-center justify-center rounded-xl border",
+                      profile.telegramId ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-500" : "bg-emerald-900/20 border-emerald-700/30 text-emerald-700"
+                    )}>
+                      <Bot size={20} />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold text-emerald-50 uppercase tracking-widest">Telegram Bot</span>
+                        <div className={cn("h-1.5 w-1.5 rounded-full", profile.telegramId ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" : "bg-emerald-700/30")} />
+                      </div>
+                      {profile.telegramUsername ? (
+                        <p className="text-sm font-medium text-emerald-400">@{profile.telegramUsername}</p>
+                      ) : (
+                        <p className="text-xs text-emerald-200/40 uppercase tracking-widest font-bold">{profile.telegramId ? 'Conectado' : 'Desconectado'}</p>
+                      )}
+                    </div>
+                  </div>
 
-                <div>
                   <button
                     onClick={profile.telegramId ? handleUnlinkTelegram : handleLinkTelegram}
                     className={cn(
-                      "relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-xl py-3 text-sm font-bold uppercase tracking-widest transition-all duration-300 active:scale-[0.98]",
+                      "px-4 py-2 text-xs font-bold uppercase tracking-widest rounded-lg transition-all duration-300",
                       profile.telegramId
-                        ? "border border-red-500/30 bg-red-500/5 text-red-400 hover:bg-red-500/10"
-                        : "bg-emerald-600 text-white shadow-[0_6px_12px_rgba(16,185,129,0.12)] hover:shadow-[0_0_12px_rgba(16,185,129,0.18)]"
+                        ? "border border-red-500/30 text-red-400 hover:bg-red-500/10"
+                        : "bg-emerald-600 text-white hover:bg-emerald-500 shadow-[0_4px_12px_rgba(16,185,129,0.2)]"
                     )}
                   >
-                    {profile.telegramId ? <><X size={14} /> Desvincular</> : <><Bot size={14} /> Vincular Bot</>}
+                    {profile.telegramId ? 'Desvincular' : 'Vincular'}
                   </button>
                 </div>
+
+                {!profile.telegramId && (
+                  <p className="text-xs text-emerald-200/50 leading-relaxed italic bg-black/20 p-3 rounded-lg border border-emerald-700/10">
+                    Vincule seu terminal ao Telegram para receber alertas críticos e relatórios diários em tempo real.
+                  </p>
+                )}
               </div>
             </div>
           </div>

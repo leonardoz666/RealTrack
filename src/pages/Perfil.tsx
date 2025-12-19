@@ -435,7 +435,7 @@ export default function Perfil() {
         </section>
 
         {/* Segurança & Status */}
-        <section className={cn(cardBaseClass, 'lg:col-span-2 min-h-[280px]')}>
+        <section className={cn(cardBaseClass, 'min-h-[280px]')}>
           <div className="mb-6 flex items-center gap-4">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500">
               <ShieldCheck size={20} />
@@ -519,7 +519,7 @@ export default function Perfil() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="flex flex-col gap-6">
             <div className="rounded-2xl bg-red-500/5 border border-red-500/20 p-6">
               <div className="flex items-start gap-4">
                 <div className="flex h-10 w-10 items-center justify-center rounded-md bg-red-500/10 text-red-400">

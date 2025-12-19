@@ -508,7 +508,7 @@ export default function Perfil() {
         </section>
 
         {/* Zona de Risco */}
-        <section className={cn(cardBaseClass, 'border-red-500/10 lg:col-span-2')}>
+        <section className={cn(cardBaseClass, 'border-red-500/10')}>
           <div className="mb-8 flex items-center gap-4">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-500/10 text-red-500">
               <Trash2 size={20} />

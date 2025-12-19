@@ -507,11 +507,9 @@ export default function Perfil() {
                   </button>
                 </div>
 
-                {!profile.telegramId && (
-                  <p className="text-xs text-emerald-200/50 leading-relaxed italic bg-black/20 p-3 rounded-lg border border-emerald-700/10">
-                    Vincule seu terminal ao Telegram para receber alertas críticos e relatórios diários em tempo real.
-                  </p>
-                )}
+                <p className="text-xs text-emerald-200/50 leading-relaxed italic bg-black/20 p-3 rounded-lg border border-emerald-700/10">
+                  Vincule seu terminal ao Telegram para receber alertas críticos e relatórios diários em tempo real.
+                </p>
               </div>
             </div>
           </div>

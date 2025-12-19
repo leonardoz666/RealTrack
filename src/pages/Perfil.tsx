@@ -32,14 +32,14 @@ import { cn } from '../components/ui/utils';
 import { toast } from '../utils/toast';
 
 const cardBaseClass =
-  'relative overflow-hidden rounded-[32px] border border-white/5 bg-[#020c14]/60 p-8 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.3)] transition-all duration-300';
-const labelClass = 'text-[0.65rem] font-bold uppercase tracking-[0.3em] text-emerald-500/80';
+  'relative overflow-hidden rounded-[32px] border border-emerald-700/20 bg-gradient-to-br from-emerald-900/40 to-emerald-800/20 p-12 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.3)] transition-all duration-300';
+const labelClass = 'text-[0.75rem] font-bold uppercase tracking-[0.25em] text-emerald-400';
 const inputClass =
-  'w-full rounded-2xl border border-white/10 bg-white/5 px-5 py-3.5 text-sm font-medium text-white placeholder:text-white/20 backdrop-blur-md transition-all duration-300 focus:border-emerald-500/50 focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:bg-white/10';
+  'w-full rounded-2xl border border-emerald-700/20 bg-emerald-900/10 px-5 py-3.5 text-sm font-medium text-emerald-100 placeholder:text-emerald-300/60 backdrop-blur-md transition-all duration-300 focus:border-emerald-500/50 focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:bg-emerald-900/20';
 const primaryButtonClass =
-  'relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-2xl bg-emerald-600 py-3.5 text-sm font-bold uppercase tracking-widest text-white shadow-[0_10px_20px_rgba(5,150,105,0.3)] transition-all duration-300 hover:bg-emerald-500 hover:shadow-[0_0_25px_rgba(16,185,129,0.4)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50';
+  'relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-2xl bg-emerald-600 py-4 text-sm font-bold uppercase tracking-widest text-white shadow-[0_10px_20px_rgba(5,150,105,0.3)] transition-all duration-300 hover:bg-emerald-500 hover:shadow-[0_0_25px_rgba(16,185,129,0.4)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50';
 const neutralButtonClass =
-  'inline-flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-5 py-2.5 text-xs font-bold uppercase tracking-widest text-white/70 transition hover:border-emerald-500/50 hover:bg-white/10 hover:text-emerald-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/30';
+  'inline-flex items-center justify-center gap-2 rounded-2xl border border-emerald-700/20 bg-emerald-900/10 px-5 py-2.5 text-xs font-bold uppercase tracking-widest text-emerald-100 transition hover:border-emerald-500/50 hover:bg-emerald-900/20 hover:text-emerald-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/30';
 const dangerButtonClass =
   'inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-red-500/30 bg-red-500/10 px-5 py-3.5 text-sm font-bold uppercase tracking-widest text-red-200 transition hover:bg-red-500/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400/40';
 
@@ -256,7 +256,7 @@ export default function Perfil() {
   const promoActive = profile.promoExpiresAt ? new Date(profile.promoExpiresAt).getTime() > Date.now() : false;
 
   return (
-    <div className="mx-auto max-w-7xl space-y-10 pb-20">
+    <div className="w-full space-y-10 pb-8">
       <PageHeader 
         title="Meu Perfil" 
         subtitle="Configurações de conta e acesso ao terminal de alta performance"
@@ -275,7 +275,7 @@ export default function Perfil() {
         
         <div className="relative z-10 flex flex-col gap-10 lg:flex-row lg:items-center">
           <div className="flex flex-1 items-center gap-6">
-            <div className={cn("flex h-20 w-20 items-center justify-center rounded-[24px] bg-white/5 border border-white/10 shadow-2xl", planVisual.colorClass)}>
+            <div className={cn("flex h-20 w-20 items-center justify-center rounded-[24px] bg-emerald-900/10 border border-emerald-700/20 shadow-2xl", planVisual.colorClass)}>
               <PlanIcon size={32} />
             </div>
             <div>
@@ -288,7 +288,7 @@ export default function Perfil() {
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-8 lg:border-l lg:border-white/5 lg:pl-10">
+          <div className="flex flex-wrap gap-8 lg:border-l lg:border-emerald-700/10 lg:pl-10">
             <div className="space-y-1">
               <p className={labelClass}>Limite Diário</p>
               <p className="text-xl font-bold text-white tabular-nums">
@@ -315,7 +315,7 @@ export default function Perfil() {
         </div>
       </section>
 
-      <div className="grid gap-8 lg:grid-cols-2">
+      <div className="grid gap-12 lg:grid-cols-2 items-stretch">
         {/* Informações Pessoais */}
         <section className={cardBaseClass}>
           <div className="mb-6 flex items-center gap-4">
@@ -323,8 +323,8 @@ export default function Perfil() {
               <User size={20} />
             </div>
             <div>
-              <h3 className="text-base font-bold text-white">Informações Pessoais</h3>
-              <p className="text-[10px] font-medium text-white/30 uppercase tracking-widest">Identidade no Terminal</p>
+              <h3 className="text-lg font-bold text-emerald-50">Informações Pessoais</h3>
+              <p className="text-sm font-medium text-emerald-200/60 uppercase tracking-widest">Identidade no Terminal</p>
             </div>
           </div>
 
@@ -332,7 +332,7 @@ export default function Perfil() {
             <div className="flex items-center gap-6">
               <div className="group relative h-16 w-16 shrink-0">
                 <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-emerald-500/40 to-teal-500/40 blur-md opacity-0 transition group-hover:opacity-100" />
-                <div className="relative h-full w-full overflow-hidden rounded-full border-2 border-white/10 bg-white/5">
+                <div className="relative h-full w-full overflow-hidden rounded-full border-2 border-emerald-700/20 bg-emerald-900/10">
                   {fotoPreview ? (
                     <img src={fotoPreview} alt="Perfil" className="h-full w-full object-cover" />
                   ) : (
@@ -385,47 +385,6 @@ export default function Perfil() {
           </form>
         </section>
 
-        {/* Segurança & Status */}
-        <section className={cardBaseClass}>
-          <div className="mb-6 flex items-center gap-4">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500">
-              <ShieldCheck size={20} />
-            </div>
-            <div>
-              <h3 className="text-base font-bold text-white">Segurança & Status</h3>
-              <p className="text-[10px] font-medium text-white/30 uppercase tracking-widest">Proteção e Rastreabilidade</p>
-            </div>
-          </div>
-
-          <div className="space-y-3">
-            <div className="rounded-xl bg-white/5 p-3 border border-white/5">
-              <p className={labelClass}>ID Operacional</p>
-              <div className="mt-1.5 flex items-center gap-2">
-                <code className="flex-1 text-[10px] font-mono text-emerald-400/80 bg-black/40 px-2 py-1.5 rounded-lg truncate">{profile.id}</code>
-                <button onClick={() => copyToClipboard(profile.id)} className={cn(neutralButtonClass, "p-1.5 min-h-0")}>
-                  <Copy size={12} />
-                </button>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <div className="rounded-xl bg-white/5 p-3 border border-white/5">
-                <p className={labelClass}>Membro Desde</p>
-                <p className="mt-0.5 text-xs font-bold text-white">{formatDateUtil(profile.membroDesde)}</p>
-              </div>
-              <div className="rounded-xl bg-white/5 p-3 border border-white/5">
-                <p className={labelClass}>Status</p>
-                <p className="mt-0.5 text-xs font-bold text-emerald-500">VERIFICADO</p>
-              </div>
-            </div>
-
-            <button onClick={handleOpenSupport} className={cn(primaryButtonClass, "mt-1 bg-white/5 border border-white/10 hover:bg-white/10 text-white shadow-none py-2.5")}>
-              <MessageCircle size={16} />
-              <span className="text-xs">Chamar Suporte</span>
-            </button>
-          </div>
-        </section>
-
         {/* Alterar Chave de Acesso */}
         <section className={cardBaseClass}>
           <div className="mb-6 flex items-center gap-4">
@@ -433,8 +392,8 @@ export default function Perfil() {
               <Lock size={20} />
             </div>
             <div>
-              <h3 className="text-base font-bold text-white">Chave de Acesso</h3>
-              <p className="text-[10px] font-medium text-white/30 uppercase tracking-widest">Criptografia do Terminal</p>
+              <h3 className="text-lg font-bold text-emerald-50">Chave de Acesso</h3>
+              <p className="text-sm font-medium text-emerald-200/60 uppercase tracking-widest">Criptografia do Terminal</p>
             </div>
           </div>
 
@@ -475,75 +434,127 @@ export default function Perfil() {
           </form>
         </section>
 
-        {/* Integração Telegram */}
-        <section className={cardBaseClass}>
+        {/* Segurança & Status */}
+        <section className={cn(cardBaseClass, 'min-h-[280px]')}>
           <div className="mb-6 flex items-center gap-4">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500">
-              <Bot size={20} />
+              <ShieldCheck size={20} />
             </div>
             <div>
-              <h3 className="text-base font-bold text-white">Bot Telegram</h3>
-              <p className="text-[10px] font-medium text-white/30 uppercase tracking-widest">Sincronização em Tempo Real</p>
+              <h3 className="text-lg font-bold text-emerald-50">Segurança & Status</h3>
+              <p className="text-sm font-medium text-emerald-200/60 uppercase tracking-widest">Proteção e Rastreabilidade</p>
             </div>
           </div>
 
-          <div className="space-y-4">
-            <div className="rounded-xl bg-[#010a0f] p-4 border border-white/5">
-              <div className="flex items-center justify-between mb-2.5">
-                <div className="flex items-center gap-2">
-                  <div className={cn("h-2 w-2 rounded-full", profile.telegramId ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" : "bg-white/20")} />
-                  <span className="text-[10px] font-bold text-white uppercase tracking-widest">{profile.telegramId ? 'Conectado' : 'Desconectado'}</span>
-                </div>
-                {profile.telegramUsername && (
-                  <span className="text-[9px] font-medium text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full">@{profile.telegramUsername}</span>
-                )}
+          <div className="space-y-6">
+            <div className="rounded-xl bg-emerald-900/10 p-5 border border-emerald-700/20">
+              <p className={labelClass}>ID Operacional</p>
+              <div className="mt-1.5 flex items-center gap-2">
+                <code className="flex-1 text-sm font-mono text-emerald-400/80 bg-black/40 px-3 py-2 rounded-lg truncate">{profile.id}</code>
+                <button onClick={() => copyToClipboard(profile.id)} className={cn(neutralButtonClass, "p-1.5 min-h-0")}>
+                  <Copy size={12} />
+                </button>
               </div>
-              <p className="text-[11px] text-white/40 leading-relaxed">
-                Vincule seu terminal ao Telegram para receber alertas críticos e relatórios diários.
-              </p>
             </div>
 
-            <button
-              onClick={profile.telegramId ? handleUnlinkTelegram : handleLinkTelegram}
-              className={cn(
-                "relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-xl py-2.5 text-[11px] font-bold uppercase tracking-widest transition-all duration-300 active:scale-[0.98]",
-                profile.telegramId
-                  ? "border border-red-500/30 bg-red-500/5 text-red-400 hover:bg-red-500/10"
-                  : "bg-[#229ED9] text-white shadow-[0_8px_15px_rgba(34,158,217,0.2)] hover:shadow-[0_0_20px_rgba(34,158,217,0.3)]"
-              )}
-            >
-              {profile.telegramId ? <><X size={16} /> Desvincular</> : <><Bot size={16} /> Vincular Bot</>}
-            </button>
+            <div className="rounded-xl bg-emerald-900/10 p-6 border border-emerald-700/20">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+                <div>
+                  <div className="flex flex-col">
+                    <div className="flex items-center gap-2">
+                      <div className={cn("h-2.5 w-2.5 rounded-full", profile.telegramId ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" : "bg-emerald-700/30")} />
+                      <span className="text-xs font-bold text-emerald-50 uppercase tracking-widest">{profile.telegramId ? 'Conectado' : 'Desconectado'}</span>
+                    </div>
+                    {profile.telegramUsername && (
+                      <div className="mt-2">
+                        <span className="text-xs font-medium text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full">@{profile.telegramUsername}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="text-center">
+                  <p className={labelClass}>Status</p>
+                  <p className="mt-2 text-lg font-bold text-emerald-300">VERIFICADO</p>
+                </div>
+
+                <div className="text-right">
+                  <p className={labelClass}>Membro Desde</p>
+                  <p className="mt-2 text-lg font-bold text-emerald-50">{formatDateUtil(profile.membroDesde)}</p>
+                </div>
+              </div>
+
+              <div className="mt-4 border-t border-emerald-700/10 pt-4">
+                <p className="text-sm text-emerald-200/70 leading-snug mb-4">
+                  Vincule seu terminal ao Telegram para receber alertas críticos e relatórios diários.
+                </p>
+
+                <div>
+                  <button
+                    onClick={profile.telegramId ? handleUnlinkTelegram : handleLinkTelegram}
+                    className={cn(
+                      "relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-xl py-3 text-sm font-bold uppercase tracking-widest transition-all duration-300 active:scale-[0.98]",
+                      profile.telegramId
+                        ? "border border-red-500/30 bg-red-500/5 text-red-400 hover:bg-red-500/10"
+                        : "bg-emerald-600 text-white shadow-[0_6px_12px_rgba(16,185,129,0.12)] hover:shadow-[0_0_12px_rgba(16,185,129,0.18)]"
+                    )}
+                  >
+                    {profile.telegramId ? <><X size={14} /> Desvincular</> : <><Bot size={14} /> Vincular Bot</>}
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
+
+        {/* Zona de Risco - colocada ao lado de Segurança & Status */}
+        <section className={cn(cardBaseClass, 'border-red-500/10 min-h-[280px]')}>
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            <div className="flex items-center gap-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-500/10 text-red-500">
+                <Trash2 size={20} />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-emerald-50">Zona de Risco</h3>
+                <p className="text-sm font-medium text-emerald-200/60 uppercase tracking-widest">Limpeza Profunda de Dados</p>
+              </div>
+            </div>
+
+            <div className="flex-1 space-y-4 lg:pl-6">
+              <div className="w-full rounded-2xl bg-red-500/5 border border-red-500/20 p-6">
+                <div className="flex items-start gap-4">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-md bg-red-500/10 text-red-400">
+                    <Trash2 size={18} />
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="text-sm font-bold text-emerald-50">Excluir Todos os Dados</h4>
+                    <p className="mt-1 text-xs text-red-200/70">Remove permanentemente todos os seus dados históricos, apostas e configurações.</p>
+                  </div>
+                </div>
+                <div className="mt-4 -mx-6 px-6">
+                  <button onClick={() => setResetModalOpen(true)} className={cn(dangerButtonClass, 'w-full rounded-full px-6 py-3')}>Excluir Dados</button>
+                </div>
+              </div>
+
+              <div className="w-full rounded-2xl bg-red-500/5 border border-red-500/20 p-6">
+                <div className="flex items-start gap-4">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-md bg-red-500/10 text-red-400">
+                    <RefreshCw size={18} />
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="text-sm font-bold text-emerald-50">Resetar Terminal</h4>
+                    <p className="mt-1 text-xs text-red-200/70">Restaura todas as configurações para os valores padrão de fábrica.</p>
+                  </div>
+                </div>
+                <div className="mt-4 -mx-6 px-6">
+                  <button onClick={() => setResetModalOpen(true)} className={cn(dangerButtonClass, 'w-full rounded-full px-6 py-3')}>Resetar Sistema</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
       </div>
-
-      {/* Zona de Risco - Full Width */}
-      <section className={cn(cardBaseClass, "border-red-500/10 w-full py-6 px-8")}>
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-          <div className="flex items-center gap-4">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-500/10 text-red-500">
-              <Trash2 size={20} />
-            </div>
-            <div>
-              <h3 className="text-base font-bold text-white">Zona de Risco</h3>
-              <p className="text-[10px] font-medium text-white/30 uppercase tracking-widest">Limpeza Profunda de Dados</p>
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-center flex-1 lg:justify-end">
-            <div className="flex items-center gap-3 rounded-xl border border-red-500/20 bg-red-500/5 px-4 py-2.5">
-              <div className="h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse" />
-              <p className="text-[9px] font-bold uppercase tracking-wider text-red-400/70">Protocolo de segurança: Dados irreversíveis</p>
-            </div>
-
-            <button onClick={() => setResetModalOpen(true)} className={cn(dangerButtonClass, "lg:w-auto px-6 py-2.5 text-xs")}>
-              <Trash2 size={16} />
-              Resetar Terminal
-            </button>
-          </div>
-        </div>
-      </section>
 
       {/* Modals */}
       <Modal isOpen={promoModalOpen} onClose={() => setPromoModalOpen(false)} title="Ativar Terminal Premium" size="sm">

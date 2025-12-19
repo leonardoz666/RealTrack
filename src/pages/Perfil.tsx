@@ -435,7 +435,7 @@ export default function Perfil() {
         </section>
 
         {/* Segurança & Status */}
-        <section className={cn(cardBaseClass, 'min-h-[280px]')}>
+        <section className={cn(cardBaseClass, 'lg:col-span-2 min-h-[280px]')}>
           <div className="mb-6 flex items-center gap-4">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500">
               <ShieldCheck size={20} />
@@ -507,48 +507,46 @@ export default function Perfil() {
           </div>
         </section>
 
-        {/* Zona de Risco - colocada ao lado de Segurança & Status */}
-        <section className={cn(cardBaseClass, 'border-red-500/10 min-h-[280px]')}>
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-            <div className="flex items-center gap-4">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-500/10 text-red-500">
-                <Trash2 size={20} />
+        {/* Zona de Risco */}
+        <section className={cn(cardBaseClass, 'border-red-500/10 lg:col-span-2')}>
+          <div className="mb-8 flex items-center gap-4">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-500/10 text-red-500">
+              <Trash2 size={20} />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-emerald-50">Zona de Risco</h3>
+              <p className="text-sm font-medium text-emerald-200/60 uppercase tracking-widest">Limpeza Profunda de Dados</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="rounded-2xl bg-red-500/5 border border-red-500/20 p-6">
+              <div className="flex items-start gap-4">
+                <div className="flex h-10 w-10 items-center justify-center rounded-md bg-red-500/10 text-red-400">
+                  <Trash2 size={18} />
+                </div>
+                <div className="flex-1">
+                  <h4 className="text-sm font-bold text-emerald-50">Excluir Todos os Dados</h4>
+                  <p className="mt-1 text-xs text-red-200/70">Remove permanentemente todos os seus dados históricos, apostas e configurações.</p>
+                </div>
               </div>
-              <div>
-                <h3 className="text-lg font-bold text-emerald-50">Zona de Risco</h3>
-                <p className="text-sm font-medium text-emerald-200/60 uppercase tracking-widest">Limpeza Profunda de Dados</p>
+              <div className="mt-6">
+                <button onClick={() => setResetModalOpen(true)} className={cn(dangerButtonClass, 'w-full rounded-full py-3')}>Excluir Dados</button>
               </div>
             </div>
 
-            <div className="flex-1 space-y-4 lg:pl-6">
-              <div className="w-full rounded-2xl bg-red-500/5 border border-red-500/20 p-6">
-                <div className="flex items-start gap-4">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-md bg-red-500/10 text-red-400">
-                    <Trash2 size={18} />
-                  </div>
-                  <div className="flex-1">
-                    <h4 className="text-sm font-bold text-emerald-50">Excluir Todos os Dados</h4>
-                    <p className="mt-1 text-xs text-red-200/70">Remove permanentemente todos os seus dados históricos, apostas e configurações.</p>
-                  </div>
+            <div className="rounded-2xl bg-red-500/5 border border-red-500/20 p-6">
+              <div className="flex items-start gap-4">
+                <div className="flex h-10 w-10 items-center justify-center rounded-md bg-red-500/10 text-red-400">
+                  <RefreshCw size={18} />
                 </div>
-                <div className="mt-4 -mx-6 px-6">
-                  <button onClick={() => setResetModalOpen(true)} className={cn(dangerButtonClass, 'w-full rounded-full px-6 py-3')}>Excluir Dados</button>
+                <div className="flex-1">
+                  <h4 className="text-sm font-bold text-emerald-50">Resetar Terminal</h4>
+                  <p className="mt-1 text-xs text-red-200/70">Restaura todas as configurações para os valores padrão de fábrica.</p>
                 </div>
               </div>
-
-              <div className="w-full rounded-2xl bg-red-500/5 border border-red-500/20 p-6">
-                <div className="flex items-start gap-4">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-md bg-red-500/10 text-red-400">
-                    <RefreshCw size={18} />
-                  </div>
-                  <div className="flex-1">
-                    <h4 className="text-sm font-bold text-emerald-50">Resetar Terminal</h4>
-                    <p className="mt-1 text-xs text-red-200/70">Restaura todas as configurações para os valores padrão de fábrica.</p>
-                  </div>
-                </div>
-                <div className="mt-4 -mx-6 px-6">
-                  <button onClick={() => setResetModalOpen(true)} className={cn(dangerButtonClass, 'w-full rounded-full px-6 py-3')}>Resetar Sistema</button>
-                </div>
+              <div className="mt-6">
+                <button onClick={() => setResetModalOpen(true)} className={cn(dangerButtonClass, 'w-full rounded-full py-3')}>Resetar Sistema</button>
               </div>
             </div>
           </div>

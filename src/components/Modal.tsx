@@ -5,7 +5,8 @@ import { cn } from './ui/utils';
 
 const SIZE_MAP = {
   sm: 'max-w-md',
-  form: 'max-w-xl',
+  // Modal 'form' padrão maior para acomodar formulários largos
+  form: 'max-w-4xl',
   md: 'max-w-2xl',
   lg: 'max-w-3xl',
   xl: 'max-w-5xl',
@@ -19,7 +20,12 @@ interface ModalProps {
   size?: keyof typeof SIZE_MAP;
 }
 
-export default function Modal({ isOpen, title, onClose, children, size = 'md' }: ModalProps) {
+interface ModalPropsExtended extends ModalProps {
+  subtitle?: string;
+  icon?: ReactNode;
+}
+
+export default function Modal({ isOpen, title, onClose, children, size = 'md', subtitle, icon }: ModalPropsExtended) {
   const titleId = useId();
   useEffect(() => {
     if (!isOpen) return;
@@ -45,7 +51,7 @@ export default function Modal({ isOpen, title, onClose, children, size = 'md' }:
 
   return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm animate-fade"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-md animate-fade"
       onClick={onClose}
     >
       <div
@@ -53,25 +59,36 @@ export default function Modal({ isOpen, title, onClose, children, size = 'md' }:
         aria-modal="true"
         aria-labelledby={titleId}
         className={cn(
-          'relative w-full rounded-3xl border border-border/30 bg-background-card/95 p-6 shadow-glass backdrop-blur-3xl animate-slide-up',
+          'relative w-full rounded-[2.5rem] border border-white/5 bg-[#0a0a0a]/95 px-6 pt-6 pb-4 shadow-[0_32px_64px_-12px_rgba(0,0,0,0.8)] backdrop-blur-3xl animate-slide-up overflow-hidden',
           SIZE_MAP[size]
         )}
         onClick={(event) => event.stopPropagation()}
       >
-        <header id={titleId} className="flex items-start justify-between gap-4 border-b border-border/20 pb-4">
-          <div>
-            <h3 className="text-xl font-semibold text-foreground">{title}</h3>
+        {/* Glow effect in background */}
+        <div className="absolute -top-24 -left-24 h-48 w-48 rounded-full bg-brand-emerald/10 blur-[100px]" />
+
+        <header id={titleId} className="relative flex items-center justify-between gap-4 pb-6">
+          <div className="flex items-center gap-4">
+            {icon && (
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-emerald shadow-[0_0_20px_rgba(16,185,129,0.3)]">
+                {icon}
+              </div>
+            )}
+            <div>
+              <h3 className="text-2xl font-bold tracking-tight text-white">{title}</h3>
+              {subtitle && <p className="mt-0.5 text-sm font-medium text-brand-emerald/80">{subtitle}</p>}
+            </div>
           </div>
           <button
             type="button"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-border/40 bg-background text-foreground transition hocus:border-brand-emerald/50 hocus:text-brand-emerald"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/5 text-white/40 transition hover:bg-white/10 hover:text-white"
             onClick={onClose}
             aria-label="Fechar modal"
           >
             <X size={20} />
           </button>
         </header>
-        <div className="mt-4 space-y-4 text-foreground">{children}</div>
+        <div className="relative text-foreground">{children}</div>
       </div>
     </div>,
     document.body

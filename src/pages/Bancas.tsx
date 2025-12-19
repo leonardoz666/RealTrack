@@ -1,10 +1,14 @@
-import { AlertTriangle, Copy, Eye, LineChart, Loader2, Pencil, Share2, Trash2 } from 'lucide-react';
+import { AlertTriangle, Check, Copy, Eye, LineChart, Loader2, Pencil, Plus, Share2, Trash2, User, X } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { FixedSizeList as List, type ListChildComponentProps } from 'react-window';
 import { useBancas } from '../hooks/useBancas';
-import { apiClient, bancaService, type Banca, type BancaStats } from '../services/api';
+import { useTipsters } from '../hooks/useTipsters';
+import { usePagination } from '../hooks/usePagination';
+import { apiClient, bancaService, tipsterService, type Banca, type BancaStats, type Tipster } from '../services/api';
 import { formatNumber } from '../utils/formatters';
 import { eventBus } from '../utils/eventBus';
 import { cn } from '../components/ui/utils';
+import { toast } from '../utils/toast';
 
 interface EditFormState {
   nome: string;
@@ -44,9 +48,16 @@ const summaryCardBaseClass =
   'rounded-lg border border-white/5 bg-[#10322e] p-6 text-white shadow-[0_25px_45px_rgba(0,0,0,0.25)] backdrop-blur-sm';
 const modalCardClass = 'rounded-2xl border border-border/30 bg-background px-5 py-5';
 const cardLabelClass = 'text-2xs uppercase tracking-[0.3em] text-foreground-muted';
+const primaryButtonClass =
+  'inline-flex items-center justify-center gap-2 rounded-2xl border border-brand-emerald/40 bg-brand-emerald/10 px-5 py-2.5 text-sm font-semibold text-brand-emerald transition hocus:bg-brand-emerald/20';
+const ghostButtonClass =
+  'inline-flex items-center justify-center gap-2 rounded-2xl border border-transparent px-4 py-2 text-sm font-semibold text-foreground transition hocus:border-border/60 hocus:text-brand-emerald';
 
 export default function Bancas() {
-  const { bancas: remoteBancas, loading, error, invalidateCache } = useBancas();
+  const [activeTab, setActiveTab] = useState<'bancas' | 'tipsters'>('bancas');
+  const { bancas: remoteBancas, loading: bancasLoading, error: bancasError, invalidateCache: invalidateBancasCache } = useBancas();
+  const { tipsters, loading: tipstersLoading, invalidateCache: invalidateTipstersCache } = useTipsters();
+
   const [bancas, setBancas] = useState<Banca[]>(remoteBancas);
   const [selectedBanco, setSelectedBanco] = useState<Banca | null>(null);
   const [statsOverride, setStatsOverride] = useState<BancaStats | null>(null);
@@ -60,6 +71,15 @@ export default function Bancas() {
     loading: false,
   });
 
+  // Tipsters state
+  const [tipsterModalOpen, setTipsterModalOpen] = useState(false);
+  const [editingTipster, setEditingTipster] = useState<Tipster | null>(null);
+  const [tipsterFormData, setTipsterFormData] = useState({ nome: '' });
+  const [tipsterSaving, setTipsterSaving] = useState(false);
+  const [tipsterError, setTipsterError] = useState('');
+
+  const { paginatedItems: paginatedTipsters, page, totalPages, setPage } = usePagination(tipsters, 10);
+
   useEffect(() => {
     // Ordena: banca principal (padrao: true) sempre no topo
     const ordered = [...remoteBancas].sort((a, b) => {
@@ -70,8 +90,8 @@ export default function Bancas() {
   }, [remoteBancas]);
 
   const refreshFromEvent = useCallback(() => {
-    invalidateCache();
-  }, [invalidateCache]);
+    invalidateBancasCache();
+  }, [invalidateBancasCache]);
 
   useEffect(() => {
     const unsubscribes = [
@@ -177,10 +197,10 @@ export default function Bancas() {
 
     try {
       await bancaService.update(banca.id, { ePadrao: newValue });
-      invalidateCache();
+      invalidateBancasCache();
     } catch (err) {
       console.error('Não foi possível atualizar o status padrão da banca.', err);
-      invalidateCache();
+      invalidateBancasCache();
     }
   };
 
@@ -192,10 +212,10 @@ export default function Bancas() {
 
     try {
       await bancaService.update(banca.id, { status: nextStatus });
-      invalidateCache();
+      invalidateBancasCache();
     } catch (err) {
       console.error('Não foi possível atualizar o status da banca.', err);
-      invalidateCache();
+      invalidateBancasCache();
     }
   };
 
@@ -223,7 +243,7 @@ export default function Bancas() {
       });
       setEditBanco(null);
       setStatsOverride(null);
-      invalidateCache();
+      invalidateBancasCache();
     } catch (err) {
       console.error('Não foi possível salvar a banca.', err);
     } finally {
@@ -238,118 +258,319 @@ export default function Bancas() {
     try {
       await bancaService.delete(confirmDelete.banca.id);
       setConfirmDelete({ open: false, banca: null, loading: false });
-      invalidateCache();
+      invalidateBancasCache();
     } catch (err) {
       console.error('Não foi possível excluir a banca.', err);
       setConfirmDelete((prev) => ({ ...prev, loading: false }));
     }
   };
 
+  // Tipsters Handlers
+  const handleOpenTipsterModal = useCallback((tipster?: Tipster) => {
+    if (tipster) {
+      setEditingTipster(tipster);
+      setTipsterFormData({ nome: tipster.nome });
+    } else {
+      setEditingTipster(null);
+      setTipsterFormData({ nome: '' });
+    }
+    setTipsterError('');
+    setTipsterModalOpen(true);
+  }, []);
+
+  const handleCloseTipsterModal = useCallback(() => {
+    setTipsterModalOpen(false);
+    setEditingTipster(null);
+    setTipsterFormData({ nome: '' });
+    setTipsterError('');
+  }, []);
+
+  const handleTipsterSubmit = useCallback(async (event: React.FormEvent) => {
+    event.preventDefault();
+    const nome = tipsterFormData.nome.trim();
+    if (!nome) {
+      setTipsterError('Informe o nome do tipster.');
+      return;
+    }
+
+    setTipsterSaving(true);
+    setTipsterError('');
+
+    try {
+      if (editingTipster) {
+        await tipsterService.update(editingTipster.id, { nome });
+      } else {
+        await tipsterService.create({ nome });
+      }
+      invalidateTipstersCache();
+      handleCloseTipsterModal();
+    } catch (err: any) {
+      const errorMessage = err.response?.data?.error;
+      setTipsterError(typeof errorMessage === 'string' ? errorMessage : 'Erro ao salvar tipster');
+    } finally {
+      setTipsterSaving(false);
+    }
+  }, [editingTipster, tipsterFormData.nome, handleCloseTipsterModal, invalidateTipstersCache]);
+
+  const handleToggleTipsterActive = useCallback(async (tipster: Tipster) => {
+    try {
+      await tipsterService.toggleAtivo(tipster.id, tipster.ativo);
+      invalidateTipstersCache();
+    } catch (err: any) {
+      const errorMessage = err.response?.data?.error;
+      toast.error(typeof errorMessage === 'string' ? errorMessage : 'Erro ao atualizar tipster');
+    }
+  }, [invalidateTipstersCache]);
+
+  const handleDeleteTipster = useCallback(async (tipster: Tipster) => {
+    if (!window.confirm(`Tem certeza que deseja deletar o tipster "${tipster.nome}"?`)) {
+      return;
+    }
+
+    try {
+      await tipsterService.remove(tipster.id);
+      invalidateTipstersCache();
+    } catch (err: any) {
+      const errorMessage = err.response?.data?.error;
+      toast.error(typeof errorMessage === 'string' ? errorMessage : 'Erro ao deletar tipster');
+    }
+  }, [invalidateTipstersCache]);
+
+  const Row = useCallback(({ index, style }: ListChildComponentProps) => {
+    const tipster = paginatedTipsters[index];
+    if (!tipster) return null;
+    return (
+      <div style={style} className="pr-2">
+        <TipsterCard
+          tipster={tipster}
+          onEdit={() => handleOpenTipsterModal(tipster)}
+          onDelete={() => handleDeleteTipster(tipster)}
+          onToggleActive={() => handleToggleTipsterActive(tipster)}
+        />
+      </div>
+    );
+  }, [paginatedTipsters, handleDeleteTipster, handleOpenTipsterModal, handleToggleTipsterActive]);
+
   return (
     <div className="space-y-6 text-foreground">
-      <div className="mb-4">
-        <h1 className="text-2xl font-semibold">Bancas</h1>
-        <p className="text-sm text-foreground-muted">Gerencie todas as suas bancas cadastradas.</p>
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-semibold">Bancas</h1>
+          <p className="text-sm text-foreground-muted">Gerencie suas bancas e tipsters.</p>
+        </div>
+        {activeTab === 'tipsters' && (
+          <button
+            onClick={() => handleOpenTipsterModal()}
+            className={primaryButtonClass}
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            Novo Tipster
+          </button>
+        )}
       </div>
 
-      {error && (
-        <div className={cn(sectionCardClass, 'border-rose-500/30 bg-rose-500/5 text-sm text-rose-200')}>
-          {error.message}
-        </div>
+      {/* Selector de Abas */}
+      <div className="flex border-b border-white/10">
+        <button
+          onClick={() => setActiveTab('bancas')}
+          className={cn(
+            'px-6 py-3 text-sm font-medium transition-colors relative',
+            activeTab === 'bancas' ? 'text-brand-emerald' : 'text-foreground-muted hover:text-foreground'
+          )}
+        >
+          Minhas Bancas
+          {activeTab === 'bancas' && (
+            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-emerald" />
+          )}
+        </button>
+        <button
+          onClick={() => setActiveTab('tipsters')}
+          className={cn(
+            'px-6 py-3 text-sm font-medium transition-colors relative',
+            activeTab === 'tipsters' ? 'text-brand-emerald' : 'text-foreground-muted hover:text-foreground'
+          )}
+        >
+          Tipsters
+          {activeTab === 'tipsters' && (
+            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-emerald" />
+          )}
+        </button>
+      </div>
+
+      {activeTab === 'bancas' ? (
+        <>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {summaryCards.map((card, idx) => (
+              <div key={idx} className={summaryCardBaseClass}>
+                <div className="flex items-center justify-between gap-4">
+                  <p className="text-xs uppercase tracking-[0.2em] text-white/50">{card.title}</p>
+                  <div className="text-brand-emerald">{card.icon}</div>
+                </div>
+                <p className="mt-4 text-3xl font-bold text-white">{card.value}</p>
+                <p className="mt-1 text-xs text-white/40">{card.helper}</p>
+              </div>
+            ))}
+          </div>
+
+          {bancasError && (
+            <div className={cn(sectionCardClass, 'border-rose-500/30 bg-rose-500/5 text-sm text-rose-200')}>
+              {bancasError.message}
+            </div>
+          )}
+
+          <section className={cn(dashboardCardShellClass, 'space-y-6')}>
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <p className={cn(cardLabelClass, 'text-white/70')}>Bancas compartilhadas</p>
+                <h2 className="text-2xl font-semibold text-white">Lista completa</h2>
+              </div>
+              <p className="text-sm text-white/70">Gerencie o status, padrão e links públicos.</p>
+            </div>
+
+            {bancasLoading ? (
+              <div className="flex h-48 items-center justify-center text-white/70">
+                <Loader2 className="h-6 w-6 animate-spin" />
+              </div>
+            ) : bancas.length === 0 ? (
+              <div className="rounded-2xl border border-dashed border-white/15 px-6 py-12 text-center text-sm text-white/70">
+                Nenhuma banca cadastrada ainda.
+              </div>
+            ) : (
+              <div className="overflow-x-auto rounded-2xl border border-white/10">
+                <table className="min-w-full divide-y divide-white/10 text-sm">
+                  <thead className="bg-white/5 text-white/70">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-2xs font-semibold uppercase tracking-[0.3em]">Banca</th>
+                      <th className="px-4 py-3 text-left text-2xs font-semibold uppercase tracking-[0.3em]">Descrição</th>
+                      <th className="px-4 py-3 text-left text-2xs font-semibold uppercase tracking-[0.3em]">Status</th>
+                      <th className="px-4 py-3 text-left text-2xs font-semibold uppercase tracking-[0.3em]">Padrão</th>
+                      <th className="px-4 py-3 text-left text-2xs font-semibold uppercase tracking-[0.3em]">Última visualização</th>
+                      <th className="px-4 py-3 text-left text-2xs font-semibold uppercase tracking-[0.3em]">Criado em</th>
+                      <th className="px-4 py-3 text-right text-2xs font-semibold uppercase tracking-[0.3em]">Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-white/10">
+                    {bancas.map((banca) => (
+                      <tr key={banca.id} className="transition hover:bg-white/5">
+                        <td className="px-4 py-4 align-middle">
+                          <div className="space-y-1">
+                            <p className="font-semibold text-white">{banca.nome}</p>
+                            <p className="text-xs text-white/60">ID: {banca.id}</p>
+                          </div>
+                        </td>
+                        <td className="px-4 py-4 align-middle text-white/70">{banca.descricao}</td>
+                        <td className="px-4 py-4 align-middle">
+                          <SwitchControl
+                            checked={banca.status === 'Ativa'}
+                            onToggle={() => void handleToggleStatus(banca)}
+                            label={`Alternar status da banca ${banca.nome}`}
+                          />
+                        </td>
+                        <td className="px-4 py-4 align-middle">
+                          <SwitchControl
+                            checked={banca.padrao}
+                            onToggle={() => void handleTogglePadrao(banca)}
+                            label={`Alternar banca padrão para ${banca.nome}`}
+                          />
+                        </td>
+                        <td className="px-4 py-4 align-middle text-white/70">{banca.ultimaVisualizacao}</td>
+                        <td className="px-4 py-4 align-middle text-white/70">{banca.criadoEm}</td>
+                        <td className="px-4 py-4 align-middle">
+                          <div className="flex justify-end gap-2">
+                            <ActionIconButton
+                              label="Ver estatísticas"
+                              icon={<LineChart className="h-4 w-4" />}
+                              onClick={() => void handleOpenStats(banca)}
+                            />
+                            <ActionIconButton
+                              label="Copiar link de compartilhamento"
+                              icon={<Share2 className="h-4 w-4" />}
+                              onClick={() => {
+                                void copyToClipboard(banca.stats.infoLink.url);
+                              }}
+                            />
+                            <ActionIconButton
+                              label="Editar banca"
+                              icon={<Pencil className="h-4 w-4" />}
+                              onClick={() => openEditModal(banca)}
+                            />
+                            <ActionIconButton
+                              label="Excluir banca"
+                              icon={<Trash2 className="h-4 w-4" />}
+                              variant="danger"
+                              onClick={() => setConfirmDelete({ open: true, banca, loading: false })}
+                            />
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </section>
+        </>
+      ) : (
+        <>
+          <section className={cn(dashboardCardShellClass, 'space-y-6')}>
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <p className={cn(cardLabelClass, 'text-white/70')}>Gestão de Analistas</p>
+                <h2 className="text-2xl font-semibold text-white">Lista de Tipsters</h2>
+              </div>
+              <p className="text-sm text-white/70">Ative ou desative tipsters para usá-los em suas apostas.</p>
+            </div>
+
+            {tipstersLoading ? (
+              <div className="flex h-48 items-center justify-center text-white/70">
+                <Loader2 className="h-6 w-6 animate-spin" />
+              </div>
+            ) : paginatedTipsters.length === 0 ? (
+              <div className="rounded-2xl border border-dashed border-white/15 px-6 py-12 text-center text-sm text-white/70">
+                Nenhum tipster cadastrado.
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="h-[400px] w-full lg:h-[500px]">
+                  <List
+                    height={500}
+                    itemCount={paginatedTipsters.length}
+                    itemSize={90}
+                    width="100%"
+                    className="scrollbar-thin scrollbar-thumb-white/10"
+                  >
+                    {Row}
+                  </List>
+                </div>
+
+                {totalPages > 1 && (
+                  <div className="flex items-center justify-center gap-4 pt-4">
+                    <button
+                      onClick={() => setPage((p) => Math.max(1, p - 1))}
+                      disabled={page === 1}
+                      className={ghostButtonClass}
+                    >
+                      Anterior
+                    </button>
+                    <span className="text-sm text-white/70">
+                      Página {page} de {totalPages}
+                    </span>
+                    <button
+                      onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                      disabled={page === totalPages}
+                      className={ghostButtonClass}
+                    >
+                      Próxima
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+          </section>
+        </>
       )}
 
-      <section className={cn(dashboardCardShellClass, 'space-y-6')}>
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <p className={cn(cardLabelClass, 'text-white/70')}>Bancas compartilhadas</p>
-            <h2 className="text-2xl font-semibold text-white">Lista completa</h2>
-          </div>
-          <p className="text-sm text-white/70">Gerencie o status, padrão e links públicos.</p>
-        </div>
-
-        {loading ? (
-          <div className="flex h-48 items-center justify-center text-white/70">
-            <Loader2 className="h-6 w-6 animate-spin" />
-          </div>
-        ) : bancas.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-white/15 px-6 py-12 text-center text-sm text-white/70">
-            Nenhuma banca cadastrada ainda.
-          </div>
-        ) : (
-          <div className="overflow-x-auto rounded-2xl border border-white/10">
-            <table className="min-w-full divide-y divide-white/10 text-sm">
-              <thead className="bg-white/5 text-white/70">
-                <tr>
-                  <th className="px-4 py-3 text-left text-2xs font-semibold uppercase tracking-[0.3em]">Banca</th>
-                  <th className="px-4 py-3 text-left text-2xs font-semibold uppercase tracking-[0.3em]">Descrição</th>
-                  <th className="px-4 py-3 text-left text-2xs font-semibold uppercase tracking-[0.3em]">Status</th>
-                  <th className="px-4 py-3 text-left text-2xs font-semibold uppercase tracking-[0.3em]">Padrão</th>
-                  <th className="px-4 py-3 text-left text-2xs font-semibold uppercase tracking-[0.3em]">Última visualização</th>
-                  <th className="px-4 py-3 text-left text-2xs font-semibold uppercase tracking-[0.3em]">Criado em</th>
-                  <th className="px-4 py-3 text-right text-2xs font-semibold uppercase tracking-[0.3em]">Ações</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/10">
-                {bancas.map((banca) => (
-                  <tr key={banca.id} className="transition hover:bg-white/5">
-                    <td className="px-4 py-4 align-middle">
-                      <div className="space-y-1">
-                        <p className="font-semibold text-white">{banca.nome}</p>
-                        <p className="text-xs text-white/60">ID: {banca.id}</p>
-                      </div>
-                    </td>
-                    <td className="px-4 py-4 align-middle text-white/70">{banca.descricao}</td>
-                    <td className="px-4 py-4 align-middle">
-                      <SwitchControl
-                        checked={banca.status === 'Ativa'}
-                        onToggle={() => void handleToggleStatus(banca)}
-                        label={`Alternar status da banca ${banca.nome}`}
-                      />
-                    </td>
-                    <td className="px-4 py-4 align-middle">
-                      <SwitchControl
-                        checked={banca.padrao}
-                        onToggle={() => void handleTogglePadrao(banca)}
-                        label={`Alternar banca padrão para ${banca.nome}`}
-                      />
-                    </td>
-                    <td className="px-4 py-4 align-middle text-white/70">{banca.ultimaVisualizacao}</td>
-                    <td className="px-4 py-4 align-middle text-white/70">{banca.criadoEm}</td>
-                    <td className="px-4 py-4 align-middle">
-                      <div className="flex justify-end gap-2">
-                        <ActionIconButton
-                          label="Ver estatísticas"
-                          icon={<LineChart className="h-4 w-4" />}
-                          onClick={() => void handleOpenStats(banca)}
-                        />
-                        <ActionIconButton
-                          label="Copiar link de compartilhamento"
-                          icon={<Share2 className="h-4 w-4" />}
-                          onClick={() => {
-                            void copyToClipboard(banca.stats.infoLink.url);
-                          }}
-                        />
-                        <ActionIconButton
-                          label="Editar banca"
-                          icon={<Pencil className="h-4 w-4" />}
-                          onClick={() => openEditModal(banca)}
-                        />
-                        <ActionIconButton
-                          label="Excluir banca"
-                          icon={<Trash2 className="h-4 w-4" />}
-                          variant="danger"
-                          onClick={() => setConfirmDelete({ open: true, banca, loading: false })}
-                        />
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </section>
-
+      {/* Modais de Bancas */}
       <ModalShell
         open={!!selectedBanco}
         title={selectedBanco ? `Estatísticas detalhadas - ${selectedBanco.nome}` : ''}
@@ -469,6 +690,49 @@ export default function Bancas() {
             </button>
           </div>
         </div>
+      </ModalShell>
+
+      {/* Modal de Tipster */}
+      <ModalShell
+        open={tipsterModalOpen}
+        title={editingTipster ? 'Editar Tipster' : 'Novo Tipster'}
+        onClose={handleCloseTipsterModal}
+        maxWidth="max-w-md"
+      >
+        <form onSubmit={handleTipsterSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-foreground">Nome do Tipster</label>
+            <input
+              type="text"
+              value={tipsterFormData.nome}
+              onChange={(e) => setTipsterFormData({ nome: e.target.value })}
+              className="w-full rounded-2xl border border-border/40 bg-background px-4 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-brand-emerald/30"
+              placeholder="Ex: João da Silva"
+              autoFocus
+            />
+          </div>
+
+          {tipsterError && (
+            <p className="text-xs text-rose-500">{tipsterError}</p>
+          )}
+
+          <div className="flex justify-end gap-3 pt-4">
+            <button
+              type="button"
+              onClick={handleCloseTipsterModal}
+              className="rounded-2xl border border-border/40 px-4 py-2 text-sm text-foreground hocus:border-brand-emerald/40"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              disabled={tipsterSaving}
+              className={primaryButtonClass}
+            >
+              {tipsterSaving ? 'Salvando...' : 'Salvar'}
+            </button>
+          </div>
+        </form>
       </ModalShell>
     </div>
   );
@@ -732,4 +996,53 @@ const copyToClipboard = async (value?: string) => {
     console.error('Não foi possível copiar o valor.', err);
   }
 };
+
+function TipsterCard({
+  tipster,
+  onEdit,
+  onDelete,
+  onToggleActive,
+}: {
+  tipster: Tipster;
+  onEdit: () => void;
+  onDelete: () => void;
+  onToggleActive: () => void;
+}) {
+  return (
+    <div className="flex items-center justify-between gap-4 rounded-2xl border border-white/5 bg-white/5 p-4 transition hover:bg-white/10">
+      <div className="flex items-center gap-4">
+        <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-brand-emerald/30 bg-brand-emerald/10 text-brand-emerald">
+          <User className="h-5 w-5" />
+        </div>
+        <div>
+          <p className="font-semibold text-white">{tipster.nome || 'Sem nome'}</p>
+          <div className="flex items-center gap-2">
+            <div className={cn('h-1.5 w-1.5 rounded-full', tipster.ativo ? 'bg-brand-emerald' : 'bg-rose-500')} />
+            <p className="text-xs text-white/50">{tipster.ativo ? 'Ativo' : 'Inativo'}</p>
+          </div>
+        </div>
+      </div>
+      <div className="flex items-center gap-2">
+        <button
+          onClick={onToggleActive}
+          className={tipster.ativo ? primaryButtonClass : ghostButtonClass}
+          title={tipster.ativo ? 'Desativar' : 'Ativar'}
+        >
+          {tipster.ativo ? <Check className="h-4 w-4" /> : <X className="h-4 w-4" />}
+        </button>
+        <ActionIconButton
+          label="Editar tipster"
+          icon={<Pencil className="h-4 w-4" />}
+          onClick={onEdit}
+        />
+        <ActionIconButton
+          label="Excluir tipster"
+          icon={<Trash2 className="h-4 w-4" />}
+          variant="danger"
+          onClick={onDelete}
+        />
+      </div>
+    </div>
+  );
+}
 

@@ -1,0 +1,463 @@
+[
+  {
+    "id": "TC001",
+    "title": "CSV Upload Success with Valid Data",
+    "description": "Verify that CSV file upload processes correctly with valid data mapping and no validation errors.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the CSV upload screen"
+      },
+      {
+        "type": "action",
+        "description": "Select a CSV file containing valid betting data with correct fields"
+      },
+      {
+        "type": "action",
+        "description": "Map CSV fields correctly if prompted"
+      },
+      {
+        "type": "action",
+        "description": "Submit the CSV upload"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the system imports at least 95% of the records without manual corrections"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify no validation errors or warnings are shown"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify imported bets appear in the listing interface"
+      }
+    ]
+  },
+  {
+    "id": "TC002",
+    "title": "CSV Upload Failure with Invalid Format",
+    "description": "Verify CSV upload fails gracefully and shows comprehensive errors when the CSV file is corrupted or incorrectly formatted.",
+    "category": "error handling",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the CSV upload screen"
+      },
+      {
+        "type": "action",
+        "description": "Upload a malformed or corrupted CSV file"
+      },
+      {
+        "type": "action",
+        "description": "Attempt to map fields if prompted"
+      },
+      {
+        "type": "action",
+        "description": "Submit the CSV upload"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the system shows clear validation errors referencing file format issues"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify no bets are imported and user is prompted to fix the file"
+      }
+    ]
+  },
+  {
+    "id": "TC003",
+    "title": "CSV Upload with Partial Invalid Rows",
+    "description": "Verify system imports valid rows while reporting errors on invalid entries in a partially invalid CSV upload.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Upload a CSV file containing both valid and invalid bet records"
+      },
+      {
+        "type": "action",
+        "description": "Map fields correctly"
+      },
+      {
+        "type": "action",
+        "description": "Submit the CSV upload"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify valid rows are imported correctly"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify invalid rows are logged with descriptive error messages"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify user receives a notification summarizing import with failure counts"
+      }
+    ]
+  },
+  {
+    "id": "TC004",
+    "title": "Listing Interface Filtering, Sorting and Pagination",
+    "description": "Verify the bets listing supports advanced filtering, sorting by columns and pagination controls.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the bets list screen"
+      },
+      {
+        "type": "action",
+        "description": "Apply multiple filters such as date range, betting house, and status"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the listing updates to reflect applied filters"
+      },
+      {
+        "type": "action",
+        "description": "Sort the listing by ROI and then by date"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the ordering of the results on each sorting operation"
+      },
+      {
+        "type": "action",
+        "description": "Use pagination to navigate to next and previous pages"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the correct records load on each page"
+      }
+    ]
+  },
+  {
+    "id": "TC005",
+    "title": "Dashboard Metrics Accuracy",
+    "description": "Verify that the dashboard metrics (ROI, win rate, profit/loss) match historical data and update accurately on filter changes.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the dashboard page"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify displayed metrics match pre-calculated historical data for given period"
+      },
+      {
+        "type": "action",
+        "description": "Change date range and tipster filters"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify dashboard metrics update correctly according to filters"
+      },
+      {
+        "type": "action",
+        "description": "Select different betting houses and verify metrics update accordingly"
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm no discrepancies in the aggregated data or calculation errors"
+      }
+    ]
+  },
+  {
+    "id": "TC006",
+    "title": "Detailed Bet Modal Display",
+    "description": "Verify detailed modal displays individual bet details including ticket history and attachments accurately.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Click on an individual bet entry in the listing interface"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a modal opens displaying detailed bet information"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify ticket history is displayed correctly with timestamps"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify attachments (such as images or PDFs) related to the bet are accessible"
+      },
+      {
+        "type": "action",
+        "description": "Close the modal"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the modal closes without side effects"
+      }
+    ]
+  },
+  {
+    "id": "TC007",
+    "title": "Report Export Functionality",
+    "description": "Verify exporting filtered bet data to CSV, XLSX, and PDF formats produces correctly formatted and filtered reports.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Apply filters on the bets list to narrow down results"
+      },
+      {
+        "type": "action",
+        "description": "Initiate export selecting CSV format"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the downloaded CSV file contains all filtered records and correct headers"
+      },
+      {
+        "type": "action",
+        "description": "Repeat export for XLSX format"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the downloaded XLSX file has correct structure, data and formatting"
+      },
+      {
+        "type": "action",
+        "description": "Repeat export for PDF format"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify PDF is generated correctly with readable tables and correct data matching filters"
+      }
+    ]
+  },
+  {
+    "id": "TC008",
+    "title": "Role-based Authentication and Authorization",
+    "description": "Verify user access controls restrict actions and views based on user roles (analyst, manager, admin).",
+    "category": "security",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Log in as an analyst"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify access only to CSV upload, bet list, and analysis dashboards"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify analyst cannot access admin configuration or import logs"
+      },
+      {
+        "type": "action",
+        "description": "Log in as a manager"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify access to dashboards and analysis with advanced metrics"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify managers cannot access API integration configuration"
+      },
+      {
+        "type": "action",
+        "description": "Log in as an admin"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify access to all features including API integration setup and system logs"
+      }
+    ]
+  },
+  {
+    "id": "TC009",
+    "title": "API Integration Configuration and Monitoring",
+    "description": "Verify admin can configure automatic API integration settings and monitor import job statuses and logs.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Log in as admin"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to API integration configuration page"
+      },
+      {
+        "type": "action",
+        "description": "Add a new API integration with valid endpoint and credentials"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify integration saves and is listed correctly"
+      },
+      {
+        "type": "action",
+        "description": "Trigger a manual import job or wait for scheduled import"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify import job status logs display success or failure information"
+      },
+      {
+        "type": "action",
+        "description": "Access detailed import log for failures"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify failure notifications and error details are accessible"
+      }
+    ]
+  },
+  {
+    "id": "TC010",
+    "title": "Security: Token Handling and Protected Routing",
+    "description": "Validate secure authentication token handling and protected access to dashboard and sensitive routes.",
+    "category": "security",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Perform login with valid credentials and obtain authentication token"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify token is stored securely (e.g., HTTPOnly cookies or secure storage)"
+      },
+      {
+        "type": "action",
+        "description": "Attempt accessing dashboard pages without authentication"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify unauthorized users are redirected to login page"
+      },
+      {
+        "type": "action",
+        "description": "Access protected routes after login"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify pages load and token refresh mechanisms work without errors"
+      },
+      {
+        "type": "action",
+        "description": "Perform logout"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify token is removed and protected routes become inaccessible"
+      }
+    ]
+  },
+  {
+    "id": "TC011",
+    "title": "Error Handling in Bet Form Submission",
+    "description": "Verify form validations and error messages when creating or editing bets with invalid or missing inputs.",
+    "category": "error handling",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to create bet form"
+      },
+      {
+        "type": "action",
+        "description": "Submit form with missing mandatory fields"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify relevant validation error messages are displayed"
+      },
+      {
+        "type": "action",
+        "description": "Submit form with invalid field formats (e.g., invalid odds format)"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify error messages clearly identify invalid inputs"
+      },
+      {
+        "type": "action",
+        "description": "Correct the inputs and submit successfully"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify bet record is created or updated correctly without errors"
+      }
+    ]
+  },
+  {
+    "id": "TC012",
+    "title": "Import Logs and Failure Notifications for Administrators",
+    "description": "Verify detailed import logs are accessible to admins and failure notifications are triggered appropriately.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Log in as admin"
+      },
+      {
+        "type": "action",
+        "description": "Access import logs page"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify logs display detailed records of each import job with timestamps and status"
+      },
+      {
+        "type": "action",
+        "description": "Trigger an import with known invalid data to simulate failure"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify failure notification is generated and visible to admin"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify error details are visible and help diagnose import issues"
+      }
+    ]
+  },
+  {
+    "id": "TC013",
+    "title": "UI Responsiveness and Accessibility on Key Screens",
+    "description": "Verify the user interface is responsive across different screen sizes and meets accessibility standards on core pages like upload, listing, and dashboard.",
+    "category": "ui",
+    "priority": "Low",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Access CSV upload, bets listing and dashboard pages on desktop, tablet, and mobile devices"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify UI components render correctly and are usable on all screen sizes"
+      },
+      {
+        "type": "action",
+        "description": "Use keyboard navigation and screen reader tools on these pages"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify focus management, ARIA labels, and semantic HTML ensure accessibility compliance"
+      }
+    ]
+  }
+]

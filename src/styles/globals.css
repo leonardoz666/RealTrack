@@ -142,4 +142,10 @@
 	scrollbar-color: #ffffff transparent;
 }
 
+@layer components {
+	.section-title {
+		@apply text-emerald-400 text-xs font-semibold tracking-wider;
+	}
+}
+
 

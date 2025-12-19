@@ -7,6 +7,7 @@ import EmptyState from '../components/EmptyState';
 import Modal from '../components/Modal';
 import UploadTicketModal from '../components/UploadTicketModal';
 import ApostaForm, { type ApostaFormData, type ApostaFormErrors } from '../components/ApostaForm';
+import { Zap } from 'lucide-react';
 import FilterPopoverApostas from '../components/FilterPopoverApostas';
 import DateInput from '../components/DateInput';
 import DropdownSelect from '../components/DropdownSelect';
@@ -437,7 +438,7 @@ export default function Atualizar() {
           .replace(/\s{2,}/g, ' ')
           .replace(/^[^a-zA-ZÀ-ÿ0-9]+/, '')
           .replace(/^[\d\s.,:;()-]+/, '')
-            .replace(MARKET_CONNECTOR_PATTERN, '')
+          .replace(MARKET_CONNECTOR_PATTERN, '')
           .trim()
       )
       .filter((segment) => segment.length > 0)
@@ -445,7 +446,7 @@ export default function Atualizar() {
         if (!/[a-zA-ZÀ-ÿ]/.test(segment)) {
           return false;
         }
-          if (MARKET_LABEL_PATTERN.test(segment)) {
+        if (MARKET_LABEL_PATTERN.test(segment)) {
           return false;
         }
         if (/^[\d.,]+$/.test(segment.replace(',', '.'))) {
@@ -1680,69 +1681,69 @@ ${limitReachedMessage}`);
 
                   return (
                     <tr key={aposta.id} className="text-white">
-                    <td className="px-4 py-3 align-middle text-sm font-medium text-white">{formatOptionalCellText(aposta.casaDeAposta)}</td>
-                    <td className="px-4 py-3 align-middle text-sm text-white/80">{formatOptionalCellText(aposta.tipster)}</td>
-                    <td className="px-4 py-3 align-middle text-sm text-white/80">{formatDate(aposta.dataEvento)}</td>
-                    <td className="px-4 py-3 align-middle text-sm text-white/80">{normalizeEsporte(aposta.esporte)}</td>
-                    <td className="px-4 py-3 align-middle text-sm text-white">{aposta.evento}</td>
-                    <td className="px-4 py-3 align-middle text-sm text-white/80">{formatOptionalCellText(aposta.aposta)}</td>
-                    <td className="px-4 py-3 align-middle text-sm text-white/80">
-                      {marketSelections.length > 0 ? (
-                        <ul className="space-y-1">
-                          {marketSelections.map((selection, index) => (
-                            <li key={`${aposta.id}-market-${index}`} className="flex items-start gap-2">
-                              <span className="mt-0.5 text-xs text-white/50">•</span>
-                              <span className="whitespace-pre-line">{selection}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      ) : (
-                        <span>{formatOptionalCellText(aposta.mercado)}</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3 align-middle text-sm text-white">
-                      <div className="flex flex-col gap-1 text-sm">
-                        <span className="font-semibold text-white">{formatCurrency(aposta.valorApostado)}</span>
-                        <span className="text-xs text-white/60">Odd: {aposta.odd}</span>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 align-middle">
-                      <button
-                        type="button"
-                        onClick={() => handleOpenStatusModal(aposta)}
-                        className={cn(
-                          betStatusPillBaseClass,
-                          'text-xs',
-                          resolveBetStatusClass(aposta.status)
+                      <td className="px-4 py-3 align-middle text-sm font-medium text-white">{formatOptionalCellText(aposta.casaDeAposta)}</td>
+                      <td className="px-4 py-3 align-middle text-sm text-white/80">{formatOptionalCellText(aposta.tipster)}</td>
+                      <td className="px-4 py-3 align-middle text-sm text-white/80">{formatDate(aposta.dataEvento)}</td>
+                      <td className="px-4 py-3 align-middle text-sm text-white/80">{normalizeEsporte(aposta.esporte)}</td>
+                      <td className="px-4 py-3 align-middle text-sm text-white">{aposta.evento}</td>
+                      <td className="px-4 py-3 align-middle text-sm text-white/80">{formatOptionalCellText(aposta.aposta)}</td>
+                      <td className="px-4 py-3 align-middle text-sm text-white/80">
+                        {marketSelections.length > 0 ? (
+                          <ul className="space-y-1">
+                            {marketSelections.map((selection, index) => (
+                              <li key={`${aposta.id}-market-${index}`} className="flex items-start gap-2">
+                                <span className="mt-0.5 text-xs text-white/50">•</span>
+                                <span className="whitespace-pre-line">{selection}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <span>{formatOptionalCellText(aposta.mercado)}</span>
                         )}
-                      >
-                        {getBetStatusIcon(aposta.status)}
-                        {aposta.status}
-                      </button>
-                    </td>
-                    <td className="px-4 py-3 align-middle text-sm text-white">
-                      {aposta.retornoObtido != null ? formatCurrency(aposta.retornoObtido) : '-'}
-                    </td>
-                    <td className="px-4 py-3 align-middle">
-                      <div className="flex items-center gap-2 text-white">
+                      </td>
+                      <td className="px-4 py-3 align-middle text-sm text-white">
+                        <div className="flex flex-col gap-1 text-sm">
+                          <span className="font-semibold text-white">{formatCurrency(aposta.valorApostado)}</span>
+                          <span className="text-xs text-white/60">Odd: {aposta.odd}</span>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 align-middle">
                         <button
                           type="button"
-                          className={tableActionButtonClass}
-                          onClick={() => handleEditAposta(aposta)}
-                          title="Editar aposta"
+                          onClick={() => handleOpenStatusModal(aposta)}
+                          className={cn(
+                            betStatusPillBaseClass,
+                            'text-xs',
+                            resolveBetStatusClass(aposta.status)
+                          )}
                         >
-                          <Pencil size={16} />
+                          {getBetStatusIcon(aposta.status)}
+                          {aposta.status}
                         </button>
-                        <button
-                          type="button"
-                          className={tableActionButtonDangerClass}
-                          onClick={() => handleDeleteAposta(aposta)}
-                          title="Deletar aposta"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
-                    </td>
+                      </td>
+                      <td className="px-4 py-3 align-middle text-sm text-white">
+                        {aposta.retornoObtido != null ? formatCurrency(aposta.retornoObtido) : '-'}
+                      </td>
+                      <td className="px-4 py-3 align-middle">
+                        <div className="flex items-center gap-2 text-white">
+                          <button
+                            type="button"
+                            className={tableActionButtonClass}
+                            onClick={() => handleEditAposta(aposta)}
+                            title="Editar aposta"
+                          >
+                            <Pencil size={16} />
+                          </button>
+                          <button
+                            type="button"
+                            className={tableActionButtonDangerClass}
+                            onClick={() => handleDeleteAposta(aposta)}
+                            title="Deletar aposta"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                      </td>
                     </tr>
                   );
                 })}
@@ -1756,6 +1757,8 @@ ${limitReachedMessage}`);
         isOpen={modalOpen}
         onClose={handleCloseModal}
         title={editingAposta ? "Editar Aposta" : "Nova Aposta"}
+        subtitle="Configure sua entrada"
+        icon={<Zap size={24} className="text-black" fill="currentColor" />}
         size="form"
       >
         {formNotice && (
@@ -1773,6 +1776,7 @@ ${limitReachedMessage}`);
           isEditing={!!editingAposta}
           saving={saving}
           notice={formNotice}
+          onCancel={handleCloseModal}
         />
       </Modal>
 
@@ -1784,7 +1788,13 @@ ${limitReachedMessage}`);
         loading={uploading}
       />
 
-      <Modal isOpen={statusModalOpen} onClose={handleCloseStatusModal} title="Atualizar Status" size="sm">
+      <Modal
+        isOpen={statusModalOpen}
+        onClose={handleCloseStatusModal}
+        title="Atualizar Status"
+        subtitle="Defina o resultado da sua aposta"
+        size="sm"
+      >
         <div className="space-y-6 py-2">
           <p className="text-sm text-foreground/60">
             {selectedApostaForStatus?.evento ?? 'Aposta'}

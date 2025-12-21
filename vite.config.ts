@@ -71,8 +71,6 @@ export default defineConfig({
       'react-router-dom',
       'axios',
       'date-fns'
-    ],
-    // Excluir tesseract.js do pré-empacotamento (carregar apenas quando necessário)
-    exclude: ['tesseract.js']
+    ]
   }
 })

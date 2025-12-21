@@ -602,7 +602,7 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="mx-auto grid max-w-3xl gap-4 md:grid-cols-3">
+          <div className="mx-auto grid max-w-3xl gap-8 md:grid-cols-3">
             {/* <div className={evolutionMetricCardClass}>
               <p className="text-xs font-semibold uppercase tracking-[0.3em] text-white/60">Total acumulado</p>
               <p className="mt-2 text-3xl font-semibold text-white">{formatCurrency(lucroPeriodo)}</p>

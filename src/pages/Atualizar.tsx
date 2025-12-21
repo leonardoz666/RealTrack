@@ -26,6 +26,7 @@ import { toast } from '../utils/toast';
 import { formatCurrency as formatCurrencyUtil, formatDate as formatDateUtil } from '../utils/formatters';
 import { useTipsters } from '../hooks/useTipsters';
 import { useBancas } from '../hooks/useBancas';
+import { useApostasManager } from '../hooks/useApostasManager';
 import { cn } from '../components/ui/utils';
 // Tesseract será carregado dinamicamente apenas quando necessário (biblioteca pesada ~2MB)
 import { type ApiBetWithBank, type ApiError, type ApiUploadTicketResponse } from '../types/api';

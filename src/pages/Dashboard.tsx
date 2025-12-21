@@ -270,9 +270,9 @@ export default function Dashboard() {
   const cardSurfaceClass = 'bg-[#10322e]';
   const cardBorderClass = 'border-white/5';
   const cardShadowClass = 'shadow-[0_25px_45px_rgba(0,0,0,0.25)]';
-  const sectionCardClass = `rounded-lg ${cardBorderClass} ${cardSurfaceClass} p-6 ${cardShadowClass} backdrop-blur-sm`;
+  const sectionCardClass = `rounded-lg ${cardBorderClass} ${cardSurfaceClass} p-6 ${cardShadowClass} backdrop-blur-sm transition-all duration-300 hover:scale-[1.015] hover:border-white/20 hover:shadow-emerald-500/5`;
   const evolutionCardClass =
-    'rounded-lg border border-white/5 bg-[#0f2d29] p-6 sm:p-8 text-white';
+    'rounded-lg border border-white/5 bg-[#0f2d29] p-6 sm:p-8 text-white transition-all duration-300 hover:scale-[1.015] hover:border-white/20 hover:shadow-emerald-500/5';
   const evolutionMetricCardClassBase = [
     'relative',
     'rounded-2xl',
@@ -335,7 +335,7 @@ export default function Dashboard() {
   const timeframeSwitchBaseClass =
     'rounded-full px-4 py-1.5 text-xs font-semibold uppercase tracking-wide transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1fe7cb]/40';
   const evolutionChartShellClass =
-    'rounded-[28px] border border-white/10 bg-black/10 p-4 sm:p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] backdrop-blur';
+    'rounded-[28px] border border-white/10 bg-black/10 p-4 sm:p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] backdrop-blur transition-all duration-300 hover:border-white/20 hover:bg-black/20';
   const lucroLineGradientId = 'lucroLineGradient';
 
   // Show skeleton on initial load
@@ -466,7 +466,7 @@ export default function Dashboard() {
       <section className="grid gap-5 lg:grid-cols-5">
         <div
           className={cn(
-            'col-span-1 space-y-6 rounded-lg border border-border/30 p-6 text-[#f2f2f2] shadow-card lg:col-span-2',
+            'col-span-1 space-y-6 rounded-lg border border-border/30 p-6 text-[#f2f2f2] shadow-card lg:col-span-2 transition-all duration-300 hover:scale-[1.01 hover:shadow-[0_0_40px_rgba(16,185,129,0.15)] hover:border-emerald-500/30',
             'bg-bank-hero'
           )}
         >
@@ -482,7 +482,7 @@ export default function Dashboard() {
           </div>
 
           <div className="grid gap-6 md:grid-cols-2 pt-2">
-            <div className="space-y-1">
+            <div className="space-y-1 rounded-xl p-3 transition-colors hover:bg-white/10">
               <p className="text-white/60 font-semibold uppercase tracking-wider text-[0.7rem]">Lucro total</p>
               <p className="text-2xl font-bold text-white leading-tight">{formatCurrency(metricas.lucroTotal)}</p>
             </div>
@@ -494,15 +494,15 @@ export default function Dashboard() {
           </div>
 
           <div className="grid grid-cols-3 gap-4 pt-4 border-t border-white/10">
-            <div className="space-y-1">
+            <div className="space-y-1 rounded-xl p-2 transition-colors hover:bg-white/10">
               <span className="text-white/50 text-[0.65rem] font-bold uppercase tracking-widest">Total Investido</span>
               <p className="text-base font-bold text-white">{formatCurrency(metricas.totalInvestido)}</p>
             </div>
-            <div className="space-y-1 text-center">
+            <div className="space-y-1 text-center rounded-xl p-2 transition-colors hover:bg-white/10">
               <span className="text-white/50 text-[0.65rem] font-bold uppercase tracking-widest">Valor Pendente</span>
               <p className="text-base font-bold text-amber-300">{formatCurrency(metricas.totalInvestidoPendente || 0)}</p>
             </div>
-            <div className="space-y-1 text-right">
+            <div className="space-y-1 text-right rounded-xl p-2 transition-colors hover:bg-white/10">
               <span className="text-white/50 text-[0.65rem] font-bold uppercase tracking-widest">Valor Perdido</span>
               <p className="text-base font-bold text-rose-300">{formatCurrency(metricas.valorPerdido || 0)}</p>
             </div>
@@ -545,15 +545,15 @@ export default function Dashboard() {
             <span className="text-3xl font-semibold text-foreground">{accuracyPercentLabel}</span>
           </div>
           <div className="grid gap-4 rounded-2xl border border-white/5 bg-white/5 p-4 text-sm text-foreground sm:grid-cols-3">
-            <div>
+            <div className="rounded-xl p-2 transition-colors hover:bg-white/10">
               <p className={cn('text-2xs uppercase tracking-[0.3em] text-foreground-muted', softLabelTextClass)}>Apostas</p>
               <p className="mt-1 text-xl font-semibold text-foreground">{totalApostas}</p>
             </div>
-            <div>
+            <div className="rounded-xl p-2 transition-colors hover:bg-white/10">
               <p className={cn('text-2xs uppercase tracking-[0.3em] text-foreground-muted', softLabelTextClass)}>Greens</p>
               <p className="mt-1 text-xl font-semibold text-emerald-400">{apostasGanhas}</p>
             </div>
-            <div>
+            <div className="rounded-xl p-2 transition-colors hover:bg-white/10">
               <p className={cn('text-2xs uppercase tracking-[0.3em] text-foreground-muted', softLabelTextClass)}>Reds</p>
               <p className="mt-1 text-xl font-semibold text-rose-400">{derrotasCalculadas}</p>
             </div>
@@ -747,7 +747,7 @@ export default function Dashboard() {
                 return (
                   <div
                     key={aposta.id}
-                    className="flex items-center justify-between rounded-2xl border border-white/5 bg-white/5 px-4 py-3 text-sm"
+                    className="flex items-center justify-between rounded-2xl border border-white/5 bg-white/5 px-4 py-3 text-sm transition-all duration-300 hover:bg-white/10 hover:border-white/20 hover:scale-[1.01]"
                   >
                     <div className="space-y-0.5">
                       <p className="font-semibold text-foreground">{description}</p>
@@ -856,8 +856,8 @@ function BreakdownList({ items, expandedId, onToggle, emptyMessage }: BreakdownL
           <div
             key={item.id}
             className={cn(
-              'rounded-2xl border bg-[#0b1f1f] text-foreground shadow-[0_25px_35px_rgba(0,0,0,0.35)] transition duration-300 backdrop-blur-sm',
-              isExpanded ? 'border-emerald-500/40 shadow-emerald-500/10' : 'border-white/5 hover:border-white/20'
+              'rounded-2xl border bg-[#0b1f1f] text-foreground shadow-[0_25px_35px_rgba(0,0,0,0.35)] transition-all duration-300 backdrop-blur-sm',
+              isExpanded ? 'border-emerald-500/40 shadow-emerald-500/10' : 'border-white/5 hover:border-white/20 hover:scale-[1.01]'
             )}
           >
             <button

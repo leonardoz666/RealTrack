@@ -1,6 +1,7 @@
 import { AlertTriangle, Check, Copy, Eye, LineChart, Loader2, Pencil, Plus, Share2, Trash2, User, X } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { FixedSizeList as List, type ListChildComponentProps } from 'react-window';
+import AutoSizer from 'react-virtualized-auto-sizer';
 import { useBancas } from '../hooks/useBancas';
 import { useTipsters } from '../hooks/useTipsters';
 import { usePagination } from '../hooks/usePagination';
@@ -43,9 +44,9 @@ const defaultForm: EditFormState = {
 const sectionCardClass =
   'rounded-3xl border border-border/30 bg-background-card/80 p-6 shadow-card backdrop-blur-sm';
 const dashboardCardShellClass =
-  'rounded-lg border border-white/5 bg-[#0f2d29] p-6 text-white shadow-[0_25px_45px_rgba(0,0,0,0.25)] backdrop-blur-sm';
+  'rounded-lg border border-white/5 bg-[#0f2d29] p-6 text-white shadow-[0_25px_45px_rgba(0,0,0,0.25)] backdrop-blur-sm transition-all duration-300 hover:border-white/20 hover:shadow-emerald-500/5';
 const summaryCardBaseClass =
-  'rounded-lg border border-white/5 bg-[#10322e] p-6 text-white shadow-[0_25px_45px_rgba(0,0,0,0.25)] backdrop-blur-sm';
+  'rounded-lg border border-white/5 bg-[#10322e] p-6 text-white shadow-[0_25px_45px_rgba(0,0,0,0.25)] backdrop-blur-sm transition-all duration-300 hover:scale-[1.015] hover:border-white/20 hover:shadow-emerald-500/5';
 const modalCardClass = 'rounded-2xl border border-border/30 bg-background px-5 py-5';
 const cardLabelClass = 'text-2xs uppercase tracking-[0.3em] text-foreground-muted';
 const primaryButtonClass =
@@ -451,7 +452,7 @@ export default function Bancas() {
                   </thead>
                   <tbody className="divide-y divide-white/10">
                     {bancas.map((banca) => (
-                      <tr key={banca.id} className="transition hover:bg-white/5">
+                      <tr key={banca.id} className="transition duration-200 hover:bg-white/10 cursor-default">
                         <td className="px-4 py-4 align-middle">
                           <div className="space-y-1">
                             <p className="font-semibold text-white">{banca.nome}</p>

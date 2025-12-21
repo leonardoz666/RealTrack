@@ -18,14 +18,26 @@ interface ModalProps {
   onClose: () => void;
   children: ReactNode;
   size?: keyof typeof SIZE_MAP;
+  className?: string;
 }
 
 interface ModalPropsExtended extends ModalProps {
   subtitle?: string;
   icon?: ReactNode;
+  hideHeader?: boolean;
 }
 
-export default function Modal({ isOpen, title, onClose, children, size = 'md', subtitle, icon }: ModalPropsExtended) {
+export default function Modal({
+  isOpen,
+  title,
+  onClose,
+  children,
+  size = 'md',
+  subtitle,
+  icon,
+  className,
+  hideHeader = false
+}: ModalPropsExtended) {
   const titleId = useId();
   useEffect(() => {
     if (!isOpen) return;
@@ -60,34 +72,37 @@ export default function Modal({ isOpen, title, onClose, children, size = 'md', s
         aria-labelledby={titleId}
         className={cn(
           'relative w-full rounded-[2.5rem] border border-white/5 bg-[#0a0a0a]/95 px-6 pt-6 pb-4 shadow-[0_32px_64px_-12px_rgba(0,0,0,0.8)] backdrop-blur-3xl animate-slide-up overflow-hidden',
-          SIZE_MAP[size]
+          SIZE_MAP[size],
+          className
         )}
         onClick={(event) => event.stopPropagation()}
       >
         {/* Glow effect in background */}
         <div className="absolute -top-24 -left-24 h-48 w-48 rounded-full bg-brand-emerald/10 blur-[100px]" />
 
-        <header id={titleId} className="relative flex items-center justify-between gap-4 pb-6">
-          <div className="flex items-center gap-4">
-            {icon && (
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-emerald shadow-[0_0_20px_rgba(16,185,129,0.3)]">
-                {icon}
+        {!hideHeader && (
+          <header id={titleId} className="relative flex items-center justify-between gap-4 pb-6">
+            <div className="flex items-center gap-4">
+              {icon && (
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-emerald shadow-[0_0_20px_rgba(16,185,129,0.3)]">
+                  {icon}
+                </div>
+              )}
+              <div>
+                <h3 className="text-2xl font-bold tracking-tight text-white">{title}</h3>
+                {subtitle && <p className="mt-0.5 text-sm font-medium text-brand-emerald/80">{subtitle}</p>}
               </div>
-            )}
-            <div>
-              <h3 className="text-2xl font-bold tracking-tight text-white">{title}</h3>
-              {subtitle && <p className="mt-0.5 text-sm font-medium text-brand-emerald/80">{subtitle}</p>}
             </div>
-          </div>
-          <button
-            type="button"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/5 text-white/40 transition hover:bg-white/10 hover:text-white"
-            onClick={onClose}
-            aria-label="Fechar modal"
-          >
-            <X size={20} />
-          </button>
-        </header>
+            <button
+              type="button"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/5 text-white/40 transition hover:bg-white/10 hover:text-white"
+              onClick={onClose}
+              aria-label="Fechar modal"
+            >
+              <X size={20} />
+            </button>
+          </header>
+        )}
         <div className="relative text-foreground">{children}</div>
       </div>
     </div>,

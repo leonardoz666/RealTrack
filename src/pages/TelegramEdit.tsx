@@ -217,12 +217,10 @@ export default function TelegramEdit() {
 
   const fetchAposta = useCallback(async () => {
     try {
+      if (!betId) return;
       setLoading(true);
       
-      const response = await apostaService.getAll();
-      
-      const apostasArray = response.apostas;
-      const apostaEncontrada = apostasArray.find(a => a.id === betId);
+      const apostaEncontrada = await apostaService.getById(betId);
       
       console.log('🎯 Aposta encontrada?', !!apostaEncontrada);
       
@@ -263,8 +261,7 @@ export default function TelegramEdit() {
           retornoObtido: retornoObtido
         });
       } else {
-        console.error('❌ Aposta não encontrada na lista. BetId buscado:', betId);
-        console.log('📋 IDs disponíveis:', apostasArray.map(a => a.id).slice(0, 5));
+        console.error('❌ Aposta não encontrada. BetId buscado:', betId);
         setError('Aposta não encontrada. Pode ter sido deletada ou você não tem permissão.');
       }
     } catch (err) {

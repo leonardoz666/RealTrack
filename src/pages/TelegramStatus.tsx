@@ -79,10 +79,9 @@ export default function TelegramStatus() {
 
   const fetchAposta = useCallback(async () => {
     try {
+      if (!betId) return;
       setLoading(true);
-      const response = await apostaService.getAll();
-      const apostasArray = response.apostas;
-      const apostaEncontrada = apostasArray.find(a => a.id === betId);
+      const apostaEncontrada = await apostaService.getById(betId);
       if (apostaEncontrada) {
         setAposta(apostaEncontrada);
         setStatus(apostaEncontrada.status);

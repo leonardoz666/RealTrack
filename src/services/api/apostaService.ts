@@ -6,11 +6,11 @@
 
 import { apiClient, invalidateCachePattern } from './apiClient';
 import { eventBus } from '../../utils/eventBus';
-import type { 
-  ApiBet, 
-  ApiBetWithBank, 
+import type {
+  ApiBet,
+  ApiBetWithBank,
   ApiBetSummary,
-  ApiUploadTicketResponse 
+  ApiUploadTicketResponse
 } from '../../types/api';
 
 // ============================================
@@ -72,13 +72,13 @@ export interface CreateApostaPayload {
   tipster?: string;
   status?: ApostaStatus;
   casaDeAposta: string;
-  retornoObtido?: number;
+  retornoObtido?: number | null;
 }
 
 export interface UpdateApostaPayload extends Partial<CreateApostaPayload> {
   aposta?: string;
   mercados?: string[];
-  retornoObtido?: number;
+  retornoObtido?: number | null;
 }
 
 interface UploadTicketOptions {
@@ -172,7 +172,7 @@ const mapSummaryFromApi = (data: ApiBetSummary): ApostasSummary => ({
  */
 const buildQueryParams = (filters: ApostasFilter): URLSearchParams => {
   const params = new URLSearchParams();
-  
+
   if (filters.bancaId) params.append('bancaId', filters.bancaId);
   if (filters.status) params.append('status', filters.status);
   if (filters.esporte) params.append('esporte', filters.esporte);
@@ -182,7 +182,7 @@ const buildQueryParams = (filters: ApostasFilter): URLSearchParams => {
   if (filters.dataFim) params.append('dataFim', filters.dataFim);
   if (filters.page) params.append('page', String(filters.page));
   if (filters.limit) params.append('limit', String(filters.limit));
-  
+
   return params;
 };
 
@@ -197,21 +197,21 @@ async function getAll(filters: ApostasFilter = {}): Promise<ApostasResponse> {
   const params = buildQueryParams(filters);
   const queryString = params.toString();
   const url = queryString ? `/apostas?${queryString}` : '/apostas';
-  
+
   const response = await apiClient.get<{
     data: ApiBetWithBank[];
     total?: number;
     page?: number;
     totalPages?: number;
   }>(url);
-  
+
   const data = response.data;
-  const apostas = Array.isArray(data) 
-    ? data 
-    : Array.isArray(data.data) 
-      ? data.data 
+  const apostas = Array.isArray(data)
+    ? data
+    : Array.isArray(data.data)
+      ? data.data
       : [];
-  
+
   return {
     apostas: apostas.map(mapApostaFromApi),
     total: 'total' in data ? data.total ?? apostas.length : apostas.length,
@@ -254,12 +254,12 @@ async function getSummary(bancaId?: string): Promise<ApostasSummary> {
 async function create(payload: CreateApostaPayload): Promise<Aposta> {
   const response = await apiClient.post<ApiBet>('/apostas', payload);
   const newAposta = mapApostaFromApi(response.data);
-  
+
   // Invalidar cache e emitir evento
   invalidateCachePattern('/apostas');
   invalidateCachePattern('/bancas');
   eventBus.emitApostasUpdated();
-  
+
   return newAposta;
 }
 
@@ -269,12 +269,12 @@ async function create(payload: CreateApostaPayload): Promise<Aposta> {
 async function update(id: string, payload: UpdateApostaPayload): Promise<Aposta> {
   const response = await apiClient.put<ApiBet>(`/apostas/${id}`, payload);
   const updatedAposta = mapApostaFromApi(response.data);
-  
+
   // Invalidar cache e emitir evento
   invalidateCachePattern('/apostas');
   invalidateCachePattern('/bancas');
   eventBus.emitApostasUpdated();
-  
+
   return updatedAposta;
 }
 
@@ -283,7 +283,7 @@ async function update(id: string, payload: UpdateApostaPayload): Promise<Aposta>
  */
 async function remove(id: string): Promise<void> {
   await apiClient.delete(`/apostas/${id}`);
-  
+
   // Invalidar cache e emitir evento
   invalidateCachePattern('/apostas');
   invalidateCachePattern('/bancas');
@@ -295,7 +295,7 @@ async function remove(id: string): Promise<void> {
  */
 async function removeMany(ids: string[]): Promise<void> {
   await Promise.all(ids.map(id => apiClient.delete(`/apostas/${id}`)));
-  
+
   // Invalidar cache e emitir evento
   invalidateCachePattern('/apostas');
   invalidateCachePattern('/bancas');
@@ -319,12 +319,12 @@ async function uploadTicket(file: File, options: UploadTicketOptions = {}): Prom
   if (options.ocrText?.trim()) {
     formData.append('ocrText', options.ocrText.trim());
   }
-  
+
   const response = await apiClient.post<ApiUploadTicketResponse>('/upload/bilhete', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
     signal: options.signal,
   });
-  
+
   return response.data;
 }
 
@@ -342,11 +342,11 @@ export const apostaService = {
   update,
   remove,
   removeMany,
-  
+
   // Ações especiais
   updateStatus,
   uploadTicket,
-  
+
   // Mapeadores
   mapApostaFromApi,
   mapSummaryFromApi,

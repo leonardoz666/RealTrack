@@ -3,10 +3,11 @@ import { useSearchParams, useLocation, useNavigate } from 'react-router-dom';
 import { Filter, Plus, Pencil, Upload, Trash2 } from 'lucide-react';
 import PageHeader from '../components/PageHeader';
 import StatCard from '../components/StatCard';
-import EmptyState from '../components/EmptyState';
+import { EmptyState } from '../components/ui/empty-state';
 import Modal from '../components/Modal';
 import UploadTicketModal from '../components/UploadTicketModal';
 import ApostaForm, { type ApostaFormData, type ApostaFormErrors } from '../components/ApostaForm';
+import ApostaStatusModal from '../components/ApostaStatusModal';
 import { Zap } from 'lucide-react';
 import FilterPopoverApostas from '../components/FilterPopoverApostas';
 import DateInput from '../components/DateInput';
@@ -19,7 +20,6 @@ import {
   getBetStatusIcon,
 } from '../constants/betStatusStyles';
 import { ESPORTES, normalizarEsporteParaOpcao } from '../constants/esportes';
-import { TIPOS_APOSTA } from '../constants/tiposAposta';
 import { apostaService, type ApostasFilter, type ApostaStatus } from '../services/api';
 import { eventBus } from '../utils/eventBus';
 import { toast } from '../utils/toast';
@@ -144,41 +144,6 @@ const toError = (error: unknown): Error => {
 
 type StatusStyleKey = keyof typeof betStatusPillVariants;
 
-const statusGlowClassMap: Partial<Record<StatusStyleKey, string>> & { default: string } = {
-  Pendente: 'ring-[rgba(255,157,0,0.65)] shadow-[0_0_30px_rgba(255,157,0,0.5)]',
-  Ganha: 'ring-[rgba(16,185,129,0.55)] shadow-[0_0_30px_rgba(16,185,129,0.45)]',
-  Perdida: 'ring-[rgba(239,68,68,0.55)] shadow-[0_0_30px_rgba(239,68,68,0.45)]',
-  'Meio Ganha': 'ring-[rgba(34,197,94,0.55)] shadow-[0_0_30px_rgba(34,197,94,0.45)]',
-  'Meio Perdida': 'ring-[rgba(249,115,22,0.55)] shadow-[0_0_30px_rgba(249,115,22,0.45)]',
-  Cashout: 'ring-[rgba(168,85,247,0.55)] shadow-[0_0_30px_rgba(168,85,247,0.45)]',
-  Reembolsada: 'ring-[rgba(59,130,246,0.55)] shadow-[0_0_30px_rgba(59,130,246,0.45)]',
-  Void: 'ring-[rgba(148,163,184,0.55)] shadow-[0_0_30px_rgba(148,163,184,0.45)]',
-  default: 'ring-[rgba(255,255,255,0.35)] shadow-[0_0_25px_rgba(255,255,255,0.25)]',
-};
-
-const resolveBetStatusClass = (status: string): string => {
-  if (status in betStatusPillVariants) {
-    return betStatusPillVariants[status as StatusStyleKey];
-  }
-  return betStatusPillVariants.default;
-};
-
-const resolveStatusGlowClass = (status: string): string => {
-  const glowKey = status as StatusStyleKey;
-  return statusGlowClassMap[glowKey] ?? statusGlowClassMap.default;
-};
-
-type UploadTicketData = NonNullable<ApiUploadTicketResponse['data']>;
-type UploadApiError = ApiError & {
-  code?: string;
-  response?: ApiError['response'] & { status?: number };
-};
-
-interface StatusUpdatePayload {
-  status: string;
-  retornoObtido?: number | null;
-}
-
 interface ApostaFormState {
   bancaId: string;
   esporte: string;
@@ -202,6 +167,19 @@ interface StatusFormState {
   status: string;
   retornoObtido: string;
 }
+
+const resolveBetStatusClass = (status: string): string => {
+  if (status in betStatusPillVariants) {
+    return betStatusPillVariants[status as StatusStyleKey];
+  }
+  return betStatusPillVariants.default;
+};
+
+type UploadTicketData = NonNullable<ApiUploadTicketResponse['data']>;
+type UploadApiError = ApiError & {
+  code?: string;
+  response?: ApiError['response'] & { status?: number };
+};
 
 interface FiltersState {
   bancaId: string;
@@ -248,9 +226,7 @@ const formFieldClass = 'flex flex-col gap-2';
 const labelClass = 'text-sm font-semibold text-foreground/80';
 const inputClass = 'w-full rounded-2xl border border-border/40 bg-background px-4 py-3 text-sm text-foreground placeholder:text-foreground/50 focus-visible:border-brand-emerald focus-visible:ring-2 focus-visible:ring-brand-emerald/30 outline-none transition';
 const compactInputClass = 'w-full rounded-lg border border-border/30 bg-background px-3 py-2 text-sm text-foreground placeholder:text-foreground/50 focus-visible:border-brand-emerald focus-visible:ring-2 focus-visible:ring-brand-emerald/30 outline-none transition';
-const inlineInputClass = 'grid gap-3 sm:grid-cols-2';
 const compactInlineInputClass = 'grid gap-2 sm:grid-cols-2';
-const errorTextClass = 'text-xs font-semibold text-rose-400';
 
 
 export default function Atualizar() {
@@ -310,10 +286,6 @@ export default function Atualizar() {
   });
   const [formErrors, setFormErrors] = useState<Partial<Record<keyof ApostaFormState, string>>>({});
   const [formNotice, setFormNotice] = useState('');
-  const [statusFormData, setStatusFormData] = useState<StatusFormState>({
-    status: '',
-    retornoObtido: ''
-  });
   const [updatingStatus, setUpdatingStatus] = useState(false);
   const [retornoManual, setRetornoManual] = useState(false);
   const [betsExpanded, setBetsExpanded] = useState(false);
@@ -561,6 +533,8 @@ export default function Atualizar() {
       if (filters.dataAte) {
         params.dataFim = filters.dataAte;
       }
+      
+      params.limit = 2000;
 
       const response = await apostaService.getAll(params);
       const apostasData = response.apostas;
@@ -642,7 +616,7 @@ export default function Atualizar() {
 
       for (const payload of payloads) {
         try {
-          await apostaService.create(payload);
+          await apostaService.create(payload as any);
           createdCount += 1;
         } catch (error) {
           const apiError = error as ApiError & { response?: { status?: number } };
@@ -801,11 +775,6 @@ ${limitReachedMessage}`);
       if (aposta) {
         setSelectedApostaForStatus(aposta);
         setStatusModalOpen(true);
-        // Preencher o formulário de status com os dados atuais
-        setStatusFormData({
-          status: aposta.status,
-          retornoObtido: aposta.retornoObtido != null ? aposta.retornoObtido.toString() : ''
-        });
         // Limpar parâmetro da URL
         searchParams.delete('status');
         setSearchParams(searchParams, { replace: true });
@@ -1053,10 +1022,10 @@ ${limitReachedMessage}`);
 
       if (editingAposta) {
         // Atualizar aposta existente
-        await apostaService.update(editingAposta, payload);
+        await apostaService.update(editingAposta, payload as any);
       } else {
         // Criar nova aposta
-        await apostaService.create(payload);
+        await apostaService.create(payload as any);
       }
 
       // Limpar formulário e fechar modal
@@ -1278,31 +1247,25 @@ ${limitReachedMessage}`);
     }
   }, []);
 
-  const handleUpdateStatus = async () => {
+  const handleUpdateStatus = async (statusData: StatusFormState) => {
     if (!selectedApostaForStatus) return;
-
-    // Validação
-    if (!statusFormData.status) {
-      toast.error('Selecione um status');
-      return;
-    }
 
     try {
       setUpdatingStatus(true);
 
-      const dataToSend: StatusUpdatePayload = {
-        status: statusFormData.status
+      const dataToSend: any = {
+        status: statusData.status as ApostaStatus
       };
 
       // Calcular retorno obtido automaticamente
-      if (STATUS_WITH_RETURNS.includes(statusFormData.status)) {
-        const retornoManualValue = parseNullableNumber(statusFormData.retornoObtido);
+      if (STATUS_WITH_RETURNS.includes(statusData.status)) {
+        const retornoManualValue = parseNullableNumber(statusData.retornoObtido.replace(',', '.'));
         // Se há valor manual, usar ele; senão calcular automaticamente
         if (retornoManualValue !== undefined && retornoManualValue > 0) {
           dataToSend.retornoObtido = retornoManualValue;
         } else {
           const retornoCalculado = calcularRetornoObtido(
-            statusFormData.status,
+            statusData.status,
             selectedApostaForStatus.valorApostado,
             selectedApostaForStatus.odd,
             retornoManualValue
@@ -1313,7 +1276,6 @@ ${limitReachedMessage}`);
         }
       } else {
         // Para outros status (Perdida, Meio Perdida, Reembolsada, Void, Pendente), não há retorno
-        // Não enviamos o campo ou enviamos explicitamente null
         dataToSend.retornoObtido = null;
       }
 
@@ -1325,7 +1287,6 @@ ${limitReachedMessage}`);
       // Fechar modal
       setStatusModalOpen(false);
       setSelectedApostaForStatus(null);
-      setStatusFormData({ status: '', retornoObtido: '' });
     } catch (error) {
       console.error('Erro ao atualizar status:', error);
       toast.error('Erro ao atualizar status. Tente novamente.');
@@ -1337,16 +1298,11 @@ ${limitReachedMessage}`);
   const handleCloseStatusModal = useCallback(() => {
     setStatusModalOpen(false);
     setSelectedApostaForStatus(null);
-    setStatusFormData({ status: '', retornoObtido: '' });
   }, []);
 
   // Função para abrir modal de status
   const handleOpenStatusModal = useCallback((aposta: ApiBetWithBank) => {
     setSelectedApostaForStatus(aposta);
-    setStatusFormData({
-      status: aposta.status,
-      retornoObtido: aposta.retornoObtido != null ? aposta.retornoObtido.toString() : ''
-    });
     setStatusModalOpen(true);
   }, []);
 
@@ -1453,17 +1409,6 @@ ${limitReachedMessage}`);
     }).filter((value) => value !== '').length;
   }, [filters]);
 
-  const manualRetornoValue = parseNullableNumber(statusFormData.retornoObtido);
-  const retornoPreview = STATUS_WITH_RETURNS.includes(statusFormData.status)
-    ? (manualRetornoValue ??
-      calcularRetornoObtido(
-        statusFormData.status,
-        selectedApostaForStatus?.valorApostado ?? 0,
-        selectedApostaForStatus?.odd ?? 0,
-        manualRetornoValue
-      ) ??
-      0)
-    : 0;
 
   return (
     <div className={pageShellClass}>
@@ -1770,7 +1715,7 @@ ${limitReachedMessage}`);
           formData={formData as unknown as ApostaFormData}
           onChange={handleFormChange as any}
           onSubmit={handleSubmit}
-          bancas={bancas}
+          bancas={bancas.map(b => ({ ...b, ePadrao: b.padrao } as any))}
           tipsters={tipsters}
           errors={formErrors as unknown as ApostaFormErrors}
           isEditing={!!editingAposta}
@@ -1788,113 +1733,14 @@ ${limitReachedMessage}`);
         loading={uploading}
       />
 
-      <Modal
+      {/* Modal de Status */}
+      <ApostaStatusModal
         isOpen={statusModalOpen}
+        aposta={selectedApostaForStatus}
         onClose={handleCloseStatusModal}
-        title="Atualizar Status"
-        subtitle="Defina o resultado da sua aposta"
-        size="sm"
-      >
-        <div className="space-y-6 py-2">
-          <p className="text-sm text-foreground/60">
-            {selectedApostaForStatus?.evento ?? 'Aposta'}
-          </p>
-
-          <div className="space-y-4">
-            <h4 className="text-sm font-semibold text-foreground/80">Status da Aposta</h4>
-            <div className="flex flex-wrap items-center justify-center gap-3 text-center">
-              {STATUS_APOSTAS.filter(s => s !== 'Tudo').map((status) => {
-                const handleStatusClick = () => {
-                  const novoRetorno = calcularRetornoObtido(
-                    status,
-                    selectedApostaForStatus?.valorApostado ?? 0,
-                    selectedApostaForStatus?.odd ?? 0
-                  );
-                  setStatusFormData(prev => ({
-                    ...prev,
-                    status,
-                    retornoObtido: novoRetorno ? novoRetorno.toString() : ''
-                  }));
-                };
-                const isSelected = statusFormData.status === status;
-                const variantClass = resolveBetStatusClass(status);
-                const selectedGlowClass = resolveStatusGlowClass(status);
-
-                return (
-                  <button
-                    key={status}
-                    type="button"
-                    onClick={handleStatusClick}
-                    className={cn(
-                      betStatusPillBaseClass,
-                      'text-xs sm:text-sm w-full sm:w-auto sm:flex-none min-w-[120px]',
-                      variantClass,
-                      isSelected
-                        ? cn('border-white/60 ring-4 scale-[1.04]', selectedGlowClass)
-                        : 'border-white/15 opacity-90 hover:opacity-100'
-                    )}
-                  >
-                    {getBetStatusIcon(status)}
-                    {status}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {(statusFormData.status === 'Ganha' || statusFormData.status === 'Meio Ganha' || statusFormData.status === 'Cashout') && (
-            <div className="space-y-4">
-              <h4 className="text-sm font-semibold text-foreground/80">Valor Resultado</h4>
-              <div className="rounded-2xl border border-brand-emerald/20 bg-brand-emerald/5 p-6 text-center shadow-inner">
-                <div className="text-3xl font-bold text-brand-emerald">
-                  {formatCurrency(retornoPreview)}
-                </div>
-                <p className="mt-2 text-xs text-foreground/60">
-                  {statusFormData.status === 'Cashout'
-                    ? 'Valor calculado automaticamente. Você pode ajustar manualmente abaixo se necessário.'
-                    : 'Valor calculado automaticamente baseado no valor apostado e na odd.'
-                  }
-                </p>
-              </div>
-              {statusFormData.status === 'Cashout' && (
-                <>
-                  <input
-                    type="number"
-                    step="0.01"
-                    min="0.01"
-                    value={statusFormData.retornoObtido}
-                    onChange={(e) => setStatusFormData(prev => ({ ...prev, retornoObtido: e.target.value }))}
-                    placeholder="Ajustar manualmente (opcional)"
-                    className={inputClass}
-                  />
-                  <p className="text-xs text-foreground/60">
-                    Deixe vazio para usar o valor calculado automaticamente
-                  </p>
-                </>
-              )}
-            </div>
-          )}
-
-          <div className="flex justify-end gap-3 pt-2">
-            <button
-              type="button"
-              className={buttonVariants.ghost}
-              onClick={handleCloseStatusModal}
-              disabled={updatingStatus}
-            >
-              Fechar
-            </button>
-            <button
-              type="button"
-              className={buttonVariants.primary}
-              onClick={handleUpdateStatus}
-              disabled={updatingStatus}
-            >
-              {updatingStatus ? 'Atualizando...' : 'Editar'}
-            </button>
-          </div>
-        </div>
-      </Modal>
+        onConfirm={handleUpdateStatus}
+        loading={updatingStatus}
+      />
     </div>
   );
 }

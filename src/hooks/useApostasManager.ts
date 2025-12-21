@@ -166,7 +166,9 @@ export function useApostasManager(options: UseApostasManagerOptions = {}) {
     try {
       setLoading(true);
       setError(null);
-      const response = await apostaService.getAll();
+      // Busca até 2000 apostas para garantir que todos os cálculos estejam corretos
+      // e o filtro no front-end funcione com todos os dados
+      const response = await apostaService.getAll({ limit: 2000 });
       // apostaService.getAll() returns { apostas: [], total, page, totalPages }
       // Extract the apostas array from the response
       const apostasData = response.apostas;

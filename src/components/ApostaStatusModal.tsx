@@ -1,17 +1,6 @@
-/**
- * Modal de Atualização de Status de Aposta
- * 
- * Permite alterar o status de uma aposta e calcular retorno automaticamente
- */
-
-import { useState, useCallback } from 'react';
-import { useToast } from '../contexts/ToastContext';
+import { useState, useCallback, useMemo } from 'react';
 import Modal from './Modal';
-import { useToast } from '../contexts/ToastContext';
-import { STATUS_APOSTAS } from '../constants/statusApostas';
-import { useToast } from '../contexts/ToastContext';
-import { formatCurrency } from '../utils/formatters';
-import { useToast } from '../contexts/ToastContext';
+import { toast } from '../utils/toast';
 import {
   STATUS_WITH_RETURNS,
   calcularRetornoObtido,
@@ -19,14 +8,17 @@ import {
   type StatusFormState,
 } from '../hooks/useApostasManager';
 import type { ApiBetWithBank } from '../types/api';
-import { useToast } from '../contexts/ToastContext';
 import { cn } from './ui/utils';
-import { useToast } from '../contexts/ToastContext';
 import {
-  betStatusPillBaseClass,
-  betStatusPillVariants,
-  getBetStatusIcon,
-} from '../constants/betStatusStyles';
+  Check,
+  X,
+  Clock,
+  Zap,
+  RefreshCw,
+  ChevronDown,
+  ArrowUpRight,
+  ArrowDownRight,
+} from 'lucide-react';
 
 // ============================================
 // Tipos
@@ -54,7 +46,15 @@ export default function ApostaStatusModal({
   if (!aposta) return null;
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Atualizar Status">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Definir Resultado"
+      subtitle="Atualize o status e o retorno da sua aposta"
+      className="bg-[#054a3e] border-emerald-400/30 pt-8"
+      size="sm"
+      hideHeader={true}
+    >
       {isOpen ? (
         <StatusFormContent
           key={aposta.id}
@@ -83,134 +83,210 @@ function StatusFormContent({ aposta, onClose, onConfirm, loading }: StatusFormCo
 
   const handleSubmit = useCallback(async () => {
     if (!formData.status) {
-      showToast('Selecione um status', 'error');
+      toast.error('Selecione um status');
       return;
     }
     await onConfirm(formData);
   }, [formData, onConfirm]);
 
   const manualRetornoValue = parseNullableNumber(formData.retornoObtido);
-  const retornoPreview = STATUS_WITH_RETURNS.includes(formData.status)
-    ? (manualRetornoValue ??
-      calcularRetornoObtido(
+
+  const handleAutoCalculate = () => {
+    const calculado = calcularRetornoObtido(
+      formData.status,
+      aposta.valorApostado,
+      aposta.odd,
+      manualRetornoValue
+    );
+    if (calculado !== null) {
+      setFormData(prev => ({ ...prev, retornoObtido: calculado.toFixed(2).replace('.', ',') }));
+    }
+  };
+
+  const retornoPreview = useMemo(() => {
+    const manualVal = parseNullableNumber(formData.retornoObtido.replace(',', '.'));
+    if (STATUS_WITH_RETURNS.includes(formData.status)) {
+      return manualVal ?? calcularRetornoObtido(
         formData.status,
         aposta.valorApostado,
         aposta.odd,
-        manualRetornoValue
-      ) ??
-      0)
-    : 0;
+        manualVal
+      ) ?? 0;
+    }
+    if (['Reembolsada', 'Void'].includes(formData.status)) {
+      return aposta.valorApostado;
+    }
+    if (formData.status === 'Meio Perdida') {
+      return aposta.valorApostado / 2;
+    }
+    return 0;
+  }, [formData.status, aposta.valorApostado, aposta.odd, formData.retornoObtido]);
+
+  const mainStatusList = ['Ganha', 'Perdida', 'Pendente'];
+  const secondaryStatusList = ['Meio Ganha', 'Meio Perdida', 'Cashout', 'Reembolsada', 'Void'];
 
   return (
-    <div className="space-y-5">
-      <div className="rounded-2xl border border-border/40 bg-background px-4 py-3 text-sm text-foreground">
-        <div className="space-y-2">
-          <p className="flex items-center justify-between gap-4">
-            <span className="text-foreground-muted">Evento</span>
-            <span className="font-semibold">{aposta.evento}</span>
-          </p>
-          <p className="flex items-center justify-between gap-4">
-            <span className="text-foreground-muted">Mercado</span>
-            <span className="font-semibold">{aposta.mercado}</span>
-          </p>
-          <p className="flex items-center justify-between gap-4">
-            <span className="text-foreground-muted">Valor Apostado</span>
-            <span className="font-semibold">{formatCurrency(aposta.valorApostado)}</span>
-          </p>
-          <p className="flex items-center justify-between gap-4">
-            <span className="text-foreground-muted">Odd</span>
-            <span className="font-semibold">{aposta.odd.toFixed(2)}</span>
-          </p>
+    <div className="space-y-4 pt-1">
+      {/* Seção Aposta */}
+      <div className="space-y-1.5">
+        <label className="text-xs font-bold text-white/90">Aposta</label>
+        <div className="relative">
+          <div className="flex w-full items-center justify-between rounded-xl border border-white/5 bg-[#06312a] px-3 py-2.5 text-xs text-white/80 shadow-inner">
+            <span className="font-semibold truncate">Aposta #{aposta.id.split('-')[0].toUpperCase()} - {aposta.evento}</span>
+            <ChevronDown size={16} className="text-white/30 flex-shrink-0" />
+          </div>
         </div>
       </div>
 
-      <div className="space-y-3">
-        <p className="text-sm font-semibold text-foreground">Status *</p>
-        <div className="space-y-2">
-          {STATUS_APOSTAS.filter((s) => s !== 'Tudo').map((status) => {
+      {/* Status Principal */}
+      <div className="space-y-2">
+        <label className="text-xs font-bold text-white/90">Status Principal</label>
+        <div className="grid grid-cols-3 gap-2">
+          {mainStatusList.map((status) => {
             const isSelected = formData.status === status;
+            let themeClass = "";
+            let iconClass = "rounded-full p-0.5 border-2 flex items-center justify-center";
+            let Icon = Clock;
+
+            if (status === 'Ganha') {
+              themeClass = isSelected
+                ? "bg-[#10b981] ring-2 ring-white border-transparent shadow-[0_0_20px_rgba(16,185,129,0.5)]"
+                : "bg-[#065f46] border-white/5 opacity-80 hover:opacity-100";
+              Icon = Check;
+            } else if (status === 'Perdida') {
+              themeClass = isSelected
+                ? "bg-[#ac3c43] ring-2 ring-white border-transparent shadow-[0_0_20px_rgba(172,60,67,0.5)]"
+                : "bg-[#7f1d1d] border-white/5 opacity-80 hover:opacity-100";
+              Icon = X;
+            } else if (status === 'Pendente') {
+              themeClass = isSelected
+                ? "bg-[#9a6a0e] ring-2 ring-white border-transparent shadow-[0_0_20px_rgba(154,106,14,0.5)]"
+                : "bg-[#78350f] border-white/5 opacity-80 hover:opacity-100";
+              Icon = Clock;
+            }
+
             return (
               <button
                 key={status}
                 type="button"
-                onClick={() =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    status,
-                    retornoObtido: STATUS_WITH_RETURNS.includes(status) ? prev.retornoObtido : ''
-                  }))
-                }
+                onClick={() => setFormData(prev => ({ ...prev, status }))}
                 className={cn(
-                  betStatusPillBaseClass,
-                  'w-full justify-start px-5 py-3 text-base',
-                  betStatusPillVariants[status] ?? betStatusPillVariants.default,
-                  isSelected && 'ring-2 ring-white/70 drop-shadow-[0_18px_35px_rgba(3,7,18,0.45)]'
+                  "flex h-12 items-center justify-center gap-2 rounded-lg border text-sm font-bold text-white transition-all active:scale-95 shadow-md relative overflow-hidden",
+                  themeClass
                 )}
-                aria-pressed={isSelected}
               >
-                <span className="flex items-center gap-2 text-white">
-                  {getBetStatusIcon(status, { className: 'h-5 w-5 text-white' })}
-                  {status}
-                </span>
+                <div className={cn(iconClass, isSelected ? "border-white" : "border-white/20")}>
+                  <Icon size={12} strokeWidth={4} />
+                </div>
+                {status}
               </button>
             );
           })}
         </div>
       </div>
 
-      {STATUS_WITH_RETURNS.includes(formData.status) && (
-        <div className="space-y-2">
-          <label htmlFor="retorno-input" className="text-sm font-semibold text-foreground">
-            Retorno Obtido
-            <span className="ml-2 text-xs font-normal text-foreground-muted">
-              (deixe vazio para calcular automaticamente)
-            </span>
-          </label>
-          <input
-            id="retorno-input"
-            type="number"
-            step="0.01"
-            placeholder={`Calculado: ${formatCurrency(retornoPreview)}`}
-            value={formData.retornoObtido}
-            onChange={(e) => setFormData((prev) => ({ ...prev, retornoObtido: e.target.value }))}
-            className="w-full rounded-2xl border border-border/50 bg-background px-4 py-3 text-sm focus-visible:border-brand-emerald focus-visible:ring-2 focus-visible:ring-brand-emerald/30"
-          />
-          <div className="text-sm text-foreground-muted">
-            <span>Retorno previsto: </span>
-            <strong className={cn('font-semibold', retornoPreview > 0 && 'text-brand-emerald')}>
-              {formatCurrency(retornoPreview)}
-            </strong>
+      {/* Status Secundário */}
+      <div className="space-y-2">
+        <label className="text-xs font-bold text-white/90">Status Secundário (Opcional)</label>
+        <div className="grid grid-cols-5 gap-1.5">
+          {secondaryStatusList.map((status) => {
+            const isSelected = formData.status === status;
+            let themeClass = "";
+            let Icon = Clock;
+
+            if (status === 'Meio Ganha') {
+              themeClass = isSelected ? "bg-[#16a34a] border-transparent shadow-[0_0_15px_rgba(22,163,74,0.3)]" : "bg-[#14532d] border-white/5 opacity-80";
+              Icon = ArrowUpRight;
+            } else if (status === 'Meio Perdida') {
+              themeClass = isSelected ? "bg-[#b45309] border-transparent shadow-[0_0_15px_rgba(180,83,9,0.3)]" : "bg-[#7c2d12] border-white/5 opacity-80";
+              Icon = ArrowDownRight;
+            } else if (status === 'Cashout') {
+              themeClass = isSelected ? "bg-[#7c3aed] border-transparent shadow-[0_0_15px_rgba(124,58,237,0.3)]" : "bg-[#4c1d95] border-white/5 opacity-80";
+              Icon = Zap;
+            } else if (status === 'Reembolsada') {
+              themeClass = isSelected ? "bg-[#2563eb] border-transparent shadow-[0_0_15px_rgba(37,99,235,0.3)]" : "bg-[#1e3a8a] border-white/5 opacity-80";
+              Icon = RefreshCw;
+            } else if (status === 'Void') {
+              themeClass = isSelected ? "bg-[#475569] border-transparent shadow-[0_0_15px_rgba(71,85,105,0.3)]" : "bg-[#1e293b] border-white/5 opacity-80";
+              Icon = RefreshCw;
+            }
+
+            return (
+              <button
+                key={status}
+                type="button"
+                onClick={() => setFormData(prev => ({ ...prev, status }))}
+                className={cn(
+                  "flex flex-col items-center justify-center gap-1 rounded-lg border py-2 text-[9px] font-bold text-white transition-all active:scale-95 hover:opacity-100",
+                  themeClass,
+                  isSelected && "ring-2 ring-white opacity-100"
+                )}
+              >
+                <Icon size={14} />
+                <span className="text-center leading-[1.1]">{status.toUpperCase()}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Seção Valor Resultado */}
+      <div className="rounded-3xl border border-white/5 bg-[#06312a] p-5 shadow-inner relative overflow-hidden">
+        {/* Subtle background glow */}
+        <div className="absolute top-0 right-0 h-24 w-24 bg-emerald-500/5 blur-[40px]" />
+
+        <div className="flex items-center justify-between mb-4">
+          <label className="text-[10px] font-bold text-white uppercase tracking-wider">Valor Resultado</label>
+          <button
+            type="button"
+            onClick={handleAutoCalculate}
+            className="flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 text-[9px] font-bold text-emerald-400 transition hover:bg-emerald-500/20 active:scale-95"
+          >
+            <Zap size={10} className="fill-emerald-400" />
+            CÁLCULO AUTOMÁTICO
+          </button>
+        </div>
+
+        <div className="flex items-end justify-between">
+          <div className="space-y-1">
+            <div className="flex items-baseline gap-1">
+              <span className="text-xl font-bold text-emerald-500">R$</span>
+              <span className="text-3xl font-extrabold text-white tracking-tight">
+                {retornoPreview.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </span>
+            </div>
+            <p className="text-[9px] font-bold text-white/30 uppercase tracking-[0.15em]">Baseado na Odd e Stake</p>
+          </div>
+
+          <div className="w-32 space-y-2">
+            <label className="text-[9px] font-bold text-white/30 uppercase tracking-[0.15em] block text-right">Ajuste Manual</label>
+            <input
+              type="text"
+              placeholder="0,00"
+              value={formData.retornoObtido}
+              onChange={(e) => setFormData(prev => ({ ...prev, retornoObtido: e.target.value }))}
+              className="w-full rounded-lg bg-[#06312a] px-3 py-2.5 text-right text-sm font-bold text-white border border-white/5 focus:outline-none focus:ring-1 focus:ring-emerald-500/20 transition-all shadow-inner"
+            />
           </div>
         </div>
-      )}
+      </div>
 
-      {formData.status && !STATUS_WITH_RETURNS.includes(formData.status) && formData.status !== 'Pendente' && (
-        <div className="rounded-2xl border border-border/40 bg-background px-4 py-3 text-sm text-foreground">
-          <p>
-            {formData.status === 'Perdida' && '❌ Esta aposta será marcada como perdida.'}
-            {formData.status === 'Meio Perdida' && '⚠️ Metade do valor será considerado perdido.'}
-            {formData.status === 'Reembolsada' && '🔄 O valor apostado será devolvido.'}
-            {formData.status === 'Void' && '⛔ Esta aposta será anulada.'}
-          </p>
-        </div>
-      )}
-
-      <div className="flex flex-col gap-3 border-t border-border/20 pt-4 sm:flex-row sm:justify-end">
+      {/* Footer */}
+      <div className="flex items-center gap-3 pt-3">
         <button
           type="button"
-          className="inline-flex items-center justify-center rounded-2xl border border-border/40 px-5 py-3 text-sm font-semibold text-foreground transition hocus:border-brand-emerald/60 hocus:text-brand-emerald disabled:opacity-60"
           onClick={onClose}
-          disabled={loading}
+          className="flex-1 rounded-xl border border-white/10 bg-transparent px-4 py-3.5 text-sm font-bold text-white transition hover:bg-white/5 active:scale-95"
         >
           Cancelar
         </button>
         <button
           type="button"
-          className="inline-flex items-center justify-center rounded-2xl bg-brand-linear px-5 py-3 text-sm font-semibold text-white shadow-glow transition active:scale-[0.98] disabled:opacity-60"
           onClick={() => void handleSubmit()}
           disabled={loading || !formData.status}
+          className="flex-1 rounded-xl bg-[#10b981] px-4 py-3.5 text-sm font-bold text-white shadow-[0_8px_16px_-4px_rgba(16,185,129,0.3)] transition hover:bg-[#059669] active:scale-95 disabled:opacity-50"
         >
-          {loading ? 'Salvando...' : 'Atualizar Status'}
+          {loading ? 'Processando...' : 'Confirmar Status'}
         </button>
       </div>
     </div>

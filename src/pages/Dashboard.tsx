@@ -11,6 +11,8 @@ import {
   Plus,
   TrendingUp,
   Trophy,
+  Wallet,
+  Upload,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import FilterPopover from '../components/FilterPopover';
@@ -420,7 +422,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <section className="grid gap-5 lg:grid-cols-4">
+      <section className="grid gap-5 lg:grid-cols-5">
         <div
           className={cn(
             'col-span-1 space-y-6 rounded-lg border border-border/30 p-6 text-[#f2f2f2] shadow-card lg:col-span-2',
@@ -429,45 +431,69 @@ export default function Dashboard() {
         >
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
-              <p className="text-sm text-white/80">Saldo da banca</p>
-              <p className="text-4xl font-semibold tracking-tight">{formatCurrency(metricas.saldoBanca)}</p>
+              <p className="text-sm font-semibold uppercase tracking-widest text-white/60">Saldo da banca</p>
+              <p className="text-4xl font-bold tracking-tight mt-1">{formatCurrency(metricas.saldoBanca)}</p>
             </div>
-            <span className="inline-flex items-center gap-2 rounded-2xl border border-white/30 bg-white/10 px-3 py-1 text-sm font-semibold">
+            <span className="inline-flex items-center gap-2 rounded-2xl border border-emerald-400/30 bg-emerald-400/10 px-4 py-2 text-sm font-bold text-emerald-100 shadow-glow">
               <TrendingUp size={16} />
               {formatSignedPercent(metricas.roi)}
             </span>
           </div>
 
-          <div className="grid gap-6 text-sm md:grid-cols-3">
-            <div>
-              <p className="text-white/70">Lucro total</p>
-              <p className="text-2xl font-semibold">{formatCurrency(metricas.lucroTotal)}</p>
+          <div className="grid gap-6 md:grid-cols-2 pt-2">
+            <div className="space-y-1">
+              <p className="text-white/60 font-semibold uppercase tracking-wider text-[0.7rem]">Lucro total</p>
+              <p className="text-2xl font-bold text-white leading-tight">{formatCurrency(metricas.lucroTotal)}</p>
             </div>
-            <div>
-              <p className="text-white/70">Depósitos</p>
-              <p className="text-lg font-semibold">{formatCurrency(metricas.totalDepositado)}</p>
-            </div>
-            <div>
-              <p className="text-white/70">Saques</p>
-              <p className="text-lg font-semibold">{formatCurrency(metricas.totalSacado)}</p>
+            <div className="flex items-end justify-end">
+              <button className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-white/20 hover:scale-[1.02] active:scale-[0.98]">
+                Ver detalhes <ArrowUpRight size={16} />
+              </button>
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center justify-between gap-4 text-sm text-white/75">
-            <div className="flex flex-wrap gap-6">
-              <span>Total investido: {formatCurrency(metricas.totalInvestido)}</span>
-              <span>ROI médio: {formatSignedPercent(metricas.roi)}</span>
+          <div className="grid grid-cols-3 gap-4 pt-4 border-t border-white/10">
+            <div className="space-y-1">
+              <span className="text-white/50 text-[0.65rem] font-bold uppercase tracking-widest">Total Investido</span>
+              <p className="text-base font-bold text-white">{formatCurrency(metricas.totalInvestido)}</p>
             </div>
-            <button className="inline-flex items-center gap-2 rounded-2xl border border-white/30 bg-white/10 px-4 py-2 text-sm font-semibold text-[#f2f2f2] transition hover:bg-white/20">
-              Ver detalhes <ArrowUpRight size={16} />
-            </button>
+            <div className="space-y-1 text-center">
+              <span className="text-white/50 text-[0.65rem] font-bold uppercase tracking-widest">Valor Pendente</span>
+              <p className="text-base font-bold text-amber-300">{formatCurrency(metricas.totalInvestidoPendente || 0)}</p>
+            </div>
+            <div className="space-y-1 text-right">
+              <span className="text-white/50 text-[0.65rem] font-bold uppercase tracking-widest">Valor Perdido</span>
+              <p className="text-base font-bold text-rose-300">{formatCurrency(metricas.valorPerdido || 0)}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Mini Cards Depósitos e Saques */}
+        <div className="flex flex-col gap-4 lg:col-span-1">
+          <div className={cn(sectionCardClass, 'flex items-center gap-3 p-4 h-full')}>
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-400">
+              <Wallet size={18} />
+            </div>
+            <div>
+              <p className="text-[0.6rem] font-bold uppercase tracking-[0.2em] text-white/50">Depósitos</p>
+              <p className="text-lg font-bold text-white leading-tight mt-0.5">{formatCurrency(metricas.totalDepositado)}</p>
+            </div>
+          </div>
+          <div className={cn(sectionCardClass, 'flex items-center gap-3 p-4 h-full')}>
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-400">
+              <Upload size={18} />
+            </div>
+            <div>
+              <p className="text-[0.6rem] font-bold uppercase tracking-[0.2em] text-white/50">Saques</p>
+              <p className="text-lg font-bold text-white leading-tight mt-0.5">{formatCurrency(metricas.totalSacado)}</p>
+            </div>
           </div>
         </div>
 
         <div className={cn(sectionCardClass, 'space-y-4 lg:col-span-2')}>
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-emerald/15 text-brand-emerald">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-brand-emerald/15 text-brand-emerald">
                 <Trophy className="h-5 w-5" />
               </div>
               <div>

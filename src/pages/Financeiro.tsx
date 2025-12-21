@@ -19,7 +19,7 @@ import DateRangeInput from '../components/DateRangeInput';
 import FilterPopover from '../components/FilterPopover';
 import DropdownSelect from '../components/DropdownSelect';
 import Modal from '../components/Modal';
-import EmptyState from '../components/EmptyState';
+import { EmptyState } from '../components/ui/empty-state';
 import { CASAS_APOSTAS } from '../constants/casasApostas';
 import { financeiroService, type TipoTransacao } from '../services/api';
 import { useBancas } from '../hooks/useBancas';
@@ -231,7 +231,7 @@ export default function Financeiro() {
     console.log('[DEBUG Financeiro] fetchStats - appliedFilters:', appliedFilters);
     console.log('[DEBUG Financeiro] fetchStats - bancaId original:', appliedFilters.bancaId);
     console.log('[DEBUG Financeiro] fetchStats - bancaId resolvido:', bancaIdToUse);
-    
+
     if (!bancaIdToUse) {
       console.log('[DEBUG Financeiro] bancaId vazio, usando emptyStats');
       setStatsData(emptyStats);
@@ -603,109 +603,7 @@ export default function Financeiro() {
         </div>
       </div>
 
-      <section className="grid gap-4 lg:grid-cols-2">
-        {statsLoading ? (
-          <>
-            {[0, 1, 2].map((index) => (
-              <div
-                key={index}
-                className={cn(dashboardCardShellClass, 'animate-pulse space-y-4 text-white')}
-              >
-                <div className="h-5 w-32 rounded-full bg-white/10" />
-                <div className="h-10 w-40 rounded-full bg-white/10" />
-                <div className="space-y-3">
-                  <div className="h-4 w-full rounded-full bg-white/5" />
-                  <div className="h-4 w-3/4 rounded-full bg-white/5" />
-                </div>
-              </div>
-            ))}
-          </>
-        ) : (
-          <>
-            <div className={cn(
-              dashboardCardShellClass,
-              'bg-bank-hero text-white shadow-[0_35px_55px_rgba(0,0,0,0.35)] flex h-full flex-col p-5 lg:p-6',
-            )}>
-              <div className="flex items-start justify-between">
-                <div className="space-y-3">
-                  <p className="text-[0.65rem] font-semibold uppercase tracking-[0.35em] text-white/70">Saldo Atual</p>
-                  <div className="text-4xl font-semibold leading-tight text-white lg:text-[2.75rem]">
-                    {formatCurrency(statsData.saldoAtual)}
-                  </div>
-                  <div className="flex items-center gap-2 text-sm font-medium text-white/80">
-                    {variationIsPositive ? (
-                      <TrendingUp className="h-4 w-4 text-emerald-300" />
-                    ) : (
-                      <TrendingDown className="h-4 w-4 text-rose-300" />
-                    )}
-                    <span className={variationIsPositive ? 'text-emerald-200' : 'text-rose-200'}>
-                      {formattedVariationPercent}
-                    </span>
-                  </div>
-                </div>
-                <div className="rounded-2xl bg-white/10 p-3 text-white">
-                  <Wallet className="h-5 w-5" />
-                </div>
-              </div>
-              <div className="mt-4 grid gap-3 md:grid-cols-3">
-                {quickStats.map(({ label, value, icon: StatIcon, accent }) => (
-                  <div key={label} className="rounded-2xl bg-white/5 p-3.5">
-                    <div className="flex items-center gap-2 text-sm text-white/70">
-                      <span className={cn('inline-flex h-7 w-7 items-center justify-center rounded-xl text-xs', accent)}>
-                        <StatIcon className="h-3.5 w-3.5" />
-                      </span>
-                      {label}
-                    </div>
-                    <p className="mt-3 text-2xl font-semibold text-white">{value}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className={cn(dashboardCardShellClass, 'flex h-full flex-col gap-5 p-5 lg:p-6')}>
-              <div className="flex flex-wrap items-start justify-between gap-4">
-                <div>
-                  <h3 className="text-xl font-semibold text-white">Resumo de Apostas</h3>
-                  <p className="text-sm text-white/70">Visão geral das suas apostas</p>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  <span className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-100">
-                    <span className="h-2 w-2 rounded-full bg-emerald-300" />
-                    {statsData.apostasConcluidas}{' '}
-                    {statsData.apostasConcluidas === 1 ? 'finalizada' : 'finalizadas'}
-                  </span>
-                  <span className="inline-flex items-center gap-2 rounded-full border border-[#ffb347]/40 bg-[#ff8f0f]/15 px-3 py-1 text-xs font-semibold text-[#ffe8c2]">
-                    <span className="h-2 w-2 rounded-full bg-[#ffc764]" />
-                    {statsData.apostasPendentes === 1 ? '1 pendente' : `${statsData.apostasPendentes} pendentes`}
-                  </span>
-                </div>
-              </div>
-              <div className="h-px bg-white/10" />
-              <div className="grid gap-3 md:grid-cols-2">
-                {resumoApostasCards.map(({ key, label, icon: ResumoIcon, accent, cardClass, parts, isNegative, description, valueClass, decimalClass }) => (
-                  <div key={key} className={cn('rounded-2xl border border-white/10 bg-white/5 p-4 transition-all', cardClass)}>
-                    <div className="flex items-center gap-2 text-sm text-white/70">
-                      <span className={cn('inline-flex h-9 w-9 items-center justify-center rounded-2xl', accent)}>
-                        <ResumoIcon className="h-4 w-4" />
-                      </span>
-                      {label}
-                    </div>
-                    <div className="mt-6 flex flex-wrap items-baseline gap-2">
-                      <span className="text-base font-semibold text-white/70">{parts.symbol}</span>
-                      <div className="flex items-baseline gap-1">
-                        {isNegative && <span className="text-3xl font-semibold text-rose-300">-</span>}
-                        <span className={cn('text-3xl font-semibold', valueClass ?? 'text-white')}>{parts.integerPart}</span>
-                        <span className={cn('text-xl font-semibold', decimalClass ?? 'text-white/60')}>,{parts.decimalPart}</span>
-                      </div>
-                    </div>
-                    <p className="mt-2 text-xs uppercase tracking-[0.35em] text-white/45">{description}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </>
-        )}
-      </section>
+      {/* Financial Summary and Bets Summary cards removed per request */}
 
       {error && (
         <div className={cn(sectionCardClass, 'border-danger/30 bg-danger/5 text-sm text-danger')}>

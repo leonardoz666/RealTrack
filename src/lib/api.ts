@@ -5,7 +5,7 @@ import axios, {
   type InternalAxiosRequestConfig,
 } from 'axios';
 import { AuthManager } from './auth';
-import { useToast } from '../contexts/ToastContext';
+import { toast } from '../utils/toast';
 
 const DEFAULT_BASE_URL = 'http://localhost:3001/api';
 const envBaseUrl = typeof import.meta.env.VITE_API_URL === 'string' ? import.meta.env.VITE_API_URL : undefined;
@@ -151,7 +151,7 @@ api.interceptors.response.use(
       if (typeof window !== 'undefined') {
         // Sanitizar mensagem para prevenir XSS
         const sanitizedMessage = message.replace(/<[^>]*>/g, '');
-        alert(`${sanitizedMessage}\n\nTente novamente em ${Math.ceil(retryAfter / 60)} minuto(s).`);
+        toast.error(`${sanitizedMessage}\n\nTente novamente em ${Math.ceil(retryAfter / 60)} minuto(s).`);
       }
     }
     

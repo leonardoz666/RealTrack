@@ -35,6 +35,9 @@ export interface DashboardMetricas {
   apostasGanhas?: number;
   apostasPerdidas?: number;
   apostasPendentes?: number;
+  valorPerdido?: number;
+  totalGanhos?: number;
+  totalInvestidoPendente?: number;
 }
 
 export interface LucroAcumuladoItem {
@@ -119,6 +122,9 @@ const initialMetricas: DashboardMetricas = {
   apostasGanhas: 0,
   apostasPerdidas: 0,
   apostasPendentes: 0,
+  valorPerdido: 0,
+  totalGanhos: 0,
+  totalInvestidoPendente: 0,
 };
 
 const isDevEnv = import.meta.env.DEV;
@@ -464,6 +470,15 @@ export function useDashboardData(
       setLucroPorTipster(data.lucroPorTipster);
       setResumoPorEsporte(data.resumoPorEsporte);
       setResumoPorCasa(data.resumoPorCasa);
+
+      // Map valorPerdido and totalGanhos if they exist in the response
+      if ((data.metricas as any).valorPerdido !== undefined) {
+        setMetricas(prev => ({
+          ...prev,
+          valorPerdido: (data.metricas as any).valorPerdido,
+          totalGanhos: (data.metricas as any).totalGanhos
+        }));
+      }
 
       if (isDevEnv) {
         console.log('[EVOLUÇÃO] Dados salvos com sucesso');

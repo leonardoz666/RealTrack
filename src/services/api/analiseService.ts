@@ -120,15 +120,82 @@ const convertFiltersToParams = (filters: AnaliseFilters): AnaliseQueryParams => 
 // ============================================
 
 /**
- * Mapeia resposta da API para formato interno
+ * Helper seguro para converter valores numéricos
  */
-const mapPerformanceFromApi = (data: AnalisePerformanceResponse): PerformanceData => ({
-  evolucaoRoiMensal: data.evolucaoRoiMensal ?? [],
-  distribuicaoOdds: data.distribuicaoOdds ?? [],
-  heatmap: data.heatmap ?? {},
-  comparacaoBookmakers: data.comparacaoBookmakers ?? [],
-  winRatePorEsporte: data.winRatePorEsporte ?? [],
-});
+const safeNumber = (val: any): number => {
+  if (typeof val === 'number') return Number.isFinite(val) ? val : 0;
+  if (typeof val === 'string') {
+    // Handle comma as decimal separator and remove non-numeric chars except dot/comma/minus
+    const clean = val.replace(',', '.');
+    const num = Number(clean);
+    return Number.isFinite(num) ? num : 0;
+  }
+  return 0;
+};
+
+/**
+ * Mapeia resposta da API para formato interno com sanitização
+ */
+const mapPerformanceFromApi = (data: AnalisePerformanceResponse): PerformanceData => {
+  // Sanitização de RoiMensal
+  const evolucaoRoiMensal = (data.evolucaoRoiMensal ?? [])
+    .map(item => ({
+      mes: String(item.mes || ''),
+      roi: safeNumber(item.roi)
+    }))
+    // Ensure basic validity of month string to avoid component crashes
+    .filter(item => item.mes.length >= 7); // minimal "YYYY-MM" length
+
+  // Sanitização de DistribuicaoOdds
+  const distribuicaoOdds = (data.distribuicaoOdds ?? []).map(item => ({
+    faixa: String(item.faixa || ''),
+    quantidade: safeNumber(item.quantidade)
+  }));
+
+  // Sanitização de Heatmap
+  const heatmap: HeatmapData = {};
+  if (data.heatmap && typeof data.heatmap === 'object') {
+    Object.entries(data.heatmap).forEach(([day, row]) => {
+      if (row && typeof row === 'object') {
+        const cleanRow: HeatmapRow = {};
+        Object.entries(row).forEach(([period, cell]) => {
+          if (cell) {
+            cleanRow[period] = {
+              investido: safeNumber(cell.investido),
+              resultado: safeNumber(cell.resultado),
+              roi: safeNumber(cell.roi)
+            };
+          }
+        });
+        heatmap[day] = cleanRow;
+      }
+    });
+  }
+
+  // Sanitização de ComparacaoBookmakers
+  const comparacaoBookmakers = (data.comparacaoBookmakers ?? []).map(item => ({
+    casa: String(item.casa || ''),
+    investido: safeNumber(item.investido),
+    resultado: safeNumber(item.resultado),
+    roi: safeNumber(item.roi)
+  }));
+
+  // Sanitização de WinRatePorEsporte
+  const winRatePorEsporte = (data.winRatePorEsporte ?? []).map(item => ({
+    esporte: String(item.esporte || ''),
+    total: safeNumber(item.total),
+    ganhas: safeNumber(item.ganhas),
+    winRate: safeNumber(item.winRate)
+  }));
+
+  return {
+    evolucaoRoiMensal,
+    distribuicaoOdds,
+    heatmap,
+    comparacaoBookmakers,
+    winRatePorEsporte,
+  };
+};
 
 /**
  * Calcula estatísticas derivadas dos dados de performance
@@ -203,70 +270,9 @@ async function getAnaliseCompleta(filters: AnaliseQueryParams = {}): Promise<Ana
   };
 }
 
-/**
- * Busca evolução de ROI mensal
- */
-async function getEvolucaoRoi(filters: AnaliseQueryParams = {}): Promise<RoiEntry[]> {
-  const performance = await getPerformance(filters);
-  return performance.evolucaoRoiMensal;
-}
-
-/**
- * Busca distribuição de odds
- */
-async function getDistribuicaoOdds(filters: AnaliseQueryParams = {}): Promise<OddDistribution[]> {
-  const performance = await getPerformance(filters);
-  return performance.distribuicaoOdds;
-}
-
-/**
- * Busca comparação de bookmakers
- */
-async function getComparacaoBookmakers(filters: AnaliseQueryParams = {}): Promise<BookmakerComparison[]> {
-  const performance = await getPerformance(filters);
-  return performance.comparacaoBookmakers;
-}
-
-/**
- * Busca heatmap de apostas
- */
-async function getHeatmap(filters: AnaliseQueryParams = {}): Promise<HeatmapData> {
-  const performance = await getPerformance(filters);
-  return performance.heatmap;
-}
-
-/**
- * Busca win rate por esporte
- */
-async function getWinRatePorEsporte(filters: AnaliseQueryParams = {}): Promise<WinRatePorEsporte[]> {
-  const performance = await getPerformance(filters);
-  return performance.winRatePorEsporte;
-}
-
-// ============================================
-// Export
-// ============================================
-
 export const analiseService = {
-  // Dados de performance
   getPerformance,
   getPerformanceByBanca,
   getAnaliseCompleta,
-  
-  // Dados específicos
-  getEvolucaoRoi,
-  getDistribuicaoOdds,
-  getComparacaoBookmakers,
-  getHeatmap,
-  getWinRatePorEsporte,
-  
-  // Helpers
-  buildQueryParams,
-  convertFiltersToParams,
-  
-  // Mapeadores
-  mapPerformanceFromApi,
   calculateDerivedStats,
 };
-
-export default analiseService;

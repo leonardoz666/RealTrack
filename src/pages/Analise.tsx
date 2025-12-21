@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Bar, BarChart, Cell, Tooltip, XAxis, YAxis, CartesianGrid } from 'recharts';
+import { AlertTriangle } from 'lucide-react';
 import PageHeader from '../components/PageHeader';
 import StatCard from '../components/StatCard';
 import { chartTheme } from '../utils/chartTheme';
 import { formatCurrency, formatPercent } from '../utils/formatters';
-import EmptyState from '../components/ui/EmptyState';
-import Skeleton from '../components/ui/Skeleton';
+import { EmptyState } from '../components/ui/empty-state';
+import { Skeleton } from '../components/ui/skeleton';
+import { Button } from '../components/ui/button';
 import { AnaliseFilters as AnaliseFiltersComponent } from '../components/analise/AnaliseFilters';
 import AnaliseRoiChart from '../components/analise/AnaliseRoiChart';
 import AnaliseOddsChart from '../components/analise/AnaliseOddsChart';
@@ -16,130 +18,21 @@ import { useChartContainer } from '../hooks/useChartContainer';
 import type { AnaliseFilters as AnaliseFiltersType } from '../types/AnaliseFilters';
 import type { RoiChartPoint } from '../types/RoiChartPoint';
 import type { OddsChartPoint } from '../types/OddsChartPoint';
+import { 
+  defaultHeatmap, 
+  emptyAnaliseState, 
+  isAnaliseState,
+  normalizeHeatmap
+} from '../utils/typeGuards';
+import type { 
+  HeatmapCell, 
+  HeatmapData, 
+  AnaliseViewState 
+} from '../utils/typeGuards';
 
 const heatmapRows = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 const heatmapCols = ['Manhã (06-12)', 'Tarde (12-18)', 'Noite (18-24)', 'Madrugada (00-06)'];
 
-interface HeatmapCell {
-  investido: number;
-  resultado: number;
-  roi: number;
-}
-
-type HeatmapRow = Record<string, HeatmapCell | undefined>;
-type HeatmapData = Record<string, HeatmapRow | undefined>;
-
-interface AnaliseViewState {
-  evolucaoRoiMensal: { mes: string; roi: number }[];
-  distribuicaoOdds: { faixa: string; quantidade: number }[];
-  heatmap: HeatmapData;
-  comparacaoBookmakers: { casa: string; investido: number; resultado: number; roi: number }[];
-  winRatePorEsporte: { esporte: string; total: number; ganhas: number; winRate: number }[];
-}
-
-interface AnaliseResultSnapshot {
-  data: AnaliseViewState;
-  isLoading: boolean;
-}
-
-const defaultHeatmap: HeatmapData = {};
-const emptyAnaliseState: AnaliseViewState = {
-  evolucaoRoiMensal: [],
-  distribuicaoOdds: [],
-  heatmap: defaultHeatmap,
-  comparacaoBookmakers: [],
-  winRatePorEsporte: [],
-};
-
-const isRecord = (value: unknown): value is Record<string, unknown> => typeof value === 'object' && value !== null;
-const isFiniteNumber = (value: unknown): value is number => typeof value === 'number' && Number.isFinite(value);
-const isStringValue = (value: unknown): value is string => typeof value === 'string';
-
-const isArrayOf = <T,>(value: unknown, predicate: (entry: unknown) => entry is T): value is T[] => {
-  return Array.isArray(value) && value.every(predicate);
-};
-
-const isRoiEntry = (value: unknown): value is { mes: string; roi: number } => {
-  return isRecord(value) && isStringValue(value.mes) && isFiniteNumber(value.roi);
-};
-
-const isOddDistribution = (value: unknown): value is { faixa: string; quantidade: number } => {
-  return isRecord(value) && isStringValue(value.faixa) && isFiniteNumber(value.quantidade);
-};
-
-const isBookmakerComparison = (value: unknown): value is { casa: string; investido: number; resultado: number; roi: number } => {
-  return (
-    isRecord(value) &&
-    isStringValue(value.casa) &&
-    isFiniteNumber(value.investido) &&
-    isFiniteNumber(value.resultado) &&
-    isFiniteNumber(value.roi)
-  );
-};
-
-const isWinRateEntry = (value: unknown): value is { esporte: string; total: number; ganhas: number; winRate: number } => {
-  return (
-    isRecord(value) &&
-    isStringValue(value.esporte) &&
-    isFiniteNumber(value.total) &&
-    isFiniteNumber(value.ganhas) &&
-    isFiniteNumber(value.winRate)
-  );
-};
-
-const isHeatmapCell = (value: unknown): value is HeatmapCell => {
-  return (
-    isRecord(value) &&
-    isFiniteNumber(value.investido) &&
-    isFiniteNumber(value.resultado) &&
-    isFiniteNumber(value.roi)
-  );
-};
-
-const isHeatmapRow = (value: unknown): value is HeatmapRow => {
-  if (!isRecord(value)) {
-    return false;
-  }
-  return Object.values(value).every((cell) => cell === undefined || isHeatmapCell(cell));
-};
-
-const isHeatmapData = (value: unknown): value is HeatmapData => {
-  if (!isRecord(value)) {
-    return false;
-  }
-  return Object.values(value).every((row) => row === undefined || isHeatmapRow(row));
-};
-
-const normalizeHeatmap = (value: unknown): HeatmapData => (isHeatmapData(value) ? value : defaultHeatmap);
-
-const isAnaliseState = (value: unknown): value is AnaliseViewState => {
-  if (!isRecord(value)) {
-    return false;
-  }
-  return (
-    isArrayOf(value.evolucaoRoiMensal, isRoiEntry) &&
-    isArrayOf(value.distribuicaoOdds, isOddDistribution) &&
-    isHeatmapData(value.heatmap) &&
-    isArrayOf(value.comparacaoBookmakers, isBookmakerComparison) &&
-    isArrayOf(value.winRatePorEsporte, isWinRateEntry)
-  );
-};
-
-const normalizeAnaliseResult = (value: unknown): AnaliseResultSnapshot => {
-  if (!isRecord(value)) {
-    return { data: emptyAnaliseState, isLoading: false };
-  }
-
-  const { data, isLoading } = value;
-  if (isAnaliseState(data) && typeof isLoading === 'boolean') {
-    return { data, isLoading };
-  }
-
-  return {
-    data: isAnaliseState(data) ? data : emptyAnaliseState,
-    isLoading: typeof isLoading === 'boolean' ? isLoading : false,
-  };
-};
 const defaultDistribuicaoOdds: OddsChartPoint[] = [
   { faixa: '1.00-1.50', quantidade: 0 },
   { faixa: '1.51-2.00', quantidade: 0 },
@@ -162,7 +55,7 @@ const initialFilters: AnaliseFiltersType = {
 
 export default function Analise() {
   const [filters, setFilters] = useState<AnaliseFiltersType>(initialFilters);
-  const { bancas } = useBancas();
+  const { bancas, loading: loadingBancas, error: errorBancas, refetch: refetchBancas } = useBancas();
   const autoSyncBancaRef = useRef(true);
   const preferredBancaId = useMemo(() => {
     if (bancas.length === 0) {
@@ -209,7 +102,76 @@ export default function Analise() {
     });
   }, []);
 
-  const { data, isLoading } = normalizeAnaliseResult(useAnaliseData(filters));
+  const { data, isLoading, error, reload } = useAnaliseData(filters);
+
+  if (errorBancas) {
+    return (
+      <div className="space-y-6">
+        <PageHeader
+          title="Gráficos"
+          subtitle="Visualize suas métricas e acompanhe evolução"
+        />
+        <div className="flex h-96 w-full flex-col items-center justify-center space-y-4 rounded-lg border border-border bg-card p-8 text-center shadow-sm">
+          <div className="rounded-full bg-semantic-danger/10 p-4 text-semantic-danger">
+            <AlertTriangle className="h-8 w-8" />
+          </div>
+          <div className="space-y-2">
+            <h3 className="text-lg font-semibold text-foreground">Erro ao carregar bancas</h3>
+            <p className="max-w-md text-sm text-foreground-muted">
+              {errorBancas.message || 'Não foi possível carregar suas bancas.'}
+            </p>
+          </div>
+          <Button variant="outline" onClick={() => refetchBancas()}>
+            Tentar novamente
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!loadingBancas && bancas.length === 0) {
+    return (
+      <div className="space-y-6">
+        <PageHeader
+          title="Gráficos"
+          subtitle="Visualize suas métricas e acompanhe evolução"
+        />
+        <div className="flex h-96 items-center justify-center">
+          <EmptyState
+            title="Nenhuma banca encontrada"
+            description="Cadastre uma banca para visualizar a análise."
+          />
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="space-y-6">
+        <PageHeader
+          title="Gráficos"
+          subtitle="Visualize suas métricas e acompanhe evolução"
+          actions={<AnaliseFiltersComponent value={filters} onChange={handleFiltersChange} />}
+        />
+        <div className="flex h-96 w-full flex-col items-center justify-center space-y-4 rounded-lg border border-border bg-card p-8 text-center shadow-sm">
+          <div className="rounded-full bg-semantic-danger/10 p-4 text-semantic-danger">
+            <AlertTriangle className="h-8 w-8" />
+          </div>
+          <div className="space-y-2">
+            <h3 className="text-lg font-semibold text-foreground">Erro ao carregar dados</h3>
+            <p className="max-w-md text-sm text-foreground-muted">
+              {error.message || 'Ocorreu um erro inesperado ao buscar os dados de análise.'}
+            </p>
+          </div>
+          <Button variant="outline" onClick={() => reload()}>
+            Tentar novamente
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   const {
     evolucaoRoiMensal,
     distribuicaoOdds,

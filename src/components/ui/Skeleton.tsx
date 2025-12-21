@@ -1,14 +1,15 @@
-import type { ReactNode } from 'react';
+import { cn } from "./utils"
 
-interface SkeletonProps {
-  className?: string;
-  children?: ReactNode;
+function Skeleton({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div
+      className={cn("animate-pulse rounded-md bg-muted", className)}
+      {...props}
+    />
+  )
 }
 
-export function Skeleton({ className, children }: SkeletonProps) {
-  return <div className={['loading-skeleton', className].filter(Boolean).join(' ')}>{children}</div>;
-}
-
-export default Skeleton;
-
-
+export { Skeleton }

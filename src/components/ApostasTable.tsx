@@ -6,7 +6,7 @@
 
 import { Pencil, Trash2 } from 'lucide-react';
 import { formatCurrency } from '../utils/formatters';
-import EmptyState from './EmptyState';
+import { EmptyState } from './ui/empty-state';
 import type { ApiBetWithBank } from '../types/api';
 import { cn } from './ui/utils';
 import {

@@ -25,6 +25,7 @@ import { useDashboardData, useTipsters, useBancas, useChartContainer } from '../
 import { cn } from '../components/ui/utils';
 import ImportCSVModal from '../components/ImportCSVModal';
 import { DashboardSkeleton } from '../components/skeletons/DashboardSkeleton';
+import { ChartSkeleton } from '../components/skeletons/ChartSkeleton';
 import { ROUTES } from '../routes';
 
 const DashboardChart = lazy(() => import('../components/dashboard/DashboardChart'));

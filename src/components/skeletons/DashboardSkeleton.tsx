@@ -2,8 +2,8 @@ import { Skeleton } from "../ui/skeleton";
 import { cn } from "../ui/utils";
 
 export function DashboardSkeleton() {
-  const sectionCardClass = "rounded-lg border border-white/5 bg-[#10322e] p-6 shadow-[0_25px_45px_rgba(0,0,0,0.25)] backdrop-blur-sm";
-  const evolutionCardClass = "rounded-lg border border-white/5 bg-[#0f2d29] p-6 sm:p-8";
+  const sectionCardClass = "rounded-lg border border-white/5 bg-app-dark p-6 shadow-[0_25px_45px_rgba(0,0,0,0.25)] backdrop-blur-sm";
+  const evolutionCardClass = "rounded-lg border border-white/5 bg-app-darker p-6 sm:p-8";
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">

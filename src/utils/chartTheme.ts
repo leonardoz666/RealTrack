@@ -18,7 +18,17 @@ export const chartTheme = {
     lineSecondary: 'var(--success)',
     lineFill: 'rgba(37, 99, 235, 0.3)',
     areaPrimary: 'var(--success)',
-    borderSuccess: 'var(--border-success)'
+    borderSuccess: 'var(--border-success)',
+    brand: {
+      neon: '#1fe7cb',
+      neonLight: '#38ffe4',
+      gradientStart: '#35ffe4',
+      gradientEnd: '#1ddfd0',
+      tooltipBg: 'rgba(3, 21, 19, 0.95)',
+      tooltipBorder: 'rgba(31, 231, 203, 0.25)',
+      tooltipText: '#f4fffc',
+      tooltipLabel: '#e8ffff',
+    }
   },
   axisTick: {
     fill: 'var(--text)',

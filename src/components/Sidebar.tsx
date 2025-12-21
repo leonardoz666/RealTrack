@@ -56,22 +56,22 @@ const navLinkClasses = (isActive: boolean, collapsed: boolean) =>
 const PLAN_VISUALS: Record<string, { icon: LucideIcon; badgeClass: string; iconClass: string }> = {
   gratuito: {
     icon: Gift,
-    badgeClass: 'bg-gradient-to-br from-[#02362c] via-[#064c3e] to-[#0a6c56]',
-    iconClass: 'text-[#7bffe0]',
+    badgeClass: 'bg-gradient-to-br from-plan-gratuito-start via-plan-gratuito-via to-plan-gratuito-end',
+    iconClass: 'text-plan-gratuito-text',
   },
   amador: {
     icon: Star,
-    badgeClass: 'bg-gradient-to-br from-[#0a1b5f] via-[#122b83] to-[#163799]',
-    iconClass: 'text-[#b3c7ff]',
+    badgeClass: 'bg-gradient-to-br from-plan-amador-start via-plan-amador-via to-plan-amador-end',
+    iconClass: 'text-plan-amador-text',
   },
   profissional: {
     icon: Crown,
-    badgeClass: 'bg-gradient-to-br from-[#2f0052] via-[#4b0b7a] to-[#6512a3]',
-    iconClass: 'text-[#f1d4ff]',
+    badgeClass: 'bg-gradient-to-br from-plan-profissional-start via-plan-profissional-via to-plan-profissional-end',
+    iconClass: 'text-plan-profissional-text',
   },
   default: {
     icon: Gift,
-    badgeClass: 'bg-[#0f3d38]',
+    badgeClass: 'bg-plan-default-badge',
     iconClass: 'text-white',
   },
 };
@@ -524,10 +524,10 @@ const Sidebar = ({ collapsed, onToggle }: SidebarProps) => {
                 </div>
                 <div className="h-1.5 w-full overflow-hidden rounded-full bg-[#0a2e2a]">
                   {consumoInfo.isUnlimited ? (
-                    <div className="h-full w-full rounded-full bg-[#14b8a6]" />
+                    <div className="h-full w-full rounded-full bg-brand-teal" />
                   ) : (
                     <div
-                      className="h-full rounded-full bg-[#14b8a6] transition-all"
+                      className="h-full rounded-full bg-brand-teal transition-all"
                       style={{ width: `${Math.min(consumoInfo.percent, 100)}%` }}
                     />
                   )}

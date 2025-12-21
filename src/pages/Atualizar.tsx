@@ -207,7 +207,7 @@ interface ApiDiagnosticsState {
 
 const pageShellClass = 'space-y-10 text-foreground';
 const statGridClass = 'grid gap-6 md:grid-cols-2 xl:grid-cols-4';
-const dashboardCardShellClass = 'rounded-lg border border-white/5 bg-[#0f2d29] p-6 text-white shadow-[0_25px_45px_rgba(0,0,0,0.25)] backdrop-blur-sm';
+const dashboardCardShellClass = 'rounded-lg border border-white/5 bg-app-darker p-6 text-white shadow-[0_25px_45px_rgba(0,0,0,0.25)] backdrop-blur-sm';
 const buttonVariants = {
   primary:
     'inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-600/20 transition hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40 disabled:cursor-not-allowed disabled:opacity-60',

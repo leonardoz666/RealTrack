@@ -28,7 +28,7 @@ const inputClass =
 const fieldLabelClass = 'text-xs font-bold uppercase tracking-widest text-emerald-400/80';
 const fieldWrapperClass = 'flex flex-col gap-2.5';
 const formCardClass =
-  'relative z-10 w-full rounded-3xl border border-white/10 bg-[#020c14]/80 p-8 md:p-10 backdrop-blur-2xl shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden';
+  'relative z-10 w-full rounded-3xl border border-white/10 bg-app-login-card/80 p-8 md:p-10 backdrop-blur-2xl shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden';
 const primaryButtonClass =
   'relative mt-6 flex w-full items-center justify-center gap-2 overflow-hidden rounded-xl bg-emerald-600 py-4 text-sm font-bold uppercase tracking-widest text-white shadow-[0_10px_20px_rgba(5,150,105,0.3)] transition-all duration-300 hover:bg-emerald-500 hover:shadow-[0_0_25px_rgba(16,185,129,0.4)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50';
 const checkboxClass =
@@ -43,8 +43,8 @@ const GridBackground = () => (
         backgroundSize: '40px 40px'
       }}
     />
-    <div className="absolute inset-0 bg-gradient-to-t from-[#010a0f] via-transparent to-[#010a0f]" />
-    <div className="absolute inset-0 bg-gradient-to-r from-[#010a0f] via-transparent to-[#010a0f]" />
+    <div className="absolute inset-0 bg-gradient-to-t from-app-login-bg via-transparent to-app-login-bg" />
+    <div className="absolute inset-0 bg-gradient-to-r from-app-login-bg via-transparent to-app-login-bg" />
 
     {/* Animated Glows */}
     <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-emerald-500/20 rounded-full blur-[120px] animate-pulse" />
@@ -83,7 +83,7 @@ export default function Login() {
   };
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden bg-[#010a0f] font-sans selection:bg-emerald-500/30 selection:text-emerald-200">
+    <div className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden bg-app-login-bg font-sans selection:bg-emerald-500/30 selection:text-emerald-200">
       <GridBackground />
 
       <div className="relative z-10 flex w-full flex-col items-center justify-center px-6 py-12 lg:flex-row lg:gap-20 lg:px-24 lg:justify-end">

@@ -44,9 +44,9 @@ const defaultForm: EditFormState = {
 const sectionCardClass =
   'rounded-3xl border border-border/30 bg-background-card/80 p-6 shadow-card backdrop-blur-sm';
 const dashboardCardShellClass =
-  'rounded-lg border border-white/5 bg-[#0f2d29] p-6 text-white shadow-[0_25px_45px_rgba(0,0,0,0.25)] backdrop-blur-sm transition-all duration-300 hover:border-white/20 hover:shadow-emerald-500/5';
+  'rounded-lg border border-white/5 bg-app-darker p-6 text-white shadow-[0_25px_45px_rgba(0,0,0,0.25)] backdrop-blur-sm transition-all duration-300 hover:border-white/20 hover:shadow-emerald-500/5';
 const summaryCardBaseClass =
-  'rounded-lg border border-white/5 bg-[#10322e] p-6 text-white shadow-[0_25px_45px_rgba(0,0,0,0.25)] backdrop-blur-sm transition-all duration-300 hover:scale-[1.015] hover:border-white/20 hover:shadow-emerald-500/5';
+  'rounded-lg border border-white/5 bg-app-dark p-6 text-white shadow-[0_25px_45px_rgba(0,0,0,0.25)] backdrop-blur-sm transition-all duration-300 hover:scale-[1.015] hover:border-white/20 hover:shadow-emerald-500/5';
 const modalCardClass = 'rounded-2xl border border-border/30 bg-background px-5 py-5';
 const cardLabelClass = 'text-2xs uppercase tracking-[0.3em] text-foreground-muted';
 const primaryButtonClass =

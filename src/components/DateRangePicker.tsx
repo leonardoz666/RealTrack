@@ -109,11 +109,10 @@ export default function DateRangePicker({ start, end, onChange, onClose, alignLe
 
   return (
     <div
-      className={`absolute z-[1000] w-[320px] max-w-[90vw] overflow-hidden rounded-lg border border-skin-border text-skin-text shadow-[0_12px_30px_rgba(0,0,0,0.18)] ${alignLeft ? 'right-full top-1/2 mr-2 -translate-y-1/2 transform' : 'left-0 top-full mt-2'}`}
-      style={{ backgroundColor: '#042620' }}
+      className={`absolute z-[1000] w-[320px] max-w-[90vw] overflow-hidden rounded-lg border border-skin-border text-skin-text shadow-[0_12px_30px_rgba(0,0,0,0.18)] bg-app-layout-bg ${alignLeft ? 'right-full top-1/2 mr-2 -translate-y-1/2 transform' : 'left-0 top-full mt-2'}`}
       onClick={(e) => e.stopPropagation()}
     >
-      <div className="w-full flex-1 p-2" style={{ backgroundColor: '#042620' }}>
+      <div className="w-full flex-1 p-2 bg-app-layout-bg">
         <div className="mb-2 flex items-center justify-center">
           <div className="inline-flex items-center gap-2 rounded-md border border-white/10 bg-white/5 px-2 py-1.5">
             <button type="button" onClick={goToPreviousMonth} className="rounded-md p-1 text-foreground-muted hover:text-foreground transition" aria-label="Mês anterior"><ChevronLeft size={16} /></button>

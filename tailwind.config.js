@@ -26,6 +26,53 @@ export default {
           teal: '#14b8a6',
           hover: '#0eb07a',
           focus: '#10b981',
+          neon: '#1fe7cb',
+          'neon-light': '#38ffe4',
+          'gradient-start': '#35ffe4',
+          'gradient-end': '#1ddfd0',
+          pending: '#ff9a15',
+          'pending-light': '#ffebc9',
+          'pending-border': '#ffb347',
+          'pending-gradient-start': '#ff8a00',
+          'pending-text': '#ffd36b',
+          'pending-text-light': '#ffdd9c',
+        },
+        app: {
+          dark: '#10322e',
+          darker: '#0f2d29',
+          slate: '#0f172a', // slate-900
+          'slate-light': '#1e293b', // slate-800
+          'layout-bg': '#041814',
+          'layout-start': '#051f1b',
+          'layout-via': '#051713',
+          'layout-end': '#040f0d',
+          login: {
+            bg: '#010a0f',
+            card: '#020c14',
+          },
+        },
+        plan: {
+          gratuito: {
+            start: '#02362c',
+            via: '#064c3e',
+            end: '#0a6c56',
+            text: '#7bffe0',
+          },
+          amador: {
+            start: '#0a1b5f',
+            via: '#122b83',
+            end: '#163799',
+            text: '#b3c7ff',
+          },
+          profissional: {
+            start: '#2f0052',
+            via: '#4b0b7a',
+            end: '#6512a3',
+            text: '#f1d4ff',
+          },
+          default: {
+            badge: '#0f3d38',
+          },
         },
         skin: {
           bg: solidVar('--bg'),

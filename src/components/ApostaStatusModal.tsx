@@ -193,19 +193,19 @@ function StatusFormContent({ aposta, onClose, onConfirm, loading }: StatusFormCo
             let Icon = Clock;
 
             if (status === 'Meio Ganha') {
-              themeClass = isSelected ? "bg-[#16a34a] border-transparent shadow-[0_0_15px_rgba(22,163,74,0.3)]" : "bg-[#14532d] border-white/5 opacity-80";
+              themeClass = isSelected ? "bg-green-600 border-transparent shadow-[0_0_15px_rgba(22,163,74,0.3)]" : "bg-green-900 border-white/5 opacity-80";
               Icon = ArrowUpRight;
             } else if (status === 'Meio Perdida') {
-              themeClass = isSelected ? "bg-[#b45309] border-transparent shadow-[0_0_15px_rgba(180,83,9,0.3)]" : "bg-[#7c2d12] border-white/5 opacity-80";
+              themeClass = isSelected ? "bg-orange-700 border-transparent shadow-[0_0_15px_rgba(194,65,12,0.3)]" : "bg-orange-900 border-white/5 opacity-80";
               Icon = ArrowDownRight;
             } else if (status === 'Cashout') {
-              themeClass = isSelected ? "bg-[#7c3aed] border-transparent shadow-[0_0_15px_rgba(124,58,237,0.3)]" : "bg-[#4c1d95] border-white/5 opacity-80";
+              themeClass = isSelected ? "bg-violet-600 border-transparent shadow-[0_0_15px_rgba(124,58,237,0.3)]" : "bg-violet-900 border-white/5 opacity-80";
               Icon = Zap;
             } else if (status === 'Reembolsada') {
-              themeClass = isSelected ? "bg-[#2563eb] border-transparent shadow-[0_0_15px_rgba(37,99,235,0.3)]" : "bg-[#1e3a8a] border-white/5 opacity-80";
+              themeClass = isSelected ? "bg-blue-600 border-transparent shadow-[0_0_15px_rgba(37,99,235,0.3)]" : "bg-blue-900 border-white/5 opacity-80";
               Icon = RefreshCw;
             } else if (status === 'Void') {
-              themeClass = isSelected ? "bg-[#475569] border-transparent shadow-[0_0_15px_rgba(71,85,105,0.3)]" : "bg-[#1e293b] border-white/5 opacity-80";
+              themeClass = isSelected ? "bg-slate-600 border-transparent shadow-[0_0_15px_rgba(71,85,105,0.3)]" : "bg-app-slate-light border-white/5 opacity-80";
               Icon = RefreshCw;
             }
 
@@ -282,7 +282,7 @@ function StatusFormContent({ aposta, onClose, onConfirm, loading }: StatusFormCo
           type="button"
           onClick={() => void handleSubmit()}
           disabled={loading || !formData.status}
-          className="flex-1 rounded-xl bg-[#10b981] px-4 py-3.5 text-sm font-bold text-white shadow-[0_8px_16px_-4px_rgba(16,185,129,0.3)] transition hover:bg-[#059669] active:scale-95 disabled:opacity-50"
+          className="flex-1 rounded-xl bg-brand-emerald px-4 py-3.5 text-sm font-bold text-white shadow-[0_8px_16px_-4px_rgba(16,185,129,0.3)] transition hover:bg-emerald-600 active:scale-95 disabled:opacity-50"
         >
           {loading ? 'Processando...' : 'Confirmar Status'}
         </button>

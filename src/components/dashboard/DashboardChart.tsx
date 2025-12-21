@@ -67,8 +67,8 @@ const DashboardChart = ({ data, width, height, isLoading }: DashboardChartProps)
       />
       <Tooltip
         contentStyle={chartTooltipStyles}
-        itemStyle={{ color: '#1fe7cb' }}
-        labelStyle={{ color: '#e8ffff', fontWeight: 600 }}
+        itemStyle={{ color: chartTheme.colors.brand.neon }}
+        labelStyle={{ color: chartTheme.colors.brand.tooltipLabel, fontWeight: 600 }}
         formatter={(value: number) => [formatCurrency(value), 'Lucro diário']}
         labelFormatter={(label: string) => `Dia ${label}`}
       />
@@ -77,8 +77,8 @@ const DashboardChart = ({ data, width, height, isLoading }: DashboardChartProps)
         dataKey="diário"
         stroke={`url(#${lucroLineGradientId})`}
         strokeWidth={3}
-        dot={{ r: 4, strokeWidth: 0, fill: '#38ffe4' }}
-        activeDot={{ r: 6, fill: '#38ffe4', stroke: '#042620', strokeWidth: 2 }}
+        dot={{ r: 4, strokeWidth: 0, fill: chartTheme.colors.brand.neonLight }}
+        activeDot={{ r: 6, fill: chartTheme.colors.brand.neonLight, stroke: '#042620', strokeWidth: 2 }}
       />
     </LineChart>
   );

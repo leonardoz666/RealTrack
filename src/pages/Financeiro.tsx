@@ -80,7 +80,7 @@ const createDefaultFormData = (bancaId = '', date = getTodayDateISO()): Financei
 const sectionCardClass =
   'rounded-3xl border border-border/30 bg-background-card/80 p-6 shadow-card backdrop-blur-sm';
 const dashboardCardShellClass =
-  'rounded-lg border border-white/5 bg-[#0f2d29] p-6 text-white shadow-[0_25px_45px_rgba(0,0,0,0.25)] backdrop-blur-sm';
+  'rounded-lg border border-white/5 bg-app-darker p-6 text-white shadow-[0_25px_45px_rgba(0,0,0,0.25)] backdrop-blur-sm';
 const sectionLabelClass = 'text-2xs uppercase tracking-[0.3em] text-foreground-muted';
 const inputClass =
   'w-full rounded-2xl border border-border/40 bg-background px-4 py-2.5 text-sm text-foreground placeholder:text-foreground-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-emerald/30';
@@ -484,13 +484,13 @@ export default function Financeiro() {
       key: 'pendentes',
       label: 'Aguardando resultado',
       icon: Clock3,
-      accent: 'bg-[#ff9a15]/25 text-[#ffebc9]',
-      cardClass: 'border-[#ffb347]/50 bg-gradient-to-br from-[#ff8a00]/25 via-[#ff9a15]/15 to-transparent shadow-[0_20px_45px_rgba(255,138,0,0.25)]',
+      accent: 'bg-brand-pending/25 text-brand-pending-light',
+      cardClass: 'border-brand-pending-border/50 bg-gradient-to-br from-brand-pending-gradient-start/25 via-brand-pending/15 to-transparent shadow-[0_20px_45px_rgba(255,138,0,0.25)]',
       parts: pendenteParts,
       isNegative: false,
       description: 'Entradas pendentes',
-      valueClass: 'text-[#ffd36b]',
-      decimalClass: 'text-[#ffdd9c]',
+      valueClass: 'text-brand-pending-text',
+      decimalClass: 'text-brand-pending-text-light',
     },
   ];
 

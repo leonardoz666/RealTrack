@@ -79,19 +79,10 @@ export default function TelegramEdit() {
   const [tipsters, setTipsters] = useState<{ id: string; nome: string }[]>([]);
   const isTelegram = typeof window !== 'undefined' && Boolean(window.Telegram?.WebApp);
 
-  // Setup inicial de estilos
+  // Setup inicial de logs (estilos removidos em favor de classes Tailwind)
   useEffect(() => {
     if (import.meta.env.DEV) {
       console.log('[DEV] Telegram Edit Page Loaded, WebApp:', !!window.Telegram?.WebApp);
-    }
-
-    // Garantir que o body tenha estilos básicos
-    if (typeof document !== 'undefined') {
-      document.body.style.margin = '0';
-      document.body.style.padding = '0';
-      document.body.style.background = '#1a1a1a';
-      document.body.style.color = '#ffffff';
-      document.body.style.minHeight = '100vh';
     }
   }, [betId]);
 
@@ -506,7 +497,7 @@ export default function TelegramEdit() {
   const inputClasses = 'w-full rounded-lg border border-border/60 bg-background px-3 py-3 text-base text-foreground shadow-sm focus:border-brand-emerald focus:outline-none focus:ring-2 focus:ring-brand-emerald/30';
 
   return (
-    <div className="min-h-screen bg-background px-4 py-6 text-foreground">
+    <div className="min-h-screen bg-app-slate px-4 py-6 text-white">
       <h2 className="mb-6 text-2xl font-semibold">✏️ Editar Aposta</h2>
 
       {error && (

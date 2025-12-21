@@ -38,26 +38,26 @@ export const betStatusPillBaseClass =
 
 export const betStatusPillVariants: Record<StatusKey, string> = {
   Pendente:
-    'text-[#1b1202] bg-[#ff9d00]',
-  Ganha: 'text-white bg-[#10b981]',
-  Perdida: 'text-white bg-[#ef4444]',
-  'Meio Ganha': 'text-white bg-[#22c55e]',
-  'Meio Perdida': 'text-white bg-[#f97316]',
-  Cashout: 'text-white bg-[#a855f7]',
-  Reembolsada: 'text-white bg-[#3b82f6]',
-  Void: 'text-white bg-[#94a3b8]',
+    'text-amber-950 bg-amber-500',
+  Ganha: 'text-white bg-emerald-500',
+  Perdida: 'text-white bg-red-500',
+  'Meio Ganha': 'text-white bg-green-500',
+  'Meio Perdida': 'text-white bg-orange-500',
+  Cashout: 'text-white bg-purple-500',
+  Reembolsada: 'text-white bg-blue-500',
+  Void: 'text-white bg-slate-400',
   default: 'text-white/80 border border-white/15 bg-white/5',
 };
 
 export const betStatusAccentClasses: Record<StatusKey, string> = {
-  Pendente: 'text-[#ffb703]',
-  Ganha: 'text-[#34d399]',
-  Perdida: 'text-[#fb7185]',
-  'Meio Ganha': 'text-[#86efac]',
-  'Meio Perdida': 'text-[#fb923c]',
-  Cashout: 'text-[#c084fc]',
-  Reembolsada: 'text-[#93c5fd]',
-  Void: 'text-[#cbd5f5]',
+  Pendente: 'text-amber-400',
+  Ganha: 'text-emerald-400',
+  Perdida: 'text-red-400',
+  'Meio Ganha': 'text-green-300',
+  'Meio Perdida': 'text-orange-400',
+  Cashout: 'text-purple-400',
+  Reembolsada: 'text-blue-300',
+  Void: 'text-slate-300',
   default: 'text-white',
 };
 

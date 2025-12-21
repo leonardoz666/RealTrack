@@ -114,13 +114,12 @@ export default function DatePicker({ value, onChange, onClose, alignLeft = false
   return (
     <div
       ref={pickerRef}
-      className={`absolute z-[1000] w-[320px] max-w-[90vw] overflow-hidden rounded-lg border border-skin-border text-skin-text shadow-[0_12px_30px_rgba(0,0,0,0.18)] ${containerPositionClasses}`}
-      style={{ backgroundColor: '#042620' }}
+      className={`absolute z-[1000] w-[320px] max-w-[90vw] overflow-hidden rounded-lg border border-skin-border text-skin-text shadow-[0_12px_30px_rgba(0,0,0,0.18)] bg-app-layout-bg ${containerPositionClasses}`}
       onClick={(e) => {
         e.stopPropagation();
       }}
     >
-      <div className="w-full flex-1 flex-col p-2" style={{ backgroundColor: '#042620' }}>
+      <div className="w-full flex-1 flex-col p-2 bg-app-layout-bg">
         {/* Header compacto reduzido */}
         <div className="mb-2 flex items-center justify-center">
           <div className="inline-flex items-center gap-2 rounded-md border border-white/10 bg-white/5 px-2 py-1.5">

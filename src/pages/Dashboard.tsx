@@ -252,17 +252,17 @@ export default function Dashboard() {
   const crescimentoLabel = formatSignedPercent(crescimentoPercentual);
   const crescimentoNegativo = crescimentoPercentual < 0;
   const GrowthTrendIcon = crescimentoNegativo ? ArrowDownRight : ArrowUpRight;
-  const growthColorClass = crescimentoNegativo ? 'text-[#ff9bb7]' : 'text-[#8efadd]';
+  const growthColorClass = crescimentoNegativo ? 'text-rose-300' : 'text-brand-neon-light';
 
   const filterInputClass =
     'mt-2 w-full rounded-2xl border border-border/40 bg-background px-3 py-2 text-sm text-foreground placeholder:text-foreground-muted transition focus-visible:border-brand-emerald focus-visible:ring-2 focus-visible:ring-brand-emerald/30';
 
-  const cardSurfaceClass = 'bg-[#10322e]';
+  const cardSurfaceClass = 'bg-app-dark';
   const cardBorderClass = 'border-white/5';
   const cardShadowClass = 'shadow-[0_25px_45px_rgba(0,0,0,0.25)]';
   const sectionCardClass = `rounded-lg ${cardBorderClass} ${cardSurfaceClass} p-6 ${cardShadowClass} backdrop-blur-sm transition-all duration-300 hover:scale-[1.015] hover:border-white/20 hover:shadow-emerald-500/5`;
   const evolutionCardClass =
-    'rounded-lg border border-white/5 bg-[#0f2d29] p-6 sm:p-8 text-white transition-all duration-300 hover:scale-[1.015] hover:border-white/20 hover:shadow-emerald-500/5';
+    'rounded-lg border border-white/5 bg-app-darker p-6 sm:p-8 text-white transition-all duration-300 hover:scale-[1.015] hover:border-white/20 hover:shadow-emerald-500/5';
   const evolutionMetricCardClassBase = [
     'relative',
     'rounded-2xl',
@@ -323,7 +323,7 @@ export default function Dashboard() {
     'hover:border-blue-500/60',
   ].join(' ');
   const timeframeSwitchBaseClass =
-    'rounded-full px-4 py-1.5 text-xs font-semibold uppercase tracking-wide transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1fe7cb]/40';
+    'rounded-full px-4 py-1.5 text-xs font-semibold uppercase tracking-wide transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-neon/40';
   const evolutionChartShellClass =
     'rounded-[28px] border border-white/10 bg-black/10 p-4 sm:p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] backdrop-blur transition-all duration-300 hover:border-white/20 hover:bg-black/20';
   const lucroLineGradientId = 'lucroLineGradient';
@@ -456,7 +456,7 @@ export default function Dashboard() {
       <section className="grid gap-5 lg:grid-cols-5">
         <div
           className={cn(
-            'col-span-1 space-y-6 rounded-lg border border-border/30 p-6 text-[#f2f2f2] shadow-card lg:col-span-2 transition-all duration-300 hover:scale-[1.01 hover:shadow-[0_0_40px_rgba(16,185,129,0.15)] hover:border-emerald-500/30',
+            'col-span-1 space-y-6 rounded-lg border border-border/30 p-6 text-slate-100 shadow-card lg:col-span-2 transition-all duration-300 hover:scale-[1.01 hover:shadow-[0_0_40px_rgba(16,185,129,0.15)] hover:border-emerald-500/30',
             'bg-bank-hero'
           )}
         >

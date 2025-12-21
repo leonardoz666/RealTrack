@@ -5,9 +5,7 @@
  * - Configuração base unificada
  * - Interceptors de request (auth token)
  * - Interceptors de response (erro, retry, rate limit)
- * - Cache em memória para GET requests
  * - Tipagem genérica para responses
- * - Deduplicação de requisições simultâneas
  */
 
 import axios, {
@@ -36,17 +34,9 @@ export interface ApiErrorData {
   retryAfter?: number;
 }
 
-export interface CacheEntry {
-  data: unknown;
-  timestamp: number;
-  headers?: Record<string, string>;
-}
-
 export interface ApiClientConfig {
   baseURL?: string;
   timeout?: number;
-  cacheDuration?: number;
-  maxCacheSize?: number;
 }
 
 // ============================================
@@ -59,16 +49,11 @@ const envBaseUrl = typeof import.meta.env.VITE_API_URL === 'string'
   : undefined;
 
 const BASE_URL = (envBaseUrl && envBaseUrl.length > 0 ? envBaseUrl : DEFAULT_BASE_URL).replace(/\/$/, '');
-const DEFAULT_TIMEOUT = 70000; // 70 segundos
-const DEFAULT_MAX_CACHE_SIZE = 50;
-const CACHE_DURATION = 60000; // 1 minuto (60 segundos)
+const DEFAULT_TIMEOUT = 15000; // 15 segundos (reduzido de 70s para melhor UX)
 
 // ============================================
 // Estado Global
 // ============================================
-
-const cache = new Map<string, CacheEntry>();
-const pendingRequests = new Map<string, Promise<unknown>>();
 
 // Referência ao token getter (será injetada pelo authService)
 let getAccessToken: (() => string | null) | null = null;
@@ -77,65 +62,6 @@ let clearTokens: (() => void) | null = null;
 // ============================================
 // Utilitários
 // ============================================
-
-/**
- * Gera chave única para cache baseada na URL completa montada pelo Axios
- */
-const generateCacheKey = (config: InternalAxiosRequestConfig): string => {
-  const method = config.method?.toUpperCase() ?? 'GET';
-  const uri = axios.getUri({
-    ...config,
-    baseURL: undefined,
-  });
-  return `${method}:${uri}`;
-};
-
-/**
- * Verifica se endpoint deve usar cache
- */
-const shouldUseCache = (url: string | undefined, method: string | undefined): boolean => {
-  if (!url || method?.toUpperCase() !== 'GET') return false;
-  
-  // Endpoints que NÃO devem ser cacheados (dados muito dinâmicos)
-  const noCacheEndpoints = [
-    '/analise/dashboard',
-    '/analise/performance',
-    '/apostas/recentes',
-    '/apostas/stream',
-    '/bancas',  // Bancas mudam frequentemente (padrão, status, etc.)
-    '/perfil',  // Perfil pode mudar
-  ];
-  
-  return !noCacheEndpoints.some(endpoint => url.includes(endpoint));
-};
-
-/**
- * Obtém dados do cache verificando expiração
- */
-const getCachedData = (key: string): CacheEntry | null => {
-  const entry = cache.get(key);
-  if (!entry) return null;
-  
-  // Verifica se expirou
-  if (Date.now() - entry.timestamp > CACHE_DURATION) {
-    cache.delete(key);
-    return null;
-  }
-  
-  return entry;
-};
-
-/**
- * Limpa entradas antigas do cache
- */
-const pruneCache = (maxSize: number = DEFAULT_MAX_CACHE_SIZE): void => {
-  if (cache.size > maxSize) {
-    const entries = Array.from(cache.entries());
-    entries.sort((a, b) => b[1].timestamp - a[1].timestamp);
-    cache.clear();
-    entries.slice(0, maxSize).forEach(([key, value]) => cache.set(key, value));
-  }
-};
 
 const toApiResponse = <T>(response: AxiosResponse<T>): ApiResponse<T> => ({
   data: response.data,
@@ -176,24 +102,6 @@ const createApiClient = (config: ApiClientConfig = {}): AxiosInstance => {
       }
     }
 
-    // Verificar cache antes de fazer a requisição
-    if (shouldUseCache(requestConfig.url, requestConfig.method)) {
-      const cacheKey = generateCacheKey(requestConfig);
-      requestConfig.__cacheKey = cacheKey;
-      
-      // Verificar se existe no cache e não expirou
-      const cachedEntry = getCachedData(cacheKey);
-      if (cachedEntry) {
-        // Retornar dados do cache evitando a requisição HTTP
-        return Promise.reject({
-          __fromCache: true,
-          data: cachedEntry.data,
-          headers: cachedEntry.headers,
-          config: requestConfig,
-        });
-      }
-    }
-
     return requestConfig;
   });
 
@@ -202,35 +110,9 @@ const createApiClient = (config: ApiClientConfig = {}): AxiosInstance => {
   // ========================================
   instance.interceptors.response.use(
     (response: AxiosResponse) => {
-      const config = response.config;
-      const cacheKey = config.__cacheKey;
-      
-      // Salvar no cache se aplicável
-      const headers = AxiosHeaders.from(config.headers);
-      if (cacheKey && shouldUseCache(config.url, config.method) && !headers.get('x-no-cache')) {
-        cache.set(cacheKey, {
-          data: response.data,
-          timestamp: Date.now(),
-          headers: response.headers,
-        });
-
-        pruneCache();
-      }
-
       return response;
     },
     async (error: AxiosError<ApiErrorData> | any) => {
-      // Tratar resposta do cache (não é realmente um erro)
-      if (error.__fromCache) {
-        return Promise.resolve({
-          data: error.data,
-          status: 200,
-          statusText: 'OK',
-          headers: error.headers || {},
-          config: error.config,
-        } as AxiosResponse);
-      }
-      
       const axiosError = error as AxiosError<ApiErrorData>;
       const config = axiosError.config;
       const status = axiosError.response?.status;
@@ -276,9 +158,9 @@ const createApiClient = (config: ApiClientConfig = {}): AxiosInstance => {
         // Redirecionar para login se não estiver na página de login
         // EXCETO para páginas do Telegram WebApp que têm seu próprio fluxo de auth
         if (typeof window !== 'undefined' && 
-            !window.location.pathname.includes('/login') &&
+            !window.location.pathname.includes(ROUTES.LOGIN) &&
             !window.location.pathname.includes('/telegram/')) {
-          window.location.href = '/login';
+          window.location.href = ROUTES.LOGIN;
         }
       }
 
@@ -311,36 +193,24 @@ export const configureAuth = (
 };
 
 /**
- * Invalida cache de um endpoint específico
+ * @deprecated Cache interno removido em favor do React Query. Esta função não tem efeito.
  */
 export const invalidateCache = (url: string, method: string = 'GET'): void => {
-  const cacheKey = `${method.toUpperCase()}:${url}`;
-  cache.delete(cacheKey);
-  pendingRequests.delete(cacheKey);
+  // No-op
 };
 
 /**
- * Invalida cache por padrão (todos que contêm a string)
+ * @deprecated Cache interno removido em favor do React Query. Esta função não tem efeito.
  */
 export const invalidateCachePattern = (pattern: string): void => {
-  for (const key of cache.keys()) {
-    if (key.includes(pattern)) {
-      cache.delete(key);
-    }
-  }
-  for (const key of pendingRequests.keys()) {
-    if (key.includes(pattern)) {
-      pendingRequests.delete(key);
-    }
-  }
+  // No-op
 };
 
 /**
- * Limpa todo o cache
+ * @deprecated Cache interno removido em favor do React Query. Esta função não tem efeito.
  */
 export const clearCache = (): void => {
-  cache.clear();
-  pendingRequests.clear();
+  // No-op
 };
 
 /**

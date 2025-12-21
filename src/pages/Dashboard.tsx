@@ -1,5 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
-import { LineChart, Line, Tooltip, XAxis, YAxis, CartesianGrid } from 'recharts';
+import { useEffect, useMemo, useState, lazy, Suspense } from 'react';
 import {
   ArrowDownRight,
   ArrowUpRight,
@@ -24,9 +23,11 @@ import { stripEsporteEmoji } from '../constants/esportes';
 import { formatCurrency, formatPercent, getFirstName } from '../utils/formatters';
 import { useDashboardData, useTipsters, useBancas, useChartContainer } from '../hooks';
 import { cn } from '../components/ui/utils';
-import { chartTheme } from '../utils/chartTheme';
 import ImportCSVModal from '../components/ImportCSVModal';
 import { DashboardSkeleton } from '../components/skeletons/DashboardSkeleton';
+import { ROUTES } from '../routes';
+
+const DashboardChart = lazy(() => import('../components/dashboard/DashboardChart'));
 
 const formatSignedPercent = (value: number): string => {
   const normalized = formatPercent(Math.abs(value));
@@ -193,7 +194,7 @@ export default function Dashboard() {
   const apostasLabel = totalApostas === 1 ? 'aposta' : 'apostas';
   const accuracyDetailText = `${derrotasCalculadas} ${derrotasLabel} de ${totalApostas} ${apostasLabel}`;
   const handleNovaAposta = () => {
-    navigate('/atualizar', { state: { openNovaAposta: true } });
+    navigate(ROUTES.ATUALIZAR, { state: { openNovaAposta: true } });
   };
 
   const sportBreakdown = useMemo<BreakdownCardItem[]>(
@@ -252,17 +253,6 @@ export default function Dashboard() {
   const crescimentoNegativo = crescimentoPercentual < 0;
   const GrowthTrendIcon = crescimentoNegativo ? ArrowDownRight : ArrowUpRight;
   const growthColorClass = crescimentoNegativo ? 'text-[#ff9bb7]' : 'text-[#8efadd]';
-  const chartTooltipStyles = useMemo(
-    () => ({
-      backgroundColor: 'rgba(3, 21, 19, 0.95)',
-      border: '1px solid rgba(31, 231, 203, 0.25)',
-      borderRadius: 16,
-      boxShadow: '0 20px 40px rgba(0,0,0,0.35)',
-      color: '#f4fffc',
-      padding: '12px 16px',
-    }),
-    []
-  );
 
   const filterInputClass =
     'mt-2 w-full rounded-2xl border border-border/40 bg-background px-3 py-2 text-sm text-foreground placeholder:text-foreground-muted transition focus-visible:border-brand-emerald focus-visible:ring-2 focus-visible:ring-brand-emerald/30';
@@ -652,59 +642,14 @@ export default function Dashboard() {
               </div>
             </div>
             <div ref={evolucaoChartRef} className="mt-6 h-72 w-full">
-              {!evolucaoChartReady ? (
-                <div className="flex h-full items-center justify-center rounded-2xl border border-dashed border-white/10 text-xs font-medium text-white/60">
-                  Preparando gráfico...
-                </div>
-              ) : evolucaoBancaChart.length > 0 ? (
-                <LineChart
+              <Suspense fallback={<ChartSkeleton />}>
+                <DashboardChart
                   width={evolucaoChartWidth}
                   height={evolucaoChartHeight}
                   data={evolucaoBancaChart}
-                  margin={{ top: 5, right: 30, left: 10, bottom: 10 }}
-                >
-                  <defs>
-                    <linearGradient id={lucroLineGradientId} x1="0" y1="0" x2="1" y2="0">
-                      <stop offset="0%" stopColor="#35ffe4" />
-                      <stop offset="100%" stopColor="#1ddfd0" />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid stroke="rgba(255,255,255,0.08)" strokeDasharray="4 4" vertical={false} />
-                  <XAxis
-                    dataKey="date"
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ ...chartTheme.axisTick, fill: 'rgba(255,255,255,0.7)' }}
-                    tickMargin={12}
-                  />
-                  <YAxis
-                    axisLine={false}
-                    tickLine={false}
-                    width={70}
-                    tick={{ ...chartTheme.axisTick, fill: 'rgba(255,255,255,0.7)' }}
-                    tickFormatter={formatAxisCurrency}
-                  />
-                  <Tooltip
-                    contentStyle={chartTooltipStyles}
-                    itemStyle={{ color: '#1fe7cb' }}
-                    labelStyle={{ color: '#e8ffff', fontWeight: 600 }}
-                    formatter={(value: number) => [formatCurrency(value), 'Lucro diário']}
-                    labelFormatter={(label: string) => `Dia ${label}`}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="diário"
-                    stroke={`url(#${lucroLineGradientId})`}
-                    strokeWidth={3}
-                    dot={{ r: 4, strokeWidth: 0, fill: '#38ffe4' }}
-                    activeDot={{ r: 6, fill: '#38ffe4', stroke: '#042620', strokeWidth: 2 }}
-                  />
-                </LineChart>
-              ) : (
-                <div className="flex h-full items-center justify-center rounded-2xl border border-dashed border-white/10 text-sm text-white/70">
-                  Nenhum dado disponível para o período selecionado.
-                </div>
-              )}
+                  isLoading={!evolucaoChartReady}
+                />
+              </Suspense>
             </div>
           </div>
         </div>

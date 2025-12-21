@@ -6,6 +6,7 @@ import { PerfilProvider } from './contexts/PerfilContext';
 import { FeatureFlagProvider } from './hooks/useFeatureFlag';
 import ToastContainer from './components/ToastContainer';
 import ErrorBoundary from './components/ErrorBoundary';
+import { ROUTES } from './routes';
 
 
 // Lazy load de todas as páginas para reduzir bundle inicial
@@ -44,20 +45,20 @@ function App() {
           <ToastContainer />
           <Suspense fallback={<PageLoader />}>
             <Routes>
-              <Route index element={<Navigate to="/login" replace />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/cadastro" element={<Cadastro />} />
+              <Route index element={<Navigate to={ROUTES.LOGIN} replace />} />
+              <Route path={ROUTES.LOGIN} element={<Login />} />
+              <Route path={ROUTES.CADASTRO} element={<Cadastro />} />
               <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/bancas" element={<Bancas />} />
-                <Route path="/financeiro" element={<Financeiro />} />
-                <Route path="/analise" element={<Analise />} />
-                <Route path="/atualizar" element={<Atualizar />} />
-                <Route path="/perfil" element={<Perfil />} />
+                <Route path={ROUTES.DASHBOARD} element={<Dashboard />} />
+                <Route path={ROUTES.BANCAS} element={<Bancas />} />
+                <Route path={ROUTES.FINANCEIRO} element={<Financeiro />} />
+                <Route path={ROUTES.ANALISE} element={<Analise />} />
+                <Route path={ROUTES.ATUALIZAR} element={<Atualizar />} />
+                <Route path={ROUTES.PERFIL} element={<Perfil />} />
               </Route>
               {/* Rotas do Telegram Web App (sem ProtectedRoute, autenticação feita via WebApp) */}
-              <Route path="/telegram/edit" element={<TelegramEdit />} />
-              <Route path="/telegram/status" element={<TelegramStatus />} />
+              <Route path={ROUTES.TELEGRAM_EDIT} element={<TelegramEdit />} />
+              <Route path={ROUTES.TELEGRAM_STATUS} element={<TelegramStatus />} />
             </Routes>
           </Suspense>
         </FeatureFlagProvider>

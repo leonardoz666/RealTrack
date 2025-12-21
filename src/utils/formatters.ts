@@ -13,6 +13,11 @@ export const formatCurrency = (value: number): string => {
   }).format(value);
 };
 
+export const formatAxisCurrency = (value: number): string => {
+  const formatted = formatCurrency(value);
+  return formatted.replace(/,00$/, '');
+};
+
 /**
  * Formata um valor numérico como percentual
  */

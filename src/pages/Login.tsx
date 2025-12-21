@@ -71,7 +71,7 @@ export default function Login() {
     try {
       const response = await authService.login(email, senha);
       if (response.success) {
-        void navigate('/dashboard');
+        void navigate(ROUTES.DASHBOARD);
       }
     } catch (err) {
       const apiError = err as ApiError;

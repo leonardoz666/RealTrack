@@ -25,6 +25,7 @@ import { bancaService, perfilService, type ConsumoPlano } from '../services/api'
 import { eventBus } from '../utils/eventBus';
 import { AuthManager } from '../lib/auth';
 import Modal from './Modal';
+import { ROUTES } from '../routes';
 
 interface CreateBancaFormState {
   nome: string;
@@ -221,12 +222,12 @@ const Sidebar = ({ collapsed, onToggle }: SidebarProps) => {
   }, [bancas]);
 
   const handleOpenSettings = () => {
-    navigate('/perfil');
+    navigate(ROUTES.PERFIL);
   };
 
   const handleLogout = async () => {
     await AuthManager.logout();
-    navigate('/login', { replace: true });
+    navigate(ROUTES.LOGIN, { replace: true });
   };
 
   const toggleBancaDropdown = () => {
@@ -464,31 +465,31 @@ const Sidebar = ({ collapsed, onToggle }: SidebarProps) => {
         <nav className={`flex-1 ${sectionPadding}`}>
           <ul className="space-y-1">
             <li>
-              <NavLink to="/dashboard" className={({ isActive }) => navLinkClasses(isActive, collapsed)}>
+              <NavLink to={ROUTES.DASHBOARD} className={({ isActive }) => navLinkClasses(isActive, collapsed)}>
                 <LayoutGrid className="h-5 w-5" strokeWidth={2} />
                 {!collapsed && <span>Início</span>}
               </NavLink>
             </li>
             <li>
-              <NavLink to="/bancas" className={({ isActive }) => navLinkClasses(isActive, collapsed)}>
+              <NavLink to={ROUTES.BANCAS} className={({ isActive }) => navLinkClasses(isActive, collapsed)}>
                 <Layers className="h-5 w-5" strokeWidth={2} />
                 {!collapsed && <span>Bancas</span>}
               </NavLink>
             </li>
             <li>
-              <NavLink to="/atualizar" className={({ isActive }) => navLinkClasses(isActive, collapsed)}>
+              <NavLink to={ROUTES.ATUALIZAR} className={({ isActive }) => navLinkClasses(isActive, collapsed)}>
                 <RefreshCw className="h-5 w-5" strokeWidth={2} />
                 {!collapsed && <span>Apostas</span>}
               </NavLink>
             </li>
             <li>
-              <NavLink to="/financeiro" className={({ isActive }) => navLinkClasses(isActive, collapsed)}>
+              <NavLink to={ROUTES.FINANCEIRO} className={({ isActive }) => navLinkClasses(isActive, collapsed)}>
                 <Wallet className="h-5 w-5" strokeWidth={2} />
                 {!collapsed && <span>Financeiro</span>}
               </NavLink>
             </li>
             <li>
-              <NavLink to="/analise" className={({ isActive }) => navLinkClasses(isActive, collapsed)}>
+              <NavLink to={ROUTES.ANALISE} className={({ isActive }) => navLinkClasses(isActive, collapsed)}>
                 <BarChart3 className="h-5 w-5" strokeWidth={2} />
                 {!collapsed && <span>Análise</span>}
               </NavLink>

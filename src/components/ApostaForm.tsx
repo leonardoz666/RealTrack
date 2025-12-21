@@ -1,4 +1,7 @@
-import { type FormEvent, useCallback } from 'react';
+import { type FormEvent, useCallback, useEffect } from 'react';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { apostaSchema, type ApostaFormValues } from '../schemas/apostaSchema';
 import DateInput from './DateInput';
 import { ESPORTES } from '../constants/esportes';
 import { TIPOS_APOSTA } from '../constants/tiposAposta';
@@ -17,46 +20,13 @@ import {
   SelectValue,
 } from './ui/select';
 
-export interface ApostaFormData {
-  bancaId: string;
-  esporte: string;
-  evento: string;
-  aposta: string;
-  torneio: string;
-  pais: string;
-  mercado: string;
-  tipoAposta: string;
-  valorApostado: string;
-  odd: string;
-  bonus: string;
-  dataEvento: string;
-  tipster: string;
-  status: string;
-  casaDeAposta: string;
-  retornoObtido: string;
-}
-
-export interface ApostaFormErrors {
-  bancaId?: string;
-  esporte?: string;
-  evento?: string;
-  aposta?: string;
-  mercado?: string;
-  tipoAposta?: string;
-  valorApostado?: string;
-  odd?: string;
-  dataEvento?: string;
-  casaDeAposta?: string;
-  retornoObtido?: string;
-}
-
 interface ApostaFormProps {
-  formData: ApostaFormData;
-  onChange: (field: keyof ApostaFormData, value: string) => void;
-  onSubmit: (e?: FormEvent) => void | Promise<void>;
+  formData: ApostaFormValues;
+  onChange?: (field: keyof ApostaFormValues, value: string) => void;
+  onSubmit: (data: ApostaFormValues) => void | Promise<void>;
   bancas: ApiBankroll[];
   tipsters: ApiTipster[];
-  errors?: ApostaFormErrors;
+  errors?: Record<string, string>; // Mantido para compatibilidade, mas não usado internamente
   isEditing?: boolean;
   saving?: boolean;
   notice?: string;
@@ -64,25 +34,39 @@ interface ApostaFormProps {
 }
 
 export default function ApostaForm({
-  formData,
-  onChange,
+  formData: initialData,
   onSubmit,
   bancas,
   tipsters,
-  errors = {},
   isEditing = false,
   saving = false,
   notice,
   onCancel,
 }: ApostaFormProps) {
-  const handleSubmit = useCallback((e: FormEvent) => {
-    e.preventDefault();
-    onSubmit(e);
-  }, [onSubmit]);
+  const {
+    control,
+    handleSubmit,
+    watch,
+    reset,
+    formState: { errors },
+  } = useForm<ApostaFormValues>({
+    resolver: zodResolver(apostaSchema),
+    defaultValues: {
+      ...initialData,
+      // Garantir que valores numéricos venham como strings se necessário para o input type="number"
+      // ou mantê-los como numbers se o schema esperar numbers (nosso schema usa coerce.number)
+    },
+    mode: 'onBlur',
+  });
 
-  const valor = Number.parseFloat(formData.valorApostado) || 0;
-  const odd = Number.parseFloat(formData.odd) || 0;
-  const bonus = Number.parseFloat(formData.bonus) || 0;
+  // Atualizar form quando props mudarem (ex: carregamento de edição)
+  useEffect(() => {
+    reset(initialData);
+  }, [initialData, reset]);
+
+  const valor = Number.parseFloat(String(watch('valorApostado'))) || 0;
+  const odd = Number.parseFloat(String(watch('odd'))) || 0;
+  const bonus = Number.parseFloat(String(watch('bonus'))) || 0;
   const totalReturn = valor * odd + bonus;
   const profit = totalReturn - valor;
 
@@ -97,7 +81,7 @@ export default function ApostaForm({
     <>
       {notice && <div className="mb-4 rounded-lg border border-brand-emerald/30 bg-background/80 p-3 text-sm text-foreground">{notice}</div>}
 
-      <form onSubmit={handleSubmit} className="w-full">
+      <form onSubmit={handleSubmit(onSubmit)} className="w-full">
         <div className="grid gap-8 grid-cols-1 lg:grid-cols-[minmax(0,1fr)_280px]">
           {/* Left column */}
           <div className="space-y-6">
@@ -110,49 +94,58 @@ export default function ApostaForm({
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="flex flex-col space-y-1.5">
                   <Label className={labelStyles}>Banca</Label>
-                  <Select
-                    value={formData.bancaId}
-                    onValueChange={(value) => onChange('bancaId', value)}
-                  >
-                    <SelectTrigger className={selectTriggerStyles}>
-                      <SelectValue placeholder="Selecione" />
-                    </SelectTrigger>
-                    <SelectContent className={selectContentStyles}>
-                      {bancas.map((b) => <SelectItem key={b.id} value={b.id}>{b.nome}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                  {errors.bancaId && <div className="text-[10px] font-medium text-rose-400 mt-1">{errors.bancaId}</div>}
+                  <Controller
+                    name="bancaId"
+                    control={control}
+                    render={({ field }) => (
+                      <Select value={field.value} onValueChange={field.onChange}>
+                        <SelectTrigger className={selectTriggerStyles}>
+                          <SelectValue placeholder="Selecione" />
+                        </SelectTrigger>
+                        <SelectContent className={selectContentStyles}>
+                          {bancas.map((b) => <SelectItem key={b.id} value={b.id}>{b.nome}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                  {errors.bancaId && <div className="text-[10px] font-medium text-rose-400 mt-1">{errors.bancaId.message}</div>}
                 </div>
 
                 <div className="flex flex-col space-y-1.5">
                   <Label className={labelStyles}>Casa de Aposta</Label>
-                  <Select
-                    value={formData.casaDeAposta}
-                    onValueChange={(value) => onChange('casaDeAposta', value)}
-                  >
-                    <SelectTrigger className={selectTriggerStyles}>
-                      <SelectValue placeholder="Selecione" />
-                    </SelectTrigger>
-                    <SelectContent className={selectContentStyles}>
-                      {CASAS_APOSTAS.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                  {errors.casaDeAposta && <div className="text-[10px] font-medium text-rose-400 mt-1">{errors.casaDeAposta}</div>}
+                  <Controller
+                    name="casaDeAposta"
+                    control={control}
+                    render={({ field }) => (
+                      <Select value={field.value} onValueChange={field.onChange}>
+                        <SelectTrigger className={selectTriggerStyles}>
+                          <SelectValue placeholder="Selecione" />
+                        </SelectTrigger>
+                        <SelectContent className={selectContentStyles}>
+                          {CASAS_APOSTAS.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                  {errors.casaDeAposta && <div className="text-[10px] font-medium text-rose-400 mt-1">{errors.casaDeAposta.message}</div>}
                 </div>
 
                 <div className="flex flex-col space-y-1.5">
                   <Label className={labelStyles}>Tipster</Label>
-                  <Select
-                    value={formData.tipster}
-                    onValueChange={(value) => onChange('tipster', value)}
-                  >
-                    <SelectTrigger className={selectTriggerStyles}>
-                      <SelectValue placeholder="Selecione" />
-                    </SelectTrigger>
-                    <SelectContent className={selectContentStyles}>
-                      {activeTipsters.map((t) => <SelectItem key={t.id} value={t.nome}>{(t as any).nome}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
+                  <Controller
+                    name="tipster"
+                    control={control}
+                    render={({ field }) => (
+                      <Select value={field.value} onValueChange={field.onChange}>
+                        <SelectTrigger className={selectTriggerStyles}>
+                          <SelectValue placeholder="Selecione" />
+                        </SelectTrigger>
+                        <SelectContent className={selectContentStyles}>
+                          {activeTipsters.map((t) => <SelectItem key={t.id} value={t.nome}>{(t as any).nome}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
                 </div>
               </div>
             </section>
@@ -166,69 +159,92 @@ export default function ApostaForm({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <Label className={labelStyles}>Esporte</Label>
-                  <Select
-                    value={formData.esporte}
-                    onValueChange={(value) => onChange('esporte', value)}
-                  >
-                    <SelectTrigger className={selectTriggerStyles}>
-                      <SelectValue placeholder="Selecione" />
-                    </SelectTrigger>
-                    <SelectContent className={selectContentStyles}>
-                      {ESPORTES.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                  {errors.esporte && <div className="text-[10px] font-medium text-rose-400 mt-1">{errors.esporte}</div>}
+                  <Controller
+                    name="esporte"
+                    control={control}
+                    render={({ field }) => (
+                      <Select value={field.value} onValueChange={field.onChange}>
+                        <SelectTrigger className={selectTriggerStyles}>
+                          <SelectValue placeholder="Selecione" />
+                        </SelectTrigger>
+                        <SelectContent className={selectContentStyles}>
+                          {ESPORTES.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                  {errors.esporte && <div className="text-[10px] font-medium text-rose-400 mt-1">{errors.esporte.message}</div>}
                 </div>
 
                 <div className="space-y-1.5">
                   <Label className={labelStyles}>Nome do Evento</Label>
-                  <Input
-                    value={formData.evento}
-                    onChange={(e) => onChange('evento', e.target.value)}
-                    placeholder="Ex: Flamengo vs Palmeiras"
-                    className={inputStyles}
+                  <Controller
+                    name="evento"
+                    control={control}
+                    render={({ field }) => (
+                      <Input
+                        {...field}
+                        placeholder="Ex: Flamengo vs Palmeiras"
+                        className={inputStyles}
+                      />
+                    )}
                   />
-                  {errors.evento && <div className="text-[10px] font-medium text-rose-400 mt-1">{errors.evento}</div>}
+                  {errors.evento && <div className="text-[10px] font-medium text-rose-400 mt-1">{errors.evento.message}</div>}
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="flex flex-col space-y-1.5">
                   <Label className={labelStyles}>Data do Evento</Label>
-                  <DateInput
-                    value={formData.dataEvento}
-                    onChange={(v) => onChange('dataEvento', v)}
-                    placeholder="DD/MM/AAAA"
-                    className={inputStyles}
+                  <Controller
+                    name="dataEvento"
+                    control={control}
+                    render={({ field }) => (
+                      <DateInput
+                        value={field.value}
+                        onChange={field.onChange}
+                        placeholder="DD/MM/AAAA"
+                        className={inputStyles}
+                      />
+                    )}
                   />
-                  {errors.dataEvento && <div className="text-[10px] font-medium text-rose-400 mt-1">{errors.dataEvento}</div>}
+                  {errors.dataEvento && <div className="text-[10px] font-medium text-rose-400 mt-1">{errors.dataEvento.message}</div>}
                 </div>
 
                 <div className="flex flex-col space-y-1.5">
                   <Label className={labelStyles}>Status</Label>
-                  <Select
-                    value={formData.status}
-                    onValueChange={(value) => onChange('status', value)}
-                  >
-                    <SelectTrigger className={selectTriggerStyles}>
-                      <SelectValue placeholder="Selecione" />
-                    </SelectTrigger>
-                    <SelectContent className={selectContentStyles}>
-                      {STATUS_APOSTAS.filter(s => s !== 'Tudo').map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
+                  <Controller
+                    name="status"
+                    control={control}
+                    render={({ field }) => (
+                      <Select value={field.value} onValueChange={field.onChange}>
+                        <SelectTrigger className={selectTriggerStyles}>
+                          <SelectValue placeholder="Selecione" />
+                        </SelectTrigger>
+                        <SelectContent className={selectContentStyles}>
+                          {STATUS_APOSTAS.filter(s => s !== 'Tudo').map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
                 </div>
 
                 <div className="flex flex-col space-y-1.5">
                   <Label className={labelStyles}>Bônus (Opcional)</Label>
-                  <Input
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    value={formData.bonus}
-                    onChange={(e) => onChange('bonus', e.target.value)}
-                    placeholder="0.00"
-                    className={inputStyles}
+                  <Controller
+                    name="bonus"
+                    control={control}
+                    render={({ field }) => (
+                      <Input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        {...field}
+                        value={field.value || ''}
+                        placeholder="0.00"
+                        className={inputStyles}
+                      />
+                    )}
                   />
                 </div>
               </div>
@@ -243,41 +259,54 @@ export default function ApostaForm({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <Label className={labelStyles}>Tipo de Aposta</Label>
-                  <Select
-                    value={formData.tipoAposta}
-                    onValueChange={(value) => onChange('tipoAposta', value)}
-                  >
-                    <SelectTrigger className={selectTriggerStyles}>
-                      <SelectValue placeholder="Selecione" />
-                    </SelectTrigger>
-                    <SelectContent className={selectContentStyles}>
-                      {TIPOS_APOSTA.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                  {errors.tipoAposta && <div className="text-[10px] font-medium text-rose-400 mt-1">{errors.tipoAposta}</div>}
+                  <Controller
+                    name="tipoAposta"
+                    control={control}
+                    render={({ field }) => (
+                      <Select value={field.value} onValueChange={field.onChange}>
+                        <SelectTrigger className={selectTriggerStyles}>
+                          <SelectValue placeholder="Selecione" />
+                        </SelectTrigger>
+                        <SelectContent className={selectContentStyles}>
+                          {TIPOS_APOSTA.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                  {errors.tipoAposta && <div className="text-[10px] font-medium text-rose-400 mt-1">{errors.tipoAposta.message}</div>}
                 </div>
 
                 <div className="space-y-1.5">
                   <Label className={labelStyles}>Mercado</Label>
-                  <Input
-                    value={formData.mercado}
-                    onChange={(e) => onChange('mercado', e.target.value)}
-                    placeholder="Ex: Resultado Final"
-                    className={inputStyles}
+                  <Controller
+                    name="mercado"
+                    control={control}
+                    render={({ field }) => (
+                      <Input
+                        {...field}
+                        placeholder="Ex: Resultado Final"
+                        className={inputStyles}
+                      />
+                    )}
                   />
-                  {errors.mercado && <div className="text-[10px] font-medium text-rose-400 mt-1">{errors.mercado}</div>}
+                  {errors.mercado && <div className="text-[10px] font-medium text-rose-400 mt-1">{errors.mercado.message}</div>}
                 </div>
               </div>
 
               <div className="space-y-1.5">
                 <Label className={labelStyles}>Descrição da Aposta</Label>
-                <Input
-                  value={formData.aposta}
-                  onChange={(e) => onChange('aposta', e.target.value)}
-                  placeholder="ex: Vitória do Mandante"
-                  className={inputStyles}
+                <Controller
+                  name="aposta"
+                  control={control}
+                  render={({ field }) => (
+                    <Input
+                      {...field}
+                      placeholder="ex: Vitória do Mandante"
+                      className={inputStyles}
+                    />
+                  )}
                 />
-                {errors.aposta && <div className="text-[10px] font-medium text-rose-400 mt-1">{errors.aposta}</div>}
+                {errors.aposta && <div className="text-[10px] font-medium text-rose-400 mt-1">{errors.aposta.message}</div>}
               </div>
 
             </section>
@@ -295,31 +324,43 @@ export default function ApostaForm({
                   <Label className={labelStyles}>Valor Apostado</Label>
                   <div className="relative">
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-emerald font-bold text-xs z-10">R$</span>
-                    <Input
-                      type="number"
-                      step="0.01"
-                      min="0"
-                      value={formData.valorApostado}
-                      onChange={(e) => onChange('valorApostado', e.target.value)}
-                      placeholder="0.00"
-                      className={`${inputStyles} pl-8`}
+                    <Controller
+                      name="valorApostado"
+                      control={control}
+                      render={({ field }) => (
+                        <Input
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          {...field}
+                          value={field.value || ''}
+                          placeholder="0.00"
+                          className={`${inputStyles} pl-8`}
+                        />
+                      )}
                     />
                   </div>
-                  {errors.valorApostado && <div className="text-[10px] font-medium text-rose-400 mt-1">{errors.valorApostado}</div>}
+                  {errors.valorApostado && <div className="text-[10px] font-medium text-rose-400 mt-1">{errors.valorApostado.message}</div>}
                 </div>
 
                 <div className="flex flex-col space-y-1.5">
                   <Label className={labelStyles}>Odd</Label>
-                  <Input
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    value={formData.odd}
-                    onChange={(e) => onChange('odd', e.target.value)}
-                    placeholder="0.00"
-                    className={inputStyles}
+                  <Controller
+                    name="odd"
+                    control={control}
+                    render={({ field }) => (
+                      <Input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        {...field}
+                        value={field.value || ''}
+                        placeholder="0.00"
+                        className={inputStyles}
+                      />
+                    )}
                   />
-                  {errors.odd && <div className="text-[10px] font-medium text-rose-400 mt-1">{errors.odd}</div>}
+                  {errors.odd && <div className="text-[10px] font-medium text-rose-400 mt-1">{errors.odd.message}</div>}
                 </div>
               </div>
             </div>

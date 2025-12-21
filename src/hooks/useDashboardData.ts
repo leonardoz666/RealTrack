@@ -113,6 +113,13 @@ export function useDashboardData(
     enabled: autoFetch,
   });
 
+  // Atualizar banca selecionada quando perfil carregar
+  useEffect(() => {
+    if (profile?.bancaAtivaId && !filters.bancaId) {
+      setFilters(prev => ({ ...prev, bancaId: profile.bancaAtivaId }));
+    }
+  }, [profile?.bancaAtivaId, filters.bancaId]);
+
   // 2. Dashboard Data
   const {
     data: dashboardData,

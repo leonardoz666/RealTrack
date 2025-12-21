@@ -26,6 +26,7 @@ import { useDashboardData, useTipsters, useBancas, useChartContainer } from '../
 import { cn } from '../components/ui/utils';
 import { chartTheme } from '../utils/chartTheme';
 import ImportCSVModal from '../components/ImportCSVModal';
+import { DashboardSkeleton } from '../components/skeletons/DashboardSkeleton';
 
 const formatSignedPercent = (value: number): string => {
   const normalized = formatPercent(Math.abs(value));

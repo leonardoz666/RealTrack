@@ -1424,7 +1424,7 @@ ${limitReachedMessage}`);
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/10">
-                {filteredApostas.map((aposta) => {
+                {apostas.map((aposta) => {
                   const marketSelections = extractMarketSelections(aposta.mercado);
 
                   return (

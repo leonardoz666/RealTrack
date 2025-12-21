@@ -11,7 +11,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '../services/api';
 import { perfilService, type Perfil } from '../services/api';
 import { eventBus } from '../utils/eventBus';
-import {
+import type {
   DashboardFilters,
   DashboardMetricas,
   DashboardResponse,

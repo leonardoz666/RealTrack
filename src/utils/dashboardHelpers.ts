@@ -1,4 +1,4 @@
-import {
+import type {
   DashboardFilters,
   DashboardMetricas,
   EvolucaoBancaChartItem,

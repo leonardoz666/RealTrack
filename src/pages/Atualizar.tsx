@@ -1,26 +1,16 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useSearchParams, useLocation, useNavigate } from 'react-router-dom';
-import { Filter, Plus, Pencil, Upload, Trash2 } from 'lucide-react';
+import { Plus, Upload, Zap } from 'lucide-react';
 import PageHeader from '../components/PageHeader';
 import StatCard from '../components/StatCard';
-import { EmptyState } from '../components/ui/empty-state';
 import Modal from '../components/Modal';
 import UploadTicketModal from '../components/UploadTicketModal';
 import ApostaForm, { type ApostaFormData, type ApostaFormErrors } from '../components/ApostaForm';
 import ApostaStatusModal from '../components/ApostaStatusModal';
-import { Zap } from 'lucide-react';
-import FilterPopoverApostas from '../components/FilterPopoverApostas';
-import DateInput from '../components/DateInput';
-import DropdownSelect from '../components/DropdownSelect';
 import { CASAS_APOSTAS } from '../constants/casasApostas';
 import { STATUS_APOSTAS } from '../constants/statusApostas';
-import {
-  betStatusPillBaseClass,
-  betStatusPillVariants,
-  getBetStatusIcon,
-} from '../constants/betStatusStyles';
 import { ESPORTES, normalizarEsporteParaOpcao } from '../constants/esportes';
-import { apostaService, type ApostasFilter, type ApostaStatus } from '../services/api';
+import { apostaService } from '../services/api';
 import { eventBus } from '../utils/eventBus';
 import { toast } from '../utils/toast';
 import { formatCurrency as formatCurrencyUtil, formatDate as formatDateUtil } from '../utils/formatters';
@@ -28,21 +18,15 @@ import { useTipsters } from '../hooks/useTipsters';
 import { useBancas } from '../hooks/useBancas';
 import { useApostasManager } from '../hooks/useApostasManager';
 import { cn } from '../components/ui/utils';
-// Tesseract será carregado dinamicamente apenas quando necessário (biblioteca pesada ~2MB)
 import { type ApiBetWithBank, type ApiError, type ApiUploadTicketResponse } from '../types/api';
 import { API_BASE_URL, API_HEALTH_URL, API_UPLOAD_URL } from '../config/api';
-import { needsStatDescriptor, isStatDescriptor, resolveBetStatusClass } from '../utils/betUtils';
 import { toError } from '../utils/errorUtils';
+import { STATUS_WITH_RETURNS } from '../constants/marketPatterns';
 
-import {
-  STATUS_WITH_RETURNS,
-  MARKET_LABEL_PATTERN,
-  MARKET_CONNECTOR_PATTERN,
-  MARKET_STAT_KEYWORDS,
-  normalizeMarketKeyword,
-  containsStatKeyword,
-} from '../constants/marketPatterns';
-
+import ApiDiagnostics from '../components/ApiDiagnostics';
+import { useApiDiagnostics } from '../hooks/useApiDiagnostics';
+import ApostasList from '../components/apostas/ApostasList';
+import ApostasFilters from '../components/apostas/ApostasFilters';
 
 interface ApostaFormState {
   bancaId: string;
@@ -74,59 +58,19 @@ type UploadApiError = ApiError & {
   response?: ApiError['response'] & { status?: number };
 };
 
-interface FiltersState {
-  bancaId: string;
-  esporte: string;
-  status: string;
-  tipster: string;
-  casaDeAposta: string;
-  dataDe: string;
-  dataAte: string;
-  searchText: string;
-  oddMin: string;
-  oddMax: string;
-}
-
-type ApiDiagnosticsStatus = 'idle' | 'checking' | 'ok' | 'error';
-
-interface ApiDiagnosticsState {
-  status: ApiDiagnosticsStatus;
-  message: string;
-  latencyMs: number | null;
-  lastCheckedAt: string | null;
-  probeUrl: string | null;
-}
-
 const pageShellClass = 'space-y-10 text-foreground';
 const statGridClass = 'grid gap-6 md:grid-cols-2 xl:grid-cols-4';
 const dashboardCardShellClass = 'rounded-lg border border-white/5 bg-app-darker p-6 text-white shadow-[0_25px_45px_rgba(0,0,0,0.25)] backdrop-blur-sm';
 const buttonVariants = {
   primary:
     'inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-600/20 transition hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40 disabled:cursor-not-allowed disabled:opacity-60',
-  ghost:
-    'inline-flex items-center gap-2 rounded-lg border border-border/40 bg-background/40 px-3 py-2 text-sm font-semibold text-foreground transition hover:border-foreground/40 hover:bg-background/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/30',
-  destructive:
-    'inline-flex items-center gap-2 rounded-lg border border-rose-400/60 bg-rose-500/10 px-3 py-2 text-sm font-semibold text-rose-400 transition hover:bg-rose-500/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400/40'
 } as const;
-const tableActionButtonClass =
-  'inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-white/15 bg-white/5 text-white/80 transition hover:border-brand-emerald/40 hover:bg-white/10 hover:text-brand-emerald focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-emerald/30';
-const tableActionButtonDangerClass =
-  'inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-rose-400/40 bg-rose-500/10 text-rose-200 transition hover:bg-rose-500/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400/40';
-const filterButtonClass = 'inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-600/20 transition hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40';
-const filterCountClass = 'rounded-full bg-black/20 px-2 py-0.5 text-xs font-semibold text-white';
-const formGridClass = 'grid gap-4 md:grid-cols-2';
-const formFieldClass = 'flex flex-col gap-2';
-const labelClass = 'text-sm font-semibold text-foreground/80';
-const inputClass = 'w-full rounded-2xl border border-border/40 bg-background px-4 py-3 text-sm text-foreground placeholder:text-foreground/50 focus-visible:border-brand-emerald focus-visible:ring-2 focus-visible:ring-brand-emerald/30 outline-none transition';
-const compactInputClass = 'w-full rounded-lg border border-border/30 bg-background px-3 py-2 text-sm text-foreground placeholder:text-foreground/50 focus-visible:border-brand-emerald focus-visible:ring-2 focus-visible:ring-brand-emerald/30 outline-none transition';
-const compactInlineInputClass = 'grid gap-2 sm:grid-cols-2';
-
 
 export default function Atualizar() {
   const [searchParams, setSearchParams] = useSearchParams();
   const location = useLocation();
   const navigate = useNavigate();
-  const [filtersOpen, setFiltersOpen] = useState(false);
+  
   const [modalOpen, setModalOpen] = useState(false);
   const [statusModalOpen, setStatusModalOpen] = useState(false);
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
@@ -138,6 +82,9 @@ export default function Atualizar() {
   const { tipsters } = useTipsters();
   const autoSyncBancaRef = useRef(true);
   const uploadAbortControllerRef = useRef<AbortController | null>(null);
+  
+  const { apiDiagnostics, checkApiConnectivity } = useApiDiagnostics();
+
   const preferredBancaId = useMemo(() => {
     if (bancas.length === 0) {
       return '';
@@ -185,166 +132,14 @@ export default function Atualizar() {
   const [updatingStatus, setUpdatingStatus] = useState(false);
   const [retornoManual, setRetornoManual] = useState(false);
   const [betsExpanded, setBetsExpanded] = useState(false);
-  const [apiDiagnostics, setApiDiagnostics] = useState<ApiDiagnosticsState>({
-    status: 'idle',
-    message: '',
-    latencyMs: null,
-    lastCheckedAt: null,
-    probeUrl: null,
-  });
 
   const isDev = import.meta.env.DEV;
-
-  const checkApiConnectivity = useCallback(async () => {
-    setApiDiagnostics((prev) => ({ ...prev, status: 'checking' }));
-
-    const probeCandidates = Array.from(
-      new Set([
-        API_HEALTH_URL,
-        `${API_BASE_URL}/health`,
-        API_BASE_URL,
-      ]),
-    ).filter((url): url is string => typeof url === 'string' && url.length > 0);
-
-    let lastErrorMessage = 'Falha ao verificar API.';
-
-    for (const probeUrl of probeCandidates) {
-      const startMark = typeof performance !== 'undefined' ? performance.now() : Date.now();
-      try {
-        const response = await fetch(probeUrl, {
-          method: 'GET',
-          mode: 'cors',
-        });
-
-        const endMark = typeof performance !== 'undefined' ? performance.now() : Date.now();
-        const latency = Math.round(endMark - startMark);
-
-        if (!response.ok) {
-          lastErrorMessage = `Status ${response.status} em ${probeUrl}`;
-          continue;
-        }
-
-        setApiDiagnostics({
-          status: 'ok',
-          message: `API respondendo (HTTP ${response.status}).`,
-          latencyMs: latency,
-          lastCheckedAt: new Date().toISOString(),
-          probeUrl,
-        });
-        return;
-      } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Falha ao verificar API.';
-        lastErrorMessage = `${errorMessage} em ${probeUrl}`;
-      }
-    }
-
-    setApiDiagnostics({
-      status: 'error',
-      message: lastErrorMessage,
-      latencyMs: null,
-      lastCheckedAt: new Date().toISOString(),
-      probeUrl: null,
-    });
-  }, []);
-
-  useEffect(() => {
-    void checkApiConnectivity();
-  }, [checkApiConnectivity]);
 
   useEffect(() => {
     if (uploadModalOpen) {
       void checkApiConnectivity();
     }
   }, [uploadModalOpen, checkApiConnectivity]);
-
-  const normalizeOptionalString = (value: string) => {
-    const trimmed = value.trim();
-    return trimmed === '' ? undefined : trimmed;
-  };
-
-  const parseNumberOrFallback = (value: string, fallback = 0) => {
-    const parsed = Number.parseFloat(value);
-    return Number.isFinite(parsed) ? parsed : fallback;
-  };
-
-  const parseNullableNumber = (value: string) => {
-    const trimmed = value.trim();
-    if (trimmed === '') {
-      return undefined;
-    }
-    const parsed = Number.parseFloat(trimmed);
-    return Number.isFinite(parsed) ? parsed : undefined;
-  };
-
-  const formatOptionalCellText = (value?: string | null) => {
-    if (typeof value !== 'string') {
-      return '-';
-    }
-    const trimmed = value.trim();
-    return trimmed === '' ? '-' : trimmed;
-  };
-
-  const extractMarketSelections = (market?: string | null): string[] => {
-    if (typeof market !== 'string') {
-      return [];
-    }
-
-    const normalized = market.trim();
-    if (normalized === '' || normalized === 'N/D') {
-      return [];
-    }
-
-    const fragments = normalized
-      .replace(/\r/g, '\n')
-      .replace(/R\$\s*[\d.,]+/gi, '\n')
-      .replace(/Odd[s]?[^\n]*[\d.,]+/gi, '\n')
-      .split(/\n+/)
-      .flatMap((segment) => segment.split(/\s{2,}|[|]/))
-      .map((segment) =>
-        segment
-          .replace(/R\$\s*[\d.,]+/gi, '')
-          .replace(/\s{2,}/g, ' ')
-          .replace(/^[^a-zA-ZÀ-ÿ0-9]+/, '')
-          .replace(/^[\d\s.,:;()-]+/, '')
-          .replace(MARKET_CONNECTOR_PATTERN, '')
-          .trim()
-      )
-      .filter((segment) => segment.length > 0)
-      .filter((segment) => {
-        if (!/[a-zA-ZÀ-ÿ]/.test(segment)) {
-          return false;
-        }
-        if (MARKET_LABEL_PATTERN.test(segment)) {
-          return false;
-        }
-        if (/^[\d.,]+$/.test(segment.replace(',', '.'))) {
-          return false;
-        }
-        return true;
-      });
-
-    const mergedFragments: string[] = [];
-    for (let i = 0; i < fragments.length; i += 1) {
-      const fragment = fragments[i];
-      const next = fragments[i + 1];
-      if (next && needsStatDescriptor(fragment) && isStatDescriptor(next)) {
-        mergedFragments.push(`${fragment} ${next}`);
-        i += 1;
-        continue;
-      }
-      mergedFragments.push(fragment);
-    }
-
-    const deduped: string[] = [];
-    for (const fragment of mergedFragments) {
-      const normalizedFragment = fragment.toLowerCase();
-      if (!deduped.some((existing) => existing.toLowerCase() === normalizedFragment)) {
-        deduped.push(fragment);
-      }
-    }
-
-    return deduped;
-  };
 
   const describeNetworkFailure = useCallback((error: UploadApiError) => {
     const hints: string[] = [
@@ -393,15 +188,12 @@ export default function Atualizar() {
     setRetornoManual(false);
   }, [preferredBancaId, todayISO]);
 
-  // Função para normalizar o esporte do banco para o formato da lista do frontend
   const normalizeEsporte = (esporteFromDb: string): string => normalizarEsporteParaOpcao(esporteFromDb);
 
   const resolveEventoFromBet = (bet: ApiBetWithBank): string => {
     const legacyEvento = (bet as unknown as { jogo?: string }).jogo;
     return bet.evento ?? legacyEvento ?? '';
   };
-
-
 
   const seedTestBets = useCallback(async () => {
     try {
@@ -451,7 +243,6 @@ export default function Atualizar() {
           casaDeAposta
         };
 
-        // Para status que têm retorno, já enviar um valor calculado, senão omitir o campo
         if (STATUS_WITH_RETURNS.includes(status)) {
           payload.retornoObtido = valorApostado * odd;
         }
@@ -491,8 +282,7 @@ export default function Atualizar() {
       }
 
       if (limitReachedMessage) {
-        alert(`Foram geradas ${createdCount} apostas antes do limite diário.
-${limitReachedMessage}`);
+        alert(`Foram geradas ${createdCount} apostas antes do limite diário.\n${limitReachedMessage}`);
         return;
       }
 
@@ -507,7 +297,6 @@ ${limitReachedMessage}`);
     }
   }, [preferredBancaId, fetchApostas]);
 
-  // Sincronizar formulário e filtros com a banca atual
   useEffect(() => {
     if (!preferredBancaId || formData.bancaId) {
       return;
@@ -563,7 +352,6 @@ ${limitReachedMessage}`);
     void fetchApostas();
   }, [fetchApostas]);
 
-  // Escutar evento de atualização de apostas (disparado quando edita via Telegram)
   useEffect(() => {
     const handleApostasUpdated = () => {
       void fetchApostas();
@@ -575,7 +363,6 @@ ${limitReachedMessage}`);
     };
   }, [fetchApostas]);
 
-  // Processar parâmetros de URL para abrir modais automaticamente
   useEffect(() => {
     const editParam = searchParams.get('edit');
     const statusParam = searchParams.get('status');
@@ -584,11 +371,9 @@ ${limitReachedMessage}`);
     if (editParam && apostas.length > 0) {
       const aposta = apostas.find(a => a.id === editParam);
       if (aposta) {
-        // Preencher formulário com os dados da aposta (mesma lógica de handleEditAposta)
         const dataEvento = aposta.dataEvento
           ? new Date(aposta.dataEvento).toISOString().split('T')[0]
           : '';
-        // Normalizar o esporte para corresponder ao formato da lista
         const esporteNormalizado = normalizeEsporte(aposta.esporte);
         setFormData({
           bancaId: aposta.bancaId,
@@ -613,7 +398,6 @@ ${limitReachedMessage}`);
         setFormErrors({});
         setRetornoManual(true);
         setFormNotice('');
-        // Limpar parâmetro da URL
         searchParams.delete('edit');
         setSearchParams(searchParams, { replace: true });
       }
@@ -624,7 +408,6 @@ ${limitReachedMessage}`);
       if (aposta) {
         setSelectedApostaForStatus(aposta);
         setStatusModalOpen(true);
-        // Limpar parâmetro da URL
         searchParams.delete('status');
         setSearchParams(searchParams, { replace: true });
       }
@@ -641,20 +424,18 @@ ${limitReachedMessage}`);
   }, [searchParams, setSearchParams, apostas, location, navigate, resetFormState]);
 
   useEffect(() => {
-    // SSE com httpOnly cookies - backend valida automaticamente
     const streamUrl = `${API_BASE_URL}/apostas/stream`;
     const eventSource = new EventSource(streamUrl, {
-      withCredentials: true // Envia cookies httpOnly
+      withCredentials: true
     });
 
-    // Throttle para evitar muitas requisições
     let lastFetchTime = 0;
-    const THROTTLE_MS = 2000; // Aguardar 2 segundos entre requisições
+    const THROTTLE_MS = 2000;
 
     const handleBetUpdate = async () => {
       const now = Date.now();
       if (now - lastFetchTime < THROTTLE_MS) {
-        return; // Ignorar se ainda não passou o tempo mínimo
+        return;
       }
       lastFetchTime = now;
       try {
@@ -722,7 +503,6 @@ ${limitReachedMessage}`);
 
     try {
       await deleteAposta(aposta.id);
-      // Disparar evento para atualizar dashboard
       window.dispatchEvent(new Event('apostas-updated'));
     } catch (error) {
       console.error('Erro ao deletar aposta:', error);
@@ -733,11 +513,9 @@ ${limitReachedMessage}`);
   };
 
   const handleEditAposta = (aposta: ApiBetWithBank) => {
-    // Converter data para formato do input (YYYY-MM-DD)
     const dataEvento = aposta.dataEvento
       ? new Date(aposta.dataEvento).toISOString().split('T')[0]
       : '';
-    // Normalizar o esporte para corresponder ao formato da lista
     const esporteNormalizado = normalizeEsporte(aposta.esporte);
 
     setFormData({
@@ -807,7 +585,6 @@ ${limitReachedMessage}`);
       errors.casaDeAposta = 'Selecione a casa de aposta';
     }
     if (formData.status !== 'Pendente' && !formData.retornoObtido) {
-      // Se o status não é Pendente, retornoObtido pode ser necessário dependendo do status
       if (['Ganha', 'Meio Ganha', 'Cashout'].includes(formData.status)) {
         if (!formData.retornoObtido || parseFloat(formData.retornoObtido) <= 0) {
           errors.retornoObtido = 'Digite o retorno obtido';
@@ -829,7 +606,6 @@ ${limitReachedMessage}`);
     try {
       setSaving(true);
 
-      // Validar e converter data
       if (!formData.dataEvento) {
         setFormErrors({ dataEvento: 'Selecione a data do evento' });
         setSaving(false);
@@ -844,17 +620,12 @@ ${limitReachedMessage}`);
       }
 
       if (editingAposta) {
-        // Atualizar aposta existente
         await updateAposta(editingAposta, formData);
       } else {
-        // Criar nova aposta
         await createAposta(formData);
       }
 
-      // Limpar formulário e fechar modal
       handleCloseModal();
-
-      // Recarregar dados do dashboard (pode ser feito via contexto ou refetch)
       window.dispatchEvent(new Event('apostas-updated'));
     } catch (error) {
       console.error('Erro ao criar aposta:', error);
@@ -879,7 +650,6 @@ ${limitReachedMessage}`);
     }
   };
 
-  // Função para processar upload e extrair dados
   const handleUpload = async (file: File) => {
     try {
       setUploading(true);
@@ -917,7 +687,6 @@ ${limitReachedMessage}`);
       if (uploadResponse && uploadResponse.success && uploadResponse.data) {
         const extractedData: UploadTicketData = uploadResponse.data;
 
-        // Preencher formulário com dados extraídos
         const defaultBancaId = preferredBancaId || '';
         const rawDate = extractedData.dataEvento ?? (extractedData as Record<string, unknown>).dataJogo;
         const normalizedDate = typeof rawDate === 'string'
@@ -943,7 +712,6 @@ ${limitReachedMessage}`);
           retornoObtido: ''
         });
 
-        // Fechar modal de upload e abrir modal de criação de aposta
         setUploadModalOpen(false);
         setModalOpen(true);
         setEditingAposta(null);
@@ -989,7 +757,6 @@ ${limitReachedMessage}`);
         return;
       }
 
-      // Mensagem mais detalhada para erro de quota
       if (errorMessage.includes('Quota') || errorMessage.includes('quota') || errorMessage.includes('excedida')) {
         const isGemini = errorMessage.includes('Gemini');
         const apiName = isGemini ? 'Google Gemini' : 'OpenAI';
@@ -1024,7 +791,6 @@ ${limitReachedMessage}`);
     setUploadModalOpen(true);
   };
 
-  // Função para fechar modal de upload
   const handleCloseUploadModal = () => {
     setUploadModalOpen(false);
     uploadAbortControllerRef.current?.abort();
@@ -1032,12 +798,10 @@ ${limitReachedMessage}`);
     setUploading(false);
   };
 
-  // Formatar valores monetários usando utilitário compartilhado
   const formatCurrency = useCallback((value: number): string => {
     return formatCurrencyUtil(value);
   }, []);
 
-  // Formatar data (apenas data, sem horário) usando utilitário compartilhado
   const formatDate = useCallback((dateString: string): string => {
     return formatDateUtil(dateString);
   }, []);
@@ -1050,7 +814,6 @@ ${limitReachedMessage}`);
       
       await updateStatus(selectedApostaForStatus.id, selectedApostaForStatus, statusData);
 
-      // Fechar modal
       setStatusModalOpen(false);
       setSelectedApostaForStatus(null);
       toast.success('Status atualizado com sucesso!');
@@ -1067,13 +830,11 @@ ${limitReachedMessage}`);
     setSelectedApostaForStatus(null);
   }, []);
 
-  // Função para abrir modal de status
   const handleOpenStatusModal = useCallback((aposta: ApiBetWithBank) => {
     setSelectedApostaForStatus(aposta);
     setStatusModalOpen(true);
   }, []);
 
-  // Calcular estatísticas (recalcula automaticamente quando apostas mudam)
   const stats = useMemo(() => {
     return [
       {
@@ -1103,8 +864,6 @@ ${limitReachedMessage}`);
     ];
   }, [hookStats, formatCurrency]);
 
-
-
   return (
     <div className={pageShellClass}>
       <PageHeader
@@ -1112,24 +871,23 @@ ${limitReachedMessage}`);
         subtitle="Gerencie seus bilhetes, aplique filtros avançados e mantenha o histórico sincronizado"
         actions={
           <div className="flex flex-wrap items-center gap-3 relative">
+            <ApostasFilters
+              filters={filters}
+              setFilters={setFilters}
+              activeFilterCount={activeFilterCount}
+              bancas={bancas}
+              tipsters={tipsters}
+              onBancaChange={() => {
+                autoSyncBancaRef.current = false;
+              }}
+            />
             <button
               type="button"
-              className={filterButtonClass}
-              onClick={() => setFiltersOpen(true)}
+              className={buttonVariants.primary}
+              onClick={handleOpenUploadModal}
             >
-              <Filter size={16} />
-              Filtros
-              {activeFilterCount > 0 && (
-                <span className={filterCountClass}>{activeFilterCount}</span>
-              )}
+              <Upload size={16} /> Upload Bilhete
             </button>
-            <button
-            type="button"
-            className={buttonVariants.primary}
-            onClick={handleOpenUploadModal}
-          >
-            <Upload size={16} /> Upload Bilhete
-          </button>
             <button
               type="button"
               className={buttonVariants.primary}
@@ -1142,129 +900,7 @@ ${limitReachedMessage}`);
             >
               <Plus size={16} /> Nova Aposta
             </button>
-            {filtersOpen && (
-              <div className="absolute right-0 top-full mt-2 z-50">
-                <FilterPopoverApostas
-                  open={filtersOpen}
-                  onClose={() => setFiltersOpen(false)}
-                  footer={
-                    <button className={buttonVariants.primary} onClick={() => setFiltersOpen(false)}>
-                      Aplicar Filtros
-                    </button>
-                  }
-                >
-                  <div className={cn(formGridClass, 'w-[min(440px,80vw)]')}>
-                    <div className={cn(formFieldClass, 'col-span-2')}>
-                      <label className={labelClass}>Evento, Mercado, Aposta</label>
-                      <input
-                        className={compactInputClass}
-                        type="text"
-                        placeholder="Digite o nome do evento, mercado ou aposta"
-                        value={filters.searchText}
-                        onChange={(e) => setFilters((prev) => ({ ...prev, searchText: e.target.value }))}
-                      />
-                    </div>
-
-                    <div className={formFieldClass}>
-                      <label className={labelClass}>Banca</label>
-                      <DropdownSelect
-                        options={bancas.map((banca) => ({ value: banca.id, label: banca.nome }))}
-                        value={filters.bancaId}
-                        onChange={(val) => {
-                          autoSyncBancaRef.current = false;
-                          setFilters((prev) => ({ ...prev, bancaId: val }));
-                        }}
-                        placeholder="Selecione uma banca"
-                        className="w-full"
-                        useWrapperClass
-                      />
-                    </div>
-
-                    <div className={formFieldClass}>
-                      <label className={labelClass}>Esporte</label>
-                      <DropdownSelect
-                        options={ESPORTES.map((esporte) => ({ value: esporte, label: esporte }))}
-                        value={filters.esporte}
-                        onChange={(val) => setFilters((prev) => ({ ...prev, esporte: val }))}
-                        placeholder="Selecione…"
-                        className="w-full"
-                        searchable
-                        useWrapperClass
-                      />
-                    </div>
-
-                    <div className={formFieldClass}>
-                      <label className={labelClass}>Status</label>
-                      <DropdownSelect
-                        options={STATUS_APOSTAS.map((s) => ({ value: s, label: s }))}
-                        value={filters.status}
-                        onChange={(val) => setFilters((prev) => ({ ...prev, status: val }))}
-                        placeholder="Selecione um status"
-                        className="w-full"
-                        useWrapperClass
-                      />
-                    </div>
-
-                    {/** Status Salvamento removido per request */}
-
-                    <div className={formFieldClass}>
-                      <label className={labelClass}>Tipster</label>
-                      <DropdownSelect
-                        options={tipsters.filter((t) => t.ativo).map((t) => ({ value: t.nome, label: t.nome }))}
-                        value={filters.tipster}
-                        onChange={(val) => setFilters((prev) => ({ ...prev, tipster: val }))}
-                        placeholder="Selecione…"
-                        className="w-full"
-                        useWrapperClass
-                      />
-                    </div>
-
-                    <div className="col-span-2 grid grid-cols-3 gap-3 items-end">
-                      <div className={formFieldClass}>
-                        <label className={labelClass}>Casa de Aposta</label>
-                        <DropdownSelect
-                          options={CASAS_APOSTAS.map((casa) => ({ value: casa, label: casa }))}
-                          value={filters.casaDeAposta}
-                          onChange={(val) => setFilters((prev) => ({ ...prev, casaDeAposta: val }))}
-                          placeholder="Selecione…"
-                          className="w-full"
-                          searchable
-                          useWrapperClass
-                        />
-                      </div>
-
-                      <div className={formFieldClass}>
-                        <label className={labelClass}>Data do Evento (De)</label>
-                        <DateInput
-                          value={filters.dataDe}
-                          onChange={(value) => setFilters((prev) => ({ ...prev, dataDe: value }))}
-                          placeholder="dd/mm/aaaa"
-                          className={compactInputClass}
-                        />
-                      </div>
-
-                      <div className={formFieldClass}>
-                        <label className={cn(labelClass, 'whitespace-nowrap')}>Data do Evento (Até)</label>
-                        <DateInput
-                          value={filters.dataAte}
-                          onChange={(value) => setFilters((prev) => ({ ...prev, dataAte: value }))}
-                          placeholder="dd/mm/aaaa"
-                          className={compactInputClass}
-                        />
-                      </div>
-
-                      <p className="col-span-3 text-xs text-foreground/60 mt-1">
-                        Se só preencher "De", filtramos somente este dia. Com "Até", usamos o intervalo.
-                      </p>
-                    </div>
-
-                    {/** Evento field moved to top */}
-
-                    {/** ODD filter removed per request */}
-                  </div>
-                </FilterPopoverApostas>
-              </div>
-            )}
+            <ApiDiagnostics />
           </div>
         }
       />
@@ -1275,123 +911,18 @@ ${limitReachedMessage}`);
         ))}
       </div>
 
-      <div className={cn(dashboardCardShellClass, 'space-y-6')}>
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <h3 className="text-lg font-semibold text-white">Apostas</h3>
-          <div className="flex items-center gap-2">
-            {isDev && (
-              <button
-                type="button"
-                className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white/80 transition hover:border-brand-emerald/50 hover:text-brand-emerald focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-emerald/30"
-                onClick={() => {
-                  void seedTestBets();
-                }}
-                title="Gerar 200 apostas de teste (apenas desenvolvimento)"
-              >
-                Gerar testes
-              </button>
-            )}
-            <button
-              type="button"
-              className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white/80 transition hover:border-brand-emerald/50 hover:text-brand-emerald focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-emerald/30"
-              onClick={() => setBetsExpanded((prev) => !prev)}
-            >
-              {betsExpanded ? 'Recolher' : 'Expandir'}
-            </button>
-          </div>
-        </div>
-
-        {apostas.length === 0 ? (
-          <EmptyState title="Nenhuma aposta" description="Cadastre uma nova aposta para começar a acompanhar resultados." />
-        ) : (
-          <div className={cn('overflow-hidden rounded-2xl border border-white/10', betsExpanded ? '' : 'max-h-[420px] overflow-y-auto')}>
-            <table className="w-full table-auto border-collapse text-left text-sm text-white">
-              <thead className="bg-white/5">
-                <tr>
-                  {['Casa de Aposta', 'Tipster', 'Data', 'Esporte', 'Evento', 'Aposta', 'Mercado', 'Stake', 'Status', 'Retorno Obtido', 'Ações'].map((column) => (
-                    <th key={column} className="px-4 py-3 text-[0.7rem] uppercase tracking-[0.18em] text-white/60">
-                      {column}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/10">
-                {apostas.map((aposta) => {
-                  const marketSelections = extractMarketSelections(aposta.mercado);
-
-                  return (
-                    <tr key={aposta.id} className="text-white">
-                      <td className="px-4 py-3 align-middle text-sm font-medium text-white">{formatOptionalCellText(aposta.casaDeAposta)}</td>
-                      <td className="px-4 py-3 align-middle text-sm text-white/80">{formatOptionalCellText(aposta.tipster)}</td>
-                      <td className="px-4 py-3 align-middle text-sm text-white/80">{formatDate(aposta.dataEvento)}</td>
-                      <td className="px-4 py-3 align-middle text-sm text-white/80">{normalizeEsporte(aposta.esporte)}</td>
-                      <td className="px-4 py-3 align-middle text-sm text-white">{aposta.evento}</td>
-                      <td className="px-4 py-3 align-middle text-sm text-white/80">{formatOptionalCellText(aposta.aposta)}</td>
-                      <td className="px-4 py-3 align-middle text-sm text-white/80">
-                        {marketSelections.length > 0 ? (
-                          <ul className="space-y-1">
-                            {marketSelections.map((selection, index) => (
-                              <li key={`${aposta.id}-market-${index}`} className="flex items-start gap-2">
-                                <span className="mt-0.5 text-xs text-white/50">•</span>
-                                <span className="whitespace-pre-line">{selection}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        ) : (
-                          <span>{formatOptionalCellText(aposta.mercado)}</span>
-                        )}
-                      </td>
-                      <td className="px-4 py-3 align-middle text-sm text-white">
-                        <div className="flex flex-col gap-1 text-sm">
-                          <span className="font-semibold text-white">{formatCurrency(aposta.valorApostado)}</span>
-                          <span className="text-xs text-white/60">Odd: {aposta.odd}</span>
-                        </div>
-                      </td>
-                      <td className="px-4 py-3 align-middle">
-                        <button
-                          type="button"
-                          onClick={() => handleOpenStatusModal(aposta)}
-                          className={cn(
-                            betStatusPillBaseClass,
-                            'text-xs',
-                            resolveBetStatusClass(aposta.status)
-                          )}
-                        >
-                          {getBetStatusIcon(aposta.status)}
-                          {aposta.status}
-                        </button>
-                      </td>
-                      <td className="px-4 py-3 align-middle text-sm text-white">
-                        {aposta.retornoObtido != null ? formatCurrency(aposta.retornoObtido) : '-'}
-                      </td>
-                      <td className="px-4 py-3 align-middle">
-                        <div className="flex items-center gap-2 text-white">
-                          <button
-                            type="button"
-                            className={tableActionButtonClass}
-                            onClick={() => handleEditAposta(aposta)}
-                            title="Editar aposta"
-                          >
-                            <Pencil size={16} />
-                          </button>
-                          <button
-                            type="button"
-                            className={tableActionButtonDangerClass}
-                            onClick={() => handleDeleteAposta(aposta)}
-                            title="Deletar aposta"
-                          >
-                            <Trash2 size={16} />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
+      <ApostasList
+        apostas={apostas}
+        expanded={betsExpanded}
+        onToggleExpand={() => setBetsExpanded((prev) => !prev)}
+        onEdit={handleEditAposta}
+        onDelete={handleDeleteAposta}
+        onStatusClick={handleOpenStatusModal}
+        formatCurrency={formatCurrency}
+        formatDate={formatDate}
+        onSeedTestBets={isDev ? seedTestBets : undefined}
+        isDev={isDev}
+      />
 
       <Modal
         isOpen={modalOpen}
@@ -1420,7 +951,6 @@ ${limitReachedMessage}`);
         />
       </Modal>
 
-      {/* Modal de Upload */}
       <UploadTicketModal
         isOpen={uploadModalOpen}
         onClose={handleCloseUploadModal}
@@ -1428,7 +958,6 @@ ${limitReachedMessage}`);
         loading={uploading}
       />
 
-      {/* Modal de Status */}
       <ApostaStatusModal
         isOpen={statusModalOpen}
         aposta={selectedApostaForStatus}
@@ -1439,5 +968,3 @@ ${limitReachedMessage}`);
     </div>
   );
 }
-
-

@@ -51,9 +51,7 @@ export default function ApostaStatusModal({
       onClose={onClose}
       title="Definir Resultado"
       subtitle="Atualize o status e o retorno da sua aposta"
-      className="bg-[#054a3e] border-emerald-400/30 pt-8"
       size="sm"
-      hideHeader={true}
     >
       {isOpen ? (
         <StatusFormContent
@@ -131,7 +129,7 @@ function StatusFormContent({ aposta, onClose, onConfirm, loading }: StatusFormCo
       <div className="space-y-1.5">
         <label className="text-xs font-bold text-white/90">Aposta</label>
         <div className="relative">
-          <div className="flex w-full items-center justify-between rounded-xl border border-white/5 bg-[#06312a] px-3 py-2.5 text-xs text-white/80 shadow-inner">
+          <div className="flex w-full items-center justify-between rounded-xl border border-white/5 bg-white/5 px-3 py-2.5 text-xs text-white/80 shadow-inner">
             <span className="font-semibold truncate">Aposta #{aposta.id.split('-')[0].toUpperCase()} - {aposta.evento}</span>
             <ChevronDown size={16} className="text-white/30 flex-shrink-0" />
           </div>
@@ -231,7 +229,7 @@ function StatusFormContent({ aposta, onClose, onConfirm, loading }: StatusFormCo
       </div>
 
       {/* Seção Valor Resultado */}
-      <div className="rounded-3xl border border-white/5 bg-[#06312a] p-5 shadow-inner relative overflow-hidden">
+      <div className="rounded-3xl border border-white/5 bg-white/5 p-5 shadow-inner relative overflow-hidden">
         {/* Subtle background glow */}
         <div className="absolute top-0 right-0 h-24 w-24 bg-emerald-500/5 blur-[40px]" />
 
@@ -265,7 +263,7 @@ function StatusFormContent({ aposta, onClose, onConfirm, loading }: StatusFormCo
               placeholder="0,00"
               value={formData.retornoObtido}
               onChange={(e) => setFormData(prev => ({ ...prev, retornoObtido: e.target.value }))}
-              className="w-full rounded-lg bg-[#06312a] px-3 py-2.5 text-right text-sm font-bold text-white border border-white/5 focus:outline-none focus:ring-1 focus:ring-emerald-500/20 transition-all shadow-inner"
+              className="w-full rounded-lg bg-black/20 px-3 py-2.5 text-right text-sm font-bold text-white border border-white/5 focus:outline-none focus:ring-1 focus:ring-emerald-500/20 transition-all shadow-inner"
             />
           </div>
         </div>

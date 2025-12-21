@@ -85,9 +85,9 @@ const sectionLabelClass = 'text-2xs uppercase tracking-[0.3em] text-foreground-m
 const inputClass =
   'w-full rounded-2xl border border-border/40 bg-background px-4 py-2.5 text-sm text-foreground placeholder:text-foreground-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-emerald/30';
 const headerGhostButtonClass =
-  'inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white/80 transition hover:border-brand-emerald/50 hover:text-brand-emerald focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-emerald/30';
+  'inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40';
 const headerPrimaryButtonClass =
-  'inline-flex items-center gap-2 rounded-full border border-brand-emerald/60 bg-brand-emerald/15 px-4 py-2 text-sm font-semibold text-brand-emerald transition hover:bg-brand-emerald/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-emerald/30';
+  'inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40';
 const tableActionButtonClass =
   'inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-white/15 bg-white/5 text-white/80 transition hover:border-brand-emerald/40 hover:bg-white/10 hover:text-brand-emerald focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-emerald/30';
 const tableActionButtonDangerClass =
@@ -523,7 +523,7 @@ export default function Financeiro() {
                     footer={
                       <button
                         type="button"
-                        className="w-full rounded-2xl bg-brand-linear px-4 py-2 text-sm font-semibold text-[#f2f2f2] shadow-glow transition active:scale-[0.99]"
+                        className="w-full rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-600/20 transition hover:bg-emerald-700 active:scale-[0.99]"
                         onClick={handleApplyFilters}
                       >
                         Aplicar filtros

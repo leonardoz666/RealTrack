@@ -48,8 +48,8 @@ const navLinkClasses = (isActive: boolean, collapsed: boolean) =>
     collapsed ? 'justify-center px-0' : 'px-3'
   } ${
     isActive
-      ? 'bg-[#14b8a6] text-white shadow-lg shadow-[#14b8a6]/20'
-      : 'text-white/80 hover:text-white hover:bg-[#0f3d38]'
+      ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/20'
+      : 'text-white/80 hover:text-white hover:bg-emerald-600/10'
   }`;
 
 const PLAN_VISUALS: Record<string, { icon: LucideIcon; badgeClass: string; iconClass: string }> = {
@@ -382,29 +382,29 @@ const Sidebar = ({ collapsed, onToggle }: SidebarProps) => {
           <div className={`mb-6 ${sectionPadding}`} ref={bancaDropdownRef}>
             <button
               type="button"
-              className="flex w-full items-center justify-between rounded-2xl bg-gradient-to-b from-[#0f3d38] to-[#0c2f2b] px-3 py-3 transition-all hover:shadow-lg hover:shadow-black/30 hover:translate-y-[-1px]"
+              className="flex w-full items-center justify-between rounded-lg border border-emerald-600/20 bg-emerald-950/30 px-3 py-3 transition-all hover:bg-emerald-900/40 hover:border-emerald-600/30"
               onClick={toggleBancaDropdown}
               aria-expanded={isBancaDropdownOpen}
             >
               <div className="flex items-center gap-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#7c3aed] to-[#14b8a6] shadow-sm">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-600 shadow-lg shadow-emerald-600/20">
                   <Layers className="h-5 w-5 text-white" strokeWidth={2} />
                 </div>
                 <div className="flex flex-col items-start">
-                  <span className="text-xs text-white/80">Banca Atual</span>
-                  <span className="text-white">
+                  <span className="text-xs text-emerald-100/60">Banca Atual</span>
+                  <span className="text-sm font-medium text-white">
                     {bancaPanelLoading ? 'Carregando...' : currentBanca?.nome ?? 'Nenhuma banca'}
                   </span>
                 </div>
               </div>
               <ChevronDown
-                className={`h-5 w-5 text-white/80 transition-transform ${isBancaDropdownOpen ? 'rotate-180' : ''}`}
+                className={`h-4 w-4 text-emerald-100/50 transition-transform ${isBancaDropdownOpen ? 'rotate-180' : ''}`}
                 strokeWidth={2}
               />
             </button>
 
             {isBancaDropdownOpen && (
-              <div className="mt-3 space-y-3 rounded-2xl border border-[#14b8a6]/20 bg-gradient-to-b from-[#072a26] to-[#0c2f2b] p-3 shadow-2xl">
+              <div className="mt-2 space-y-2 rounded-lg border border-emerald-600/20 bg-emerald-950 p-2 shadow-xl shadow-black/40">
                 {bancaPanelLoading ? (
                   <div className="flex h-20 items-center justify-center text-sm text-white/80">
                     Carregando bancas...
@@ -412,7 +412,7 @@ const Sidebar = ({ collapsed, onToggle }: SidebarProps) => {
                 ) : bancas.length === 0 ? (
                   <div className="text-sm text-white/80">Nenhuma banca cadastrada ainda.</div>
                 ) : (
-                  <div className="grid grid-cols-1 gap-2">
+                  <div className="grid grid-cols-1 gap-1">
                     {[...bancas]
                       .sort((a, b) => {
                         if (a.padrao === b.padrao) return 0;
@@ -422,36 +422,36 @@ const Sidebar = ({ collapsed, onToggle }: SidebarProps) => {
                         <button
                           key={banca.id}
                           type="button"
-                        className={`flex flex-col rounded-xl border px-3 py-3 text-left transition-all transform-gpu ${
-                          banca.padrao
-                            ? 'border-[#14b8a6] bg-[#062e2a] shadow-md'
-                            : 'border-white/5 bg-[#071f1d] hover:border-[#14b8a6]/60 hover:scale-[1.01]'
-                        }`}
-                        onClick={() => handleSelectBanca(banca.id)}
-                        disabled={updatingBancaId === banca.id}
-                      >
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium text-white">{banca.nome}</span>
-                          {banca.padrao && (
-                            <span className="rounded-full bg-[#14b8a6]/20 px-2 py-0.5 text-xs text-white">
-                              Atual
+                          className={`flex flex-col rounded-lg border px-3 py-2.5 text-left transition-all ${
+                            banca.padrao
+                              ? 'border-emerald-600/50 bg-emerald-900/20'
+                              : 'border-transparent hover:bg-white/5'
+                          }`}
+                          onClick={() => handleSelectBanca(banca.id)}
+                          disabled={updatingBancaId === banca.id}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-medium text-white">{banca.nome}</span>
+                            {banca.padrao && (
+                              <span className="rounded bg-emerald-600/20 px-1.5 py-0.5 text-[10px] font-medium text-emerald-400">
+                                Atual
+                              </span>
+                            )}
+                          </div>
+                          <div className="mt-0.5 flex items-center justify-between text-xs text-white/60">
+                            <span className="inline-flex items-center gap-2">
+                              <span className="rounded bg-white/10 px-1.5 py-0.5 text-[10px]">{banca.status}</span>
                             </span>
-                          )}
-                        </div>
-                        <div className="mt-1 flex items-center justify-between text-xs text-white/80">
-                          <span className="inline-flex items-center gap-2"> 
-                            <span className="rounded-full bg-white/5 px-2 py-0.5 text-[11px]">{banca.status}</span>
-                          </span>
-                          <span className="ml-2 flex-1 truncate text-right">{banca.descricao}</span>
-                        </div>
-                      </button>
-                    ))}
+                            <span className="ml-2 flex-1 truncate text-right">{banca.descricao}</span>
+                          </div>
+                        </button>
+                      ))}
                   </div>
                 )}
 
                 <button
                   type="button"
-                  className="flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-[#14b8a6]/50 px-3 py-2 text-sm font-medium text-white transition-colors hover:border-[#14b8a6] hover:bg-[#14b8a6]/10"
+                  className="flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-emerald-600/30 px-3 py-2 text-xs font-medium text-emerald-400 transition-colors hover:border-emerald-600 hover:bg-emerald-600/10"
                   onClick={handleCreateBanca}
                 >
                   + Nova Banca

@@ -209,18 +209,18 @@ const statGridClass = 'grid gap-6 md:grid-cols-2 xl:grid-cols-4';
 const dashboardCardShellClass = 'rounded-lg border border-white/5 bg-[#0f2d29] p-6 text-white shadow-[0_25px_45px_rgba(0,0,0,0.25)] backdrop-blur-sm';
 const buttonVariants = {
   primary:
-    'inline-flex items-center gap-2 rounded-full bg-brand-emerald px-4 py-2 text-sm font-semibold text-white shadow-glow transition hover:bg-brand-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-emerald/40 disabled:cursor-not-allowed disabled:opacity-60',
+    'inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-600/20 transition hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40 disabled:cursor-not-allowed disabled:opacity-60',
   ghost:
-    'inline-flex items-center gap-2 rounded-full border border-border/40 bg-background/40 px-3 py-2 text-sm font-semibold text-foreground transition hover:border-foreground/40 hover:bg-background/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-emerald/30',
+    'inline-flex items-center gap-2 rounded-lg border border-border/40 bg-background/40 px-3 py-2 text-sm font-semibold text-foreground transition hover:border-foreground/40 hover:bg-background/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/30',
   destructive:
-    'inline-flex items-center gap-2 rounded-full border border-rose-400/60 bg-rose-500/10 px-3 py-2 text-sm font-semibold text-rose-400 transition hover:bg-rose-500/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400/40'
+    'inline-flex items-center gap-2 rounded-lg border border-rose-400/60 bg-rose-500/10 px-3 py-2 text-sm font-semibold text-rose-400 transition hover:bg-rose-500/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400/40'
 } as const;
 const tableActionButtonClass =
   'inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-white/15 bg-white/5 text-white/80 transition hover:border-brand-emerald/40 hover:bg-white/10 hover:text-brand-emerald focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-emerald/30';
 const tableActionButtonDangerClass =
   'inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-rose-400/40 bg-rose-500/10 text-rose-200 transition hover:bg-rose-500/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400/40';
-const filterButtonClass = 'inline-flex items-center gap-2 rounded-full border border-border/40 bg-background px-4 py-2 text-sm font-semibold text-foreground shadow-sm transition hover:text-brand-emerald focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-emerald/40';
-const filterCountClass = 'rounded-full bg-foreground/10 px-2 py-0.5 text-xs font-semibold text-foreground';
+const filterButtonClass = 'inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-600/20 transition hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40';
+const filterCountClass = 'rounded-full bg-black/20 px-2 py-0.5 text-xs font-semibold text-white';
 const formGridClass = 'grid gap-4 md:grid-cols-2';
 const formFieldClass = 'flex flex-col gap-2';
 const labelClass = 'text-sm font-semibold text-foreground/80';
@@ -1429,12 +1429,12 @@ ${limitReachedMessage}`);
               )}
             </button>
             <button
-              type="button"
-              className={buttonVariants.ghost}
-              onClick={handleOpenUploadModal}
-            >
-              <Upload size={16} /> Upload Bilhete
-            </button>
+            type="button"
+            className={buttonVariants.primary}
+            onClick={handleOpenUploadModal}
+          >
+            <Upload size={16} /> Upload Bilhete
+          </button>
             <button
               type="button"
               className={buttonVariants.primary}

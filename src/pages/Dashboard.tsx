@@ -282,7 +282,7 @@ export default function Dashboard() {
   const evolutionMetricCardClassBase = [
     'relative',
     'rounded-2xl',
-    'p-6',
+    'p-4',
     'bg-white/[0.06]',
     'backdrop-blur-2xl',
     'border',
@@ -293,9 +293,51 @@ export default function Dashboard() {
     'hover:scale-[1.015]',
     'hover:border-white/30',
   ].join(' ');
-  const evolutionMetricCardClassMelhor = evolutionMetricCardClassBase;
-  const evolutionMetricCardClassPior = evolutionMetricCardClassBase;
-  const evolutionMetricCardClassMedia = evolutionMetricCardClassBase;
+
+  const evolutionMetricCardClassMelhor = [
+    'relative',
+    'rounded-2xl',
+    'p-4',
+    'bg-emerald-900/40',
+    'backdrop-blur-2xl',
+    'border',
+    'border-emerald-500/50',
+    'shadow-[0_8px_40px_rgba(16,185,129,0.1)]',
+    'transition-all',
+    'duration-300',
+    'hover:scale-[1.015]',
+    'hover:border-emerald-500/60',
+  ].join(' ');
+
+  const evolutionMetricCardClassPior = [
+    'relative',
+    'rounded-2xl',
+    'p-4',
+    'bg-rose-900/40',
+    'backdrop-blur-2xl',
+    'border',
+    'border-rose-500/50',
+    'shadow-[0_8px_40px_rgba(244,63,94,0.1)]',
+    'transition-all',
+    'duration-300',
+    'hover:scale-[1.015]',
+    'hover:border-rose-500/60',
+  ].join(' ');
+
+  const evolutionMetricCardClassMedia = [
+    'relative',
+    'rounded-2xl',
+    'p-4',
+    'bg-blue-900/40',
+    'backdrop-blur-2xl',
+    'border',
+    'border-blue-500/50',
+    'shadow-[0_8px_40px_rgba(59,130,246,0.1)]',
+    'transition-all',
+    'duration-300',
+    'hover:scale-[1.015]',
+    'hover:border-blue-500/60',
+  ].join(' ');
   const timeframeSwitchBaseClass =
     'rounded-full px-4 py-1.5 text-xs font-semibold uppercase tracking-wide transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1fe7cb]/40';
   const evolutionChartShellClass =
@@ -321,14 +363,14 @@ export default function Dashboard() {
             )}
             <button
               type="button"
-              className="inline-flex items-center gap-2 rounded-2xl border border-border/40 bg-background px-4 py-2 text-sm font-semibold text-foreground transition hocus:border-brand-emerald/60 hocus:text-brand-emerald"
+              className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-600/20 transition hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40"
               onClick={handleNovaAposta}
             >
               <Plus size={16} /> Nova aposta
             </button>
             <button
               type="button"
-              className="inline-flex items-center gap-2 rounded-2xl border border-border/40 bg-background px-4 py-2 text-sm font-semibold text-foreground transition hocus:border-brand-emerald/60 hocus:text-brand-emerald"
+              className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-600/20 transition hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40"
               onClick={() => setImportModalOpen(true)}
             >
               <Download size={16} /> Importar dados
@@ -336,14 +378,14 @@ export default function Dashboard() {
             <div className="relative">
               <button
                 type="button"
-                className="inline-flex items-center gap-2 rounded-2xl border border-border/40 bg-background px-4 py-2 text-sm font-semibold text-foreground transition hocus:border-brand-emerald/60 hocus:text-brand-emerald"
+                className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-600/20 transition hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40"
                 onClick={() => setFiltersOpen((prev) => !prev)}
                 aria-expanded={filtersOpen}
               >
                 <Filter size={16} />
                 Filtros
                 {activeFiltersCount > 0 && (
-                  <span className="rounded-full bg-brand-emerald/15 px-2 text-xs font-semibold text-brand-emerald">{activeFiltersCount}</span>
+                  <span className="rounded-full bg-black/20 px-2 text-xs font-semibold text-white">{activeFiltersCount}</span>
                 )}
               </button>
               {filtersOpen && (
@@ -560,7 +602,7 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="mx-auto grid max-w-3xl gap-4 md:grid-cols-3">
             {/* <div className={evolutionMetricCardClass}>
               <p className="text-xs font-semibold uppercase tracking-[0.3em] text-white/60">Total acumulado</p>
               <p className="mt-2 text-3xl font-semibold text-white">{formatCurrency(lucroPeriodo)}</p>
@@ -569,32 +611,36 @@ export default function Dashboard() {
               </p>
             </div> */}
             <div className={evolutionMetricCardClassMelhor}>
-              {/* Glow interno */}
-              <div className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-br from-white/20 via-white/5 to-transparent opacity-30" />
-              {/* Overlay de cor fintech */}
-              <div className="pointer-events-none absolute inset-0 rounded-2xl bg-emerald-500/8" />
+              <div className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-br from-emerald-500/10 via-transparent to-transparent opacity-50" />
               <div className="relative z-10">
-                <p className="text-xs font-medium tracking-widest text-white/60 uppercase">Melhor dia</p>
-                <p className="mt-2 text-3xl font-semibold text-white">{formatCurrency(melhorDia && melhorDia.valor ? melhorDia.valor : 0)}</p>
-                <p className="mt-1 text-sm text-white/50">{melhorDia && melhorDia.data ? melhorDia.data : ''}</p>
+                <div className="mb-2 flex items-center gap-2">
+                  <CalendarDays className="h-4 w-4 text-emerald-500" />
+                  <p className="text-[10px] font-bold tracking-widest text-emerald-500 uppercase">Melhor dia</p>
+                </div>
+                <p className="text-2xl font-bold text-white">{formatCurrency(melhorDia && melhorDia.valor ? melhorDia.valor : 0)}</p>
+                <p className="mt-1 text-xs font-medium text-emerald-500/60">{melhorDia && melhorDia.data ? melhorDia.data : ''}</p>
               </div>
             </div>
             <div className={evolutionMetricCardClassPior}>
-              <div className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-br from-white/20 via-white/5 to-transparent opacity-30" />
-              <div className="pointer-events-none absolute inset-0 rounded-2xl bg-zinc-500/8" />
+              <div className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-br from-rose-500/10 via-transparent to-transparent opacity-50" />
               <div className="relative z-10">
-                <p className="text-xs font-medium tracking-widest text-white/60 uppercase">Pior dia</p>
-                <p className="mt-2 text-3xl font-semibold text-white">{formatCurrency(piorDia && piorDia.valor ? piorDia.valor : 0)}</p>
-                <p className="mt-1 text-sm text-white/50">{piorDia && piorDia.data ? piorDia.data : ''}</p>
+                <div className="mb-2 flex items-center gap-2">
+                  <CalendarDays className="h-4 w-4 text-rose-500" />
+                  <p className="text-[10px] font-bold tracking-widest text-rose-500 uppercase">Pior dia</p>
+                </div>
+                <p className="text-2xl font-bold text-white">{formatCurrency(piorDia && piorDia.valor ? piorDia.valor : 0)}</p>
+                <p className="mt-1 text-xs font-medium text-rose-500/60">{piorDia && piorDia.data ? piorDia.data : ''}</p>
               </div>
             </div>
             <div className={evolutionMetricCardClassMedia}>
-              <div className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-br from-white/20 via-white/5 to-transparent opacity-30" />
-              <div className="pointer-events-none absolute inset-0 rounded-2xl bg-indigo-500/8" />
+              <div className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-500/10 via-transparent to-transparent opacity-50" />
               <div className="relative z-10">
-                <p className="text-xs font-medium tracking-widest text-white/60 uppercase">Média diária</p>
-                <p className="mt-2 text-3xl font-semibold text-white">{formatCurrency(mediaDiaria || 0)}</p>
-                <p className="mt-1 text-sm text-white/50">Últimos {periodoDiasLabel}</p>
+                <div className="mb-2 flex items-center gap-2">
+                  <CalendarDays className="h-4 w-4 text-blue-500" />
+                  <p className="text-[10px] font-bold tracking-widest text-blue-500 uppercase">Média diária</p>
+                </div>
+                <p className="text-2xl font-bold text-white">{formatCurrency(mediaDiaria || 0)}</p>
+                <p className="mt-1 text-xs font-medium text-blue-500/60">Últimos {periodoDiasLabel}</p>
               </div>
             </div>
           </div>

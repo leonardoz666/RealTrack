@@ -532,15 +532,19 @@ export default function Bancas() {
             ) : (
               <div className="space-y-4">
                 <div className="h-[400px] w-full lg:h-[500px]">
-                  <List
-                    height={500}
-                    itemCount={paginatedTipsters.length}
-                    itemSize={90}
-                    width="100%"
-                    className="scrollbar-thin scrollbar-thumb-white/10"
-                  >
-                    {Row}
-                  </List>
+                  <AutoSizer>
+                    {({ height, width }) => (
+                      <List
+                        height={height}
+                        itemCount={paginatedTipsters.length}
+                        itemSize={90}
+                        width={width}
+                        className="scrollbar-thin scrollbar-thumb-white/10"
+                      >
+                        {Row}
+                      </List>
+                    )}
+                  </AutoSizer>
                 </div>
 
                 {totalPages > 1 && (

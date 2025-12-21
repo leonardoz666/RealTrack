@@ -234,18 +234,6 @@ export default function Atualizar() {
   const location = useLocation();
   const navigate = useNavigate();
   const [filtersOpen, setFiltersOpen] = useState(false);
-  const [filters, setFilters] = useState<FiltersState>({
-    bancaId: '',
-    esporte: '',
-    status: '',
-    tipster: '',
-    casaDeAposta: '',
-    dataDe: '',
-    dataAte: '',
-    searchText: '',
-    oddMin: '',
-    oddMax: ''
-  });
   const [modalOpen, setModalOpen] = useState(false);
   const [statusModalOpen, setStatusModalOpen] = useState(false);
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
@@ -253,7 +241,6 @@ export default function Atualizar() {
   const [selectedApostaForStatus, setSelectedApostaForStatus] = useState<ApiBetWithBank | null>(null);
   const [editingAposta, setEditingAposta] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
-  const [apostas, setApostas] = useState<ApiBetWithBank[]>([]);
   const { bancas, refetch: refetchBancas } = useBancas();
   const { tipsters } = useTipsters();
   const autoSyncBancaRef = useRef(true);
@@ -265,6 +252,22 @@ export default function Atualizar() {
     const bancaPadrao = bancas.find((banca) => banca.padrao);
     return bancaPadrao?.id ?? bancas[0].id;
   }, [bancas]);
+
+  const {
+    filteredApostas: apostas,
+    loading: isLoadingApostas,
+    fetchApostas,
+    createAposta,
+    updateAposta,
+    deleteAposta,
+    updateStatus,
+    filters,
+    setFilter,
+    setFilters,
+    activeFilterCount,
+    stats: hookStats,
+  } = useApostasManager({ defaultBancaId: preferredBancaId });
+
   const todayISO = useMemo(() => new Date().toISOString().split('T')[0], []);
   const [formData, setFormData] = useState<ApostaFormState>({
     bancaId: '',
@@ -505,54 +508,7 @@ export default function Atualizar() {
     return bet.evento ?? legacyEvento ?? '';
   };
 
-  const fetchApostas = useCallback(async () => {
-    try {
-      if (!filters.bancaId) {
-        if (!preferredBancaId) {
-          setApostas([]);
-        }
-        return;
-      }
-      const params: ApostasFilter = {};
-      params.bancaId = filters.bancaId;
-      if (filters.status && filters.status !== 'Tudo') {
-        params.status = filters.status as ApostaStatus;
-      }
-      if (filters.esporte) {
-        params.esporte = filters.esporte;
-      }
-      if (filters.casaDeAposta) {
-        params.casaDeAposta = filters.casaDeAposta;
-      }
-      if (filters.tipster) {
-        params.tipster = filters.tipster;
-      }
-      if (filters.dataDe) {
-        params.dataInicio = filters.dataDe;
-      }
-      if (filters.dataAte) {
-        params.dataFim = filters.dataAte;
-      }
-      
-      params.limit = 2000;
 
-      const response = await apostaService.getAll(params);
-      const apostasData = response.apostas;
-      setApostas(Array.isArray(apostasData) ? apostasData : []);
-    } catch (error) {
-      console.error('Erro ao buscar apostas:', error);
-      setApostas([]);
-    }
-  }, [
-    filters.bancaId,
-    filters.status,
-    filters.esporte,
-    filters.casaDeAposta,
-    filters.tipster,
-    filters.dataDe,
-    filters.dataAte,
-    preferredBancaId,
-  ]);
 
   const seedTestBets = useCallback(async () => {
     try {
@@ -872,9 +828,7 @@ ${limitReachedMessage}`);
     }
 
     try {
-      await apostaService.remove(aposta.id);
-      // Recarregar apostas após deletar
-      await fetchApostas();
+      await deleteAposta(aposta.id);
       // Disparar evento para atualizar dashboard
       window.dispatchEvent(new Event('apostas-updated'));
     } catch (error) {
@@ -996,43 +950,16 @@ ${limitReachedMessage}`);
         return;
       }
 
-      // Converter para ISO string (apenas data, sem hora)
-      // O input type="date" retorna no formato YYYY-MM-DD, então ao converter para Date
-      // a hora será 00:00:00 automaticamente
-      const dataEventoISO = dataEventoDate.toISOString();
-
-      const payload = {
-        bancaId: formData.bancaId,
-        esporte: formData.esporte.trim(),
-        evento: formData.evento.trim(),
-        aposta: formData.aposta.trim(),
-        torneio: normalizeOptionalString(formData.torneio),
-        pais: normalizeOptionalString(formData.pais),
-        mercado: formData.mercado.trim(),
-        tipoAposta: formData.tipoAposta,
-        valorApostado: Number.parseFloat(formData.valorApostado),
-        odd: Number.parseFloat(formData.odd),
-        bonus: parseNumberOrFallback(formData.bonus),
-        dataEvento: dataEventoISO,
-        tipster: normalizeOptionalString(formData.tipster),
-        status: formData.status,
-        casaDeAposta: formData.casaDeAposta,
-        retornoObtido: parseNullableNumber(formData.retornoObtido)
-      };
-
       if (editingAposta) {
         // Atualizar aposta existente
-        await apostaService.update(editingAposta, payload as any);
+        await updateAposta(editingAposta, formData);
       } else {
         // Criar nova aposta
-        await apostaService.create(payload as any);
+        await createAposta(formData);
       }
 
       // Limpar formulário e fechar modal
       handleCloseModal();
-
-      // Recarregar apostas e atualizar estatísticas
-      await fetchApostas();
 
       // Recarregar dados do dashboard (pode ser feito via contexto ou refetch)
       window.dispatchEvent(new Event('apostas-updated'));
@@ -1222,71 +1149,18 @@ ${limitReachedMessage}`);
     return formatDateUtil(dateString);
   }, []);
 
-  // Calcular retorno obtido automaticamente baseado no status
-  const calcularRetornoObtido = useCallback((status: string, valorApostado: number, odd: number, retornoManualValue?: number): number | null => {
-    switch (status) {
-      case 'Ganha':
-        // Retorno = valor apostado * odd
-        return valorApostado * odd;
-
-      case 'Meio Ganha':
-        // Retorno = (valor apostado * odd) / 2 + valor apostado / 2
-        return (valorApostado * odd) / 2 + valorApostado / 2;
-
-      case 'Cashout':
-        // Para cashout, usar valor manual se fornecido, senão calcular baseado na odd
-        return retornoManualValue ?? valorApostado * odd * 0.7; // 70% do retorno potencial como padrão
-
-      case 'Perdida':
-      case 'Meio Perdida':
-      case 'Reembolsada':
-      case 'Void':
-      case 'Pendente':
-      default:
-        return null;
-    }
-  }, []);
-
   const handleUpdateStatus = async (statusData: StatusFormState) => {
     if (!selectedApostaForStatus) return;
 
     try {
       setUpdatingStatus(true);
-
-      const dataToSend: any = {
-        status: statusData.status as ApostaStatus
-      };
-
-      // Calcular retorno obtido automaticamente
-      if (STATUS_WITH_RETURNS.includes(statusData.status)) {
-        const retornoManualValue = parseNullableNumber(statusData.retornoObtido.replace(',', '.'));
-        // Se há valor manual, usar ele; senão calcular automaticamente
-        if (retornoManualValue !== undefined && retornoManualValue > 0) {
-          dataToSend.retornoObtido = retornoManualValue;
-        } else {
-          const retornoCalculado = calcularRetornoObtido(
-            statusData.status,
-            selectedApostaForStatus.valorApostado,
-            selectedApostaForStatus.odd,
-            retornoManualValue
-          );
-          if (retornoCalculado !== null) {
-            dataToSend.retornoObtido = retornoCalculado;
-          }
-        }
-      } else {
-        // Para outros status (Perdida, Meio Perdida, Reembolsada, Void, Pendente), não há retorno
-        dataToSend.retornoObtido = null;
-      }
-
-      await apostaService.update(selectedApostaForStatus.id, dataToSend);
-
-      // Atualizar lista e estatísticas
-      await fetchApostas();
+      
+      await updateStatus(selectedApostaForStatus.id, selectedApostaForStatus, statusData);
 
       // Fechar modal
       setStatusModalOpen(false);
       setSelectedApostaForStatus(null);
+      toast.success('Status atualizado com sucesso!');
     } catch (error) {
       console.error('Erro ao atualizar status:', error);
       toast.error('Erro ao atualizar status. Tente novamente.');
@@ -1308,106 +1182,34 @@ ${limitReachedMessage}`);
 
   // Calcular estatísticas (recalcula automaticamente quando apostas mudam)
   const stats = useMemo(() => {
-    // Defensive check: ensure apostas is always an array
-    const apostasArray = Array.isArray(apostas) ? apostas : [];
-
-    const totalInvestido = apostasArray.reduce((sum, aposta) => sum + aposta.valorApostado, 0);
-    const ganhos = apostasArray
-      .filter(
-        (aposta): aposta is ApiBetWithBank & { retornoObtido: number } =>
-          aposta.status !== 'Pendente' && typeof aposta.retornoObtido === 'number'
-      )
-      .reduce((sum, aposta) => sum + aposta.retornoObtido, 0);
-    const pendente = apostasArray
-      .filter((aposta) => aposta.status === 'Pendente')
-      .reduce((sum, aposta) => sum + aposta.valorApostado, 0);
-
     return [
       {
         title: 'Total Apostas',
-        value: apostasArray.length.toString(),
+        value: hookStats.totalApostas.toString(),
         helper: 'apostas registradas',
         color: 'blue' as const
       },
       {
         title: 'Valor Investido',
-        value: formatCurrency(totalInvestido),
+        value: formatCurrency(hookStats.totalInvestido),
         helper: 'total investido',
         color: 'purple' as const
       },
       {
         title: 'Ganhos',
-        value: formatCurrency(ganhos),
+        value: formatCurrency(hookStats.totalGanhos),
         helper: 'lucro obtido',
         color: 'emerald' as const
       },
       {
         title: 'Pendente',
-        value: formatCurrency(pendente),
+        value: formatCurrency(hookStats.totalPendente),
         helper: 'aguardando resultado',
         color: 'amber' as const
       }
     ];
-  }, [apostas, formatCurrency]);
+  }, [hookStats, formatCurrency]);
 
-  const filteredApostas = useMemo(() => {
-    // Defensive check: ensure apostas is always an array
-    const apostasArray = Array.isArray(apostas) ? apostas : [];
-    const normalizedStatus = filters.status && filters.status !== 'Tudo' ? filters.status : '';
-
-    return apostasArray.filter((aposta) => {
-      if (filters.bancaId && aposta.bancaId !== filters.bancaId) return false;
-      if (filters.esporte && aposta.esporte !== filters.esporte) return false;
-      if (normalizedStatus && aposta.status !== normalizedStatus) return false;
-      if (filters.tipster && aposta.tipster !== filters.tipster) return false;
-      if (filters.casaDeAposta && aposta.casaDeAposta !== filters.casaDeAposta) return false;
-
-      if (filters.dataDe) {
-        const dataAposta = new Date(aposta.dataEvento).getTime();
-        const deTime = new Date(filters.dataDe).getTime();
-        if (Number.isFinite(deTime) && dataAposta < deTime) return false;
-      }
-      if (filters.dataAte) {
-        const dataAposta = new Date(aposta.dataEvento).getTime();
-        const ateDate = new Date(filters.dataAte);
-        // incluir o dia inteiro no "até"
-        ateDate.setHours(23, 59, 59, 999);
-        const ateTime = ateDate.getTime();
-        if (Number.isFinite(ateTime) && dataAposta > ateTime) return false;
-      }
-
-      if (filters.searchText) {
-        const text = filters.searchText.toLowerCase();
-        const combined = `${aposta.evento} ${aposta.mercado} ${aposta.esporte} ${aposta.aposta ?? ''}`.toLowerCase();
-        if (!combined.includes(text)) return false;
-      }
-
-      if (filters.oddMin) {
-        const min = Number.parseFloat(filters.oddMin);
-        if (Number.isFinite(min) && aposta.odd < min) return false;
-      }
-      if (filters.oddMax) {
-        const max = Number.parseFloat(filters.oddMax);
-        if (Number.isFinite(max) && aposta.odd > max) return false;
-      }
-
-      return true;
-    });
-  }, [apostas, filters]);
-
-  const activeFilterCount = useMemo(() => {
-    return Object.values({
-      bancaId: filters.bancaId,
-      esporte: filters.esporte,
-      status: filters.status,
-      tipster: filters.tipster,
-      casaDeAposta: filters.casaDeAposta,
-      dataDe: filters.dataDe,
-      dataAte: filters.dataAte,
-      searchText: filters.searchText,
-      // oddMin/oddMax removed from UI
-    }).filter((value) => value !== '').length;
-  }, [filters]);
 
 
   return (

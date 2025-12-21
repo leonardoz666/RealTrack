@@ -7,8 +7,6 @@
 import { apiClient, invalidateCachePattern } from './apiClient';
 import { eventBus } from '../../utils/eventBus';
 import type {
-  ApiBet,
-  ApiBetWithBank,
   ApiBetSummary,
   ApiUploadTicketResponse
 } from '../../types/api';
@@ -117,20 +115,65 @@ export interface ApostasSummary {
   apostasConcluidas: number;
 }
 
+// Interface estrita para resposta da API (incluindo campos legados)
+interface RawApiBet {
+  id: string;
+  bancaId: string;
+  esporte: string;
+  evento?: string;
+  jogo?: string; // Legacy
+  aposta?: string;
+  mercados?: string[];
+  torneio?: string | null;
+  pais?: string | null;
+  mercado: string;
+  tipoAposta: string;
+  valorApostado: number;
+  odd: number;
+  bonus: number;
+  dataEvento?: string;
+  dataJogo?: string; // Legacy
+  tipster?: string | null;
+  status: string;
+  casaDeAposta: string;
+  retornoObtido?: number | null;
+  createdAt?: string;
+  updatedAt?: string;
+  banca?: {
+    id: string;
+    nome: string;
+  };
+}
+
 // ============================================
 // Funções de Mapeamento
 // ============================================
 
+const isValidApostaStatus = (status: string): status is ApostaStatus => {
+  const validStatuses: ApostaStatus[] = [
+    'Pendente',
+    'Ganha',
+    'Perdida',
+    'Meio Ganha',
+    'Meio Perdida',
+    'Cashout',
+    'Reembolso',
+    'Reembolsada',
+    'Void'
+  ];
+  return validStatuses.includes(status as ApostaStatus);
+};
+
 /**
  * Mapeia dados da API para formato do frontend
  */
-const mapApostaFromApi = (item: ApiBet | ApiBetWithBank): Aposta => ({
+const mapApostaFromApi = (item: RawApiBet): Aposta => ({
   id: item.id,
   bancaId: item.bancaId,
   esporte: item.esporte,
-  evento: (item as any).evento ?? (item as any).jogo ?? '',
-  aposta: (item as any).aposta ?? '',
-  mercados: (item as any).mercados ?? [],
+  evento: item.evento ?? item.jogo ?? '',
+  aposta: item.aposta ?? '',
+  mercados: item.mercados ?? [],
   torneio: item.torneio ?? '',
   pais: item.pais ?? '',
   mercado: item.mercado,
@@ -138,14 +181,14 @@ const mapApostaFromApi = (item: ApiBet | ApiBetWithBank): Aposta => ({
   valorApostado: item.valorApostado,
   odd: item.odd,
   bonus: item.bonus,
-  dataEvento: (item as any).dataEvento ?? (item as any).dataJogo ?? '',
+  dataEvento: item.dataEvento ?? item.dataJogo ?? '',
   tipster: item.tipster ?? '',
-  status: item.status as ApostaStatus,
+  status: isValidApostaStatus(item.status) ? item.status : 'Pendente',
   casaDeAposta: item.casaDeAposta,
   retornoObtido: item.retornoObtido ?? 0,
   createdAt: item.createdAt,
   updatedAt: item.updatedAt,
-  banca: 'banca' in item ? item.banca : undefined,
+  banca: item.banca,
 });
 
 /**
@@ -199,7 +242,7 @@ async function getAll(filters: ApostasFilter = {}): Promise<ApostasResponse> {
   const url = queryString ? `/apostas?${queryString}` : '/apostas';
 
   const response = await apiClient.get<{
-    data: ApiBetWithBank[];
+    data: RawApiBet[];
     total?: number;
     page?: number;
     totalPages?: number;
@@ -232,7 +275,7 @@ async function getByBanca(bancaId: string, filters: Omit<ApostasFilter, 'bancaId
  */
 async function getById(id: string): Promise<Aposta | null> {
   try {
-    const response = await apiClient.get<ApiBet>(`/apostas/${id}`);
+    const response = await apiClient.get<RawApiBet>(`/apostas/${id}`);
     return mapApostaFromApi(response.data);
   } catch {
     return null;
@@ -252,7 +295,7 @@ async function getSummary(bancaId?: string): Promise<ApostasSummary> {
  * Cria uma nova aposta
  */
 async function create(payload: CreateApostaPayload): Promise<Aposta> {
-  const response = await apiClient.post<ApiBet>('/apostas', payload);
+  const response = await apiClient.post<RawApiBet>('/apostas', payload);
   const newAposta = mapApostaFromApi(response.data);
 
   // Invalidar cache e emitir evento
@@ -267,7 +310,7 @@ async function create(payload: CreateApostaPayload): Promise<Aposta> {
  * Atualiza uma aposta existente
  */
 async function update(id: string, payload: UpdateApostaPayload): Promise<Aposta> {
-  const response = await apiClient.put<ApiBet>(`/apostas/${id}`, payload);
+  const response = await apiClient.put<RawApiBet>(`/apostas/${id}`, payload);
   const updatedAposta = mapApostaFromApi(response.data);
 
   // Invalidar cache e emitir evento

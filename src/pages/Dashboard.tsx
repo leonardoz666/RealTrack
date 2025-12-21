@@ -146,10 +146,10 @@ export default function Dashboard() {
     fetchDashboardData,
   } = useDashboardData();
 
-  // Sempre que o período mudar, faz fetch dos dados
-  useEffect(() => {
-    fetchDashboardData();
-  }, [periodoGrafico]);
+  // Show skeleton on initial load
+  if (loading && metricas.saldoBanca === 0 && metricas.totalApostas === 0) {
+    return <DashboardSkeleton />;
+  }
 
   const {
     containerRef: evolucaoChartRef,
@@ -179,13 +179,11 @@ export default function Dashboard() {
 
   const handleApplyFilters = () => {
     setFiltersOpen(false);
-    void fetchDashboardData();
   };
 
   const handleClearFilters = () => {
     clearFilters();
     setFiltersOpen(false);
-    void fetchDashboardData();
   };
 
   const rawAccuracyPercent = Number.isFinite(metricas.taxaAcerto) ? metricas.taxaAcerto : 0;

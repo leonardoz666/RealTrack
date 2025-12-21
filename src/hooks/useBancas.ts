@@ -5,18 +5,13 @@
  * mantém cache local para otimização.
  */
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { bancaService, type Banca } from '../services/api';
-import { invalidateCachePattern } from '../services/api/apiClient';
 import { eventBus, type EventName } from '../utils/eventBus';
 
 // Re-exportar tipo para manter compatibilidade
 export type { Banca };
-
-// Cache global simples (o apiClient já tem cache, mas mantemos para estado local)
-let bancasCache: Banca[] | null = null;
-let bancasCacheTime: number = 0;
-const CACHE_DURATION = 60000; // 1 minuto
 
 interface UseBancasResult {
   bancas: Banca[];
@@ -27,52 +22,41 @@ interface UseBancasResult {
 }
 
 export function useBancas(): UseBancasResult {
-  const [bancas, setBancas] = useState<Banca[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
+  const queryClient = useQueryClient();
 
-  const fetchBancas = useCallback(async (force = false) => {
-    const now = Date.now();
-    
-    // Usar cache se ainda válido e não for forçado
-    if (!force && bancasCache && (now - bancasCacheTime) < CACHE_DURATION) {
-      setBancas(bancasCache);
-      setLoading(false);
-      return;
+  const {
+    data: bancas = [],
+    isLoading: loading,
+    error,
+    refetch: queryRefetch,
+  } = useQuery({
+    queryKey: ['bancas'],
+    queryFn: async () => {
+      return await bancaService.getAll();
+    },
+    staleTime: 1000 * 60, // 1 minuto de cache
+  });
+
+  // Wrapper para refetch compatível com a interface anterior
+  const handleRefetch = useCallback(async (force = false) => {
+    if (force) {
+      await queryClient.invalidateQueries({ queryKey: ['bancas'] });
+    } else {
+      await queryRefetch();
     }
+  }, [queryClient, queryRefetch]);
 
-    try {
-      setLoading(true);
-      setError(null);
-      
-      const bancasData = await bancaService.getAll();
-      setBancas(bancasData);
-      
-      // Atualizar cache local
-      bancasCache = bancasData;
-      bancasCacheTime = now;
-    } catch (err) {
-      console.error('Erro ao carregar bancas:', err);
-      setError(err instanceof Error ? err : new Error('Erro ao carregar bancas'));
-      
-      // Usar cache mesmo em caso de erro se disponível
-      if (bancasCache) {
-        setBancas(bancasCache);
-      }
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  // Invalidar cache
+  const invalidateCache = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: ['bancas'] });
+  }, [queryClient]);
 
-  useEffect(() => {
-    void fetchBancas();
-  }, [fetchBancas]);
-
+  // Listeners de eventos
   useEffect(() => {
     const events: EventName[] = ['banca:created', 'banca:updated', 'banca:deleted', 'banca:saved'];
     const unsubscribes = events.map((event) =>
       eventBus.on(event, () => {
-        void fetchBancas(true);
+        void queryClient.invalidateQueries({ queryKey: ['bancas'] });
       })
     );
 
@@ -83,26 +67,17 @@ export function useBancas(): UseBancasResult {
         }
       });
     };
-  }, [fetchBancas]);
+  }, [queryClient]);
 
-  // Função para invalidar cache (útil após criar/editar/deletar)
-  const invalidateLocalCache = useCallback(() => {
-    bancasCache = null;
-    bancasCacheTime = 0;
-    invalidateCachePattern('/bancas');
-    void fetchBancas(true);
-  }, [fetchBancas]);
-
-  // Memoizar retorno para evitar re-criação do objeto
   return useMemo(
     () => ({ 
       bancas, 
       loading, 
-      error,
-      refetch: fetchBancas, 
-      invalidateCache: invalidateLocalCache 
+      error: error as Error | null,
+      refetch: handleRefetch, 
+      invalidateCache 
     }),
-    [bancas, loading, error, fetchBancas, invalidateLocalCache]
+    [bancas, loading, error, handleRefetch, invalidateCache]
   );
 }
 

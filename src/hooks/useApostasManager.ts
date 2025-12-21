@@ -101,12 +101,12 @@ export const createInitialFormState = (bancaId = ''): ApostaFormState => ({
 // ============================================
 
 export const parseNumberOrFallback = (value: string, fallback = 0): number => {
-  const parsed = Number.parseFloat(value);
+  const parsed = Number.parseFloat(value.replace(',', '.'));
   return Number.isFinite(parsed) ? parsed : fallback;
 };
 
 export const parseNullableNumber = (value: string): number | undefined => {
-  const trimmed = value.trim();
+  const trimmed = value.trim().replace(',', '.');
   if (trimmed === '') return undefined;
   const parsed = Number.parseFloat(trimmed);
   return Number.isFinite(parsed) ? parsed : undefined;
@@ -202,6 +202,7 @@ export function useApostasManager(options: UseApostasManagerOptions = {}) {
         tipster: normalizeOptionalString(formData.tipster),
         status: formData.status as ApostaStatus,
         casaDeAposta: formData.casaDeAposta,
+        retornoObtido: parseNullableNumber(formData.retornoObtido),
       };
       return apostaService.create(payload);
     },
@@ -300,6 +301,7 @@ export function useApostasManager(options: UseApostasManagerOptions = {}) {
   // Filtrar apostas (mantido igual)
   const filteredApostas = useMemo(() => {
     return apostas.filter((aposta: ApiBetWithBank) => {
+      if (filters.bancaId && aposta.bancaId !== filters.bancaId) return false;
       if (filters.esporte && aposta.esporte !== filters.esporte) return false;
       if (filters.status && aposta.status !== filters.status) return false;
       if (filters.tipster && aposta.tipster !== filters.tipster) return false;

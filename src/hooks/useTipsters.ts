@@ -5,17 +5,12 @@
  * mantém cache local para otimização.
  */
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { tipsterService, type Tipster } from '../services/api';
-import { invalidateCachePattern } from '../services/api/apiClient';
 
 // Re-exportar tipo para manter compatibilidade
 export type { Tipster };
-
-// Cache global simples
-let tipstersCache: Tipster[] | null = null;
-let tipstersCacheTime: number = 0;
-const CACHE_DURATION = 60000; // 1 minuto
 
 interface UseTipstersResult {
   tipsters: Tipster[];
@@ -26,65 +21,44 @@ interface UseTipstersResult {
 }
 
 export function useTipsters(): UseTipstersResult {
-  const [tipsters, setTipsters] = useState<Tipster[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
+  const queryClient = useQueryClient();
 
-  const fetchTipsters = useCallback(async (force = false) => {
-    const now = Date.now();
-    
-    // Usar cache se ainda válido e não for forçado
-    if (!force && tipstersCache && (now - tipstersCacheTime) < CACHE_DURATION) {
-      setTipsters(tipstersCache);
-      setLoading(false);
-      return;
+  const {
+    data: tipsters = [],
+    isLoading: loading,
+    error,
+    refetch: queryRefetch,
+  } = useQuery({
+    queryKey: ['tipsters'],
+    queryFn: async () => {
+      return await tipsterService.getAll();
+    },
+    staleTime: 1000 * 60, // 1 minuto de cache
+  });
+
+  // Wrapper para refetch compatível
+  const handleRefetch = useCallback(async (force = false) => {
+    if (force) {
+      await queryClient.invalidateQueries({ queryKey: ['tipsters'] });
+    } else {
+      await queryRefetch();
     }
-
-    try {
-      setLoading(true);
-      setError(null);
-      
-      const tipstersData = await tipsterService.getAll();
-      setTipsters(tipstersData);
-      
-      // Atualizar cache local
-      tipstersCache = tipstersData;
-      tipstersCacheTime = now;
-    } catch (err) {
-      console.error('Erro ao carregar tipsters:', err);
-      setError(err instanceof Error ? err : new Error('Erro ao carregar tipsters'));
-      
-      // Usar cache mesmo em caso de erro se disponível
-      if (tipstersCache) {
-        setTipsters(tipstersCache);
-      }
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    void fetchTipsters();
-  }, [fetchTipsters]);
+  }, [queryClient, queryRefetch]);
 
   // Função para invalidar cache
-  const invalidateLocalCache = useCallback(() => {
-    tipstersCache = null;
-    tipstersCacheTime = 0;
-    invalidateCachePattern('/tipsters');
-    void fetchTipsters(true);
-  }, [fetchTipsters]);
+  const invalidateCache = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: ['tipsters'] });
+  }, [queryClient]);
 
-  // Memoizar retorno para evitar re-criação do objeto
   return useMemo(
     () => ({ 
       tipsters, 
       loading, 
-      error,
-      refetch: fetchTipsters, 
-      invalidateCache: invalidateLocalCache 
+      error: error as Error | null,
+      refetch: handleRefetch, 
+      invalidateCache 
     }),
-    [tipsters, loading, error, fetchTipsters, invalidateLocalCache]
+    [tipsters, loading, error, handleRefetch, invalidateCache]
   );
 }
 

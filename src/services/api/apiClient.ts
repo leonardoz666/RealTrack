@@ -17,6 +17,7 @@ import axios, {
   type InternalAxiosRequestConfig,
   type RawAxiosResponseHeaders,
 } from 'axios';
+import { ROUTES } from '../../routes';
 
 // ============================================
 // Tipos

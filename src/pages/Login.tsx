@@ -4,6 +4,7 @@ import { Eye, EyeOff, ChevronRight, Lock } from 'lucide-react';
 import { authService } from '../services/api';
 import { AuthManager } from '../lib/auth';
 import { type ApiError } from '../types/api';
+import { ROUTES } from '../routes';
 
 const heroStats = [
   { value: '24/7', label: 'Bot Suporte' },

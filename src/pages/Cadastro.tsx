@@ -76,7 +76,7 @@ export default function Cadastro() {
     try {
       const data = await authService.register(nomeCompleto, email, senha);
       if (data.token) {
-        void navigate('/dashboard');
+        void navigate(ROUTES.DASHBOARD);
       }
     } catch (err) {
       const apiError = err as ApiError;

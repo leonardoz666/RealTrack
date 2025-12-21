@@ -3,9 +3,11 @@
  * 
  * Encapsula toda a lógica de busca e processamento de dados
  * do dashboard, incluindo métricas, gráficos e filtros.
+ * Refatorado para usar React Query (TanStack Query)
  */
 
-import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '../services/api';
 import { perfilService, type Perfil } from '../services/api';
 import { eventBus } from '../utils/eventBus';
@@ -127,8 +129,6 @@ const initialMetricas: DashboardMetricas = {
   totalInvestidoPendente: 0,
 };
 
-const isDevEnv = import.meta.env.DEV;
-
 // ============================================
 // Helpers
 // ============================================
@@ -165,6 +165,9 @@ const periodMap: Record<string, number | undefined> = {
   '7': 7,
   '30': 30,
   '60': 60,
+  '90': 90,
+  '180': 180,
+  '365': 365,
 };
 
 const sliceByPeriod = (
@@ -367,253 +370,85 @@ interface UseDashboardDataResult {
 export function useDashboardData(
   options: UseDashboardDataOptions = {}
 ): UseDashboardDataResult {
-  const { autoFetch = true, debounceMs = 300 } = options;
-
-  // Estados principais
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-  const [profile, setProfile] = useState<Perfil | null>(null);
-
-  // Dados do dashboard
-  const [metricas, setMetricas] = useState<DashboardMetricas>(initialMetricas);
-  const [lucroAcumulado, setLucroAcumulado] = useState<LucroAcumuladoItem[]>([]);
-  const [lucroPorTipster, setLucroPorTipster] = useState<LucroPorTipsterItem[]>([]);
-  const [resumoPorEsporte, setResumoPorEsporte] = useState<ResumoEsporteItem[]>([]);
-  const [resumoPorCasa, setResumoPorCasa] = useState<ResumoCasaItem[]>([]);
-
-  // Apostas recentes
-  const [apostasRecentes, setApostasRecentes] = useState<ApostaRecente[]>([]);
-  const [loadingApostasRecentes, setLoadingApostasRecentes] = useState(false);
+  const { autoFetch = true } = options;
+  const queryClient = useQueryClient();
 
   // Filtros
   const [filters, setFilters] = useState<DashboardFilters>(initialFilters);
   const [periodoGrafico, setPeriodoGrafico] = useState('7');
 
-  // Ref para acessar filtros atuais sem causar re-criação do callback
-  const filtersRef = useRef(filters);
-  filtersRef.current = filters;
+  // ============================================
+  // Queries
+  // ============================================
 
-  const clearDashboardData = useCallback(() => {
-    setMetricas(() => ({ ...initialMetricas }));
-    setLucroAcumulado([]);
-    setLucroPorTipster([]);
-    setResumoPorEsporte([]);
-    setResumoPorCasa([]);
-  }, []);
+  // 1. Perfil
+  const { data: profile } = useQuery({
+    queryKey: ['profile'],
+    queryFn: () => perfilService.get(),
+    staleTime: 1000 * 60 * 30, // 30 minutos
+    enabled: autoFetch,
+  });
 
-  // Fetch do perfil
-  const fetchProfile = useCallback(async () => {
-    try {
-      const data = await perfilService.get();
-      setProfile(data);
-    } catch {
-      setProfile(null);
-    }
-  }, []);
-
-  // Fetch das apostas recentes
-  const fetchApostasRecentes = useCallback(async () => {
-    const bancaId = filtersRef.current.bancaId;
-    if (!bancaId) {
-      setApostasRecentes([]);
-      setLoadingApostasRecentes(false);
-      return;
-    }
-
-    setLoadingApostasRecentes(true);
-    try {
-      const response = await apiClient.get<{ data: ApostaRecente[]; nextCursor: string | null; hasMore: boolean }>('/apostas/recentes', { params: { bancaId } });
-      // O endpoint agora retorna { data, nextCursor, hasMore }
-      const recentData = response.data?.data ? response.data.data : [];
-      setApostasRecentes(recentData);
-    } catch {
-      setApostasRecentes([]);
-    } finally {
-      setLoadingApostasRecentes(false);
-    }
-  }, []);
-
-  // Fetch dos dados do dashboard
-  const fetchDashboardData = useCallback(async () => {
-    const bancaId = filtersRef.current.bancaId;
-    const hasBanca = Boolean(bancaId);
-
-    if (isDevEnv) {
-      console.log('[DEBUG] fetchDashboardData chamado');
-      console.trace('[DEBUG] fetchDashboardData stack');
-    }
-    if (!hasBanca) {
-      clearDashboardData();
-      setLoading(false);
-      return;
-    }
-
-    const params = buildParams(filtersRef.current);
-    if (isDevEnv) {
-      console.log('[EVOLUÇÃO] Parâmetros da API:', params);
-    }
-    setLoading(true);
-    setError(null);
-
-    try {
+  // 2. Dashboard Data
+  const {
+    data: dashboardData,
+    isLoading: loadingDashboard,
+    error: dashboardError,
+    refetch: refetchDashboard,
+  } = useQuery({
+    queryKey: ['dashboard', filters],
+    queryFn: async () => {
+      if (!filters.bancaId) return null;
+      const params = buildParams(filters);
       const response = await apiClient.get<DashboardResponse>('/analise/dashboard', { params });
-      const data = response.data;
+      return response.data;
+    },
+    enabled: autoFetch && !!filters.bancaId,
+    staleTime: 1000 * 60 * 5, // 5 minutos
+  });
 
-      if (isDevEnv) {
-        console.log('[EVOLUÇÃO] Resposta completa da API:', data);
-        console.log('[EVOLUÇÃO] lucroAcumulado recebido:', data.lucroAcumulado);
-        console.log('[EVOLUÇÃO] Quantidade de itens em lucroAcumulado:', data.lucroAcumulado?.length);
-      }
+  // 3. Apostas Recentes
+  const {
+    data: apostasRecentes,
+    isLoading: loadingApostasRecentes,
+    refetch: refetchApostasRecentes,
+  } = useQuery({
+    queryKey: ['apostasRecentes', filters.bancaId],
+    queryFn: async () => {
+      if (!filters.bancaId) return [];
+      const response = await apiClient.get<{ data: ApostaRecente[]; nextCursor: string | null; hasMore: boolean }>('/apostas/recentes', { 
+        params: { bancaId: filters.bancaId } 
+      });
+      return response.data?.data || [];
+    },
+    enabled: autoFetch && !!filters.bancaId,
+  });
 
-      setMetricas(data.metricas);
-      setLucroAcumulado(data.lucroAcumulado);
-      setLucroPorTipster(data.lucroPorTipster);
-      setResumoPorEsporte(data.resumoPorEsporte);
-      setResumoPorCasa(data.resumoPorCasa);
+  // ============================================
+  // Dados Derivados
+  // ============================================
 
-      // Map valorPerdido and totalGanhos if they exist in the response
-      if ((data.metricas as any).valorPerdido !== undefined) {
-        setMetricas(prev => ({
-          ...prev,
-          valorPerdido: (data.metricas as any).valorPerdido,
-          totalGanhos: (data.metricas as any).totalGanhos
-        }));
-      }
-
-      if (isDevEnv) {
-        console.log('[EVOLUÇÃO] Dados salvos com sucesso');
-      }
-    } catch (err) {
-      const apiError = err as { response?: { status?: number } };
-      if (isDevEnv) {
-        console.error('[EVOLUÇÃO] Erro ao carregar dados:', err);
-        console.error('[EVOLUÇÃO] Status do erro:', apiError.response?.status);
-      }
-      if (apiError.response?.status !== 429) {
-        if (isDevEnv) {
-          console.error('Erro ao carregar dados do dashboard:', err);
-        }
-        setError(err instanceof Error ? err : new Error('Erro ao carregar dashboard'));
-      }
-    } finally {
-      setLoading(false);
-    }
-  }, [clearDashboardData]);
-
-  // Handler para mudança de filtros
-  const handleFilterChange = useCallback((field: keyof DashboardFilters, value: string) => {
-    setFilters((prev: DashboardFilters) => {
-      if (prev[field] === value) return prev;
-      return { ...prev, [field]: value };
-    });
-  }, []);
-
-  // Limpar filtros
-  const clearFilters = useCallback(() => {
-    setFilters(initialFilters);
-  }, []);
-
-  // Refetch completo
-  const refetch = useCallback(() => {
-    if (isDevEnv) {
-      console.log('[DEBUG] refetch chamado');
-    }
-    void fetchDashboardData();
-    void fetchApostasRecentes();
-  }, [fetchDashboardData, fetchApostasRecentes]);
-
-  // Ref para controlar se já fez o fetch inicial
-  const hasFetchedRef = useRef(false);
-
-  // Efeito único para fetch inicial (roda apenas uma vez)
-  useEffect(() => {
-    // Ignora se autoFetch está desabilitado
-    if (!autoFetch) return;
-
-    // Evita fetch duplicado
-    if (hasFetchedRef.current) {
-      if (isDevEnv) {
-        console.log('[DEBUG] fetch inicial ignorado - já foi feito');
-      }
-      return;
-    }
-    hasFetchedRef.current = true;
-
-    if (isDevEnv) {
-      console.log('[DEBUG] fetch inicial executado');
-    }
-    void fetchDashboardData();
-    void fetchApostasRecentes();
-    void fetchProfile();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // Ref para controlar mudança real de filtros (não primeira renderização)
-  const prevFiltersRef = useRef<string>(JSON.stringify(initialFilters));
-
-  // Efeito para mudança de filtros (com debounce)
-  useEffect(() => {
-    if (!autoFetch) return;
-
-    const currentFilters = JSON.stringify(filters);
-
-    // Ignora se os filtros não mudaram de verdade
-    if (prevFiltersRef.current === currentFilters) {
-      return;
-    }
-    prevFiltersRef.current = currentFilters;
-
-    if (isDevEnv) {
-      console.log('[DEBUG] filtros mudaram, agendando fetch');
-    }
-    const timeoutId = setTimeout(() => {
-      if (isDevEnv) {
-        console.log('[DEBUG] fetch por mudança de filtros');
-      }
-      void fetchDashboardData();
-      void fetchApostasRecentes();
-    }, debounceMs);
-
-    return () => clearTimeout(timeoutId);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filters, fetchApostasRecentes]);
-
-  // Escutar eventos de atualização (refs para evitar re-criação)
-  const refetchRef = useRef(refetch);
-  refetchRef.current = refetch;
-  const fetchProfileRef = useRef(fetchProfile);
-  fetchProfileRef.current = fetchProfile;
-
-  useEffect(() => {
-    const unsubscribeProfile = eventBus.on('profile:updated', () => {
-      if (isDevEnv) {
-        console.log('[DEBUG] evento profile:updated');
-      }
-      void fetchProfileRef.current();
-    });
-
-    const unsubscribeBanca = eventBus.on('banca:updated', () => {
-      if (isDevEnv) {
-        console.log('[DEBUG] evento banca:updated');
-      }
-      refetchRef.current();
-    });
-
-    const unsubscribeApostas = eventBus.on('apostas:updated', () => {
-      if (isDevEnv) {
-        console.log('[DEBUG] evento apostas:updated');
-      }
-      refetchRef.current();
-    });
-
-    return () => {
-      unsubscribeProfile();
-      unsubscribeBanca();
-      unsubscribeApostas();
+  const metricas = useMemo<DashboardMetricas>(() => {
+    if (!dashboardData?.metricas) return initialMetricas;
+    
+    // Mapeamento de campos extras se necessário (como feito no código original)
+    const rawMetricas = dashboardData.metricas as any;
+    return {
+      ...dashboardData.metricas,
+      valorPerdido: rawMetricas.valorPerdido ?? dashboardData.metricas.valorPerdido,
+      totalGanhos: rawMetricas.totalGanhos ?? dashboardData.metricas.totalGanhos,
     };
-  }, []); // Dependências vazias - usa refs para funções atuais
+  }, [dashboardData]);
 
-  // Dados calculados (memoizados)
+  const lucroAcumulado = useMemo(() => dashboardData?.lucroAcumulado || [], [dashboardData]);
+  const lucroPorTipster = useMemo(() => dashboardData?.lucroPorTipster || [], [dashboardData]);
+  const resumoPorEsporte = useMemo(() => dashboardData?.resumoPorEsporte || [], [dashboardData]);
+  const resumoPorCasa = useMemo(() => dashboardData?.resumoPorCasa || [], [dashboardData]);
+
+  // ============================================
+  // Cálculos para Gráficos
+  // ============================================
+
   const activeFiltersCount = useMemo(
     () => Object.values(filters).filter(v => v !== '').length,
     [filters]
@@ -677,11 +512,63 @@ export function useDashboardData(
     [lucroAcumulado, periodoGrafico]
   );
 
+  // ============================================
+  // Actions & Event Listeners
+  // ============================================
+
+  const handleFilterChange = useCallback((field: keyof DashboardFilters, value: string) => {
+    setFilters((prev: DashboardFilters) => {
+      if (prev[field] === value) return prev;
+      return { ...prev, [field]: value };
+    });
+  }, []);
+
+  const clearFilters = useCallback(() => {
+    setFilters(initialFilters);
+  }, []);
+
+  // Wrappers para manter compatibilidade com interface original
+  const fetchDashboardData = useCallback(async () => {
+    await refetchDashboard();
+  }, [refetchDashboard]);
+
+  const fetchApostasRecentes = useCallback(async () => {
+    await refetchApostasRecentes();
+  }, [refetchApostasRecentes]);
+
+  const refetch = useCallback(() => {
+    void refetchDashboard();
+    void refetchApostasRecentes();
+  }, [refetchDashboard, refetchApostasRecentes]);
+
+  // Event Listeners
+  useEffect(() => {
+    const unsubscribeProfile = eventBus.on('profile:updated', () => {
+      queryClient.invalidateQueries({ queryKey: ['profile'] });
+    });
+
+    const unsubscribeBanca = eventBus.on('banca:updated', () => {
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] });
+      queryClient.invalidateQueries({ queryKey: ['apostasRecentes'] });
+    });
+
+    const unsubscribeApostas = eventBus.on('apostas:updated', () => {
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] });
+      queryClient.invalidateQueries({ queryKey: ['apostasRecentes'] });
+    });
+
+    return () => {
+      unsubscribeProfile();
+      unsubscribeBanca();
+      unsubscribeApostas();
+    };
+  }, [queryClient]);
+
   return {
     // Estados
-    loading,
-    error,
-    profile,
+    loading: loadingDashboard,
+    error: (dashboardError as Error) || null,
+    profile: profile || null,
 
     // Dados
     metricas,
@@ -689,7 +576,7 @@ export function useDashboardData(
     lucroPorTipster,
     resumoPorEsporte,
     resumoPorCasa,
-    apostasRecentes,
+    apostasRecentes: apostasRecentes || [],
     loadingApostasRecentes,
 
     // Filtros

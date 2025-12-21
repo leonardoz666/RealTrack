@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { LineChart, Line, Tooltip, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { chartTheme } from '../../utils/chartTheme';
 import { formatCurrency, formatAxisCurrency } from '../../utils/formatters';
+import { ChartSkeleton } from '../skeletons/ChartSkeleton';
 
 interface DashboardChartProps {
   data: any[];

@@ -3,9 +3,10 @@ import { LineChart, Line, Tooltip, XAxis, YAxis, CartesianGrid } from 'recharts'
 import { chartTheme } from '../../utils/chartTheme';
 import { formatCurrency, formatAxisCurrency } from '../../utils/formatters';
 import { ChartSkeleton } from '../skeletons/ChartSkeleton';
+import type { EvolucaoBancaChartItem } from '../../types/dashboard';
 
 interface DashboardChartProps {
-  data: any[];
+  data: EvolucaoBancaChartItem[];
   width: number;
   height: number;
   isLoading?: boolean;

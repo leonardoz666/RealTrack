@@ -205,7 +205,7 @@ export default function Perfil() {
       setProfile(result.profile);
       toast.success(result.message);
       setPromoModalOpen(false);
-    } catch (error: any) {
+    } catch (error) {
       setPromoError('Não foi possível aplicar o código.');
     } finally {
       setRedeemingPromo(false);

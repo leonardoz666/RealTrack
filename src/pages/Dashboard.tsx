@@ -19,35 +19,23 @@ import DropdownSelect from '../components/DropdownSelect';
 import DateInput from '../components/DateInput';
 import { CASAS_APOSTAS } from '../constants/casasApostas';
 import { STATUS_APOSTAS } from '../constants/statusApostas';
-import { stripEsporteEmoji } from '../constants/esportes';
-import { formatCurrency, formatPercent, getFirstName } from '../utils/formatters';
+import { formatCurrency, formatPercent, getFirstName, formatAxisCurrency } from '../utils/formatters';
 import { useDashboardData, useTipsters, useBancas, useChartContainer } from '../hooks';
 import { cn } from '../components/ui/utils';
 import ImportCSVModal from '../components/ImportCSVModal';
 import { DashboardSkeleton } from '../components/skeletons/DashboardSkeleton';
 import { ChartSkeleton } from '../components/skeletons/ChartSkeleton';
+import {
+  formatSignedPercent,
+  formatSignedCurrency,
+  getSportIcon,
+  getSportDisplayName,
+} from '../utils/dashboardUtils';
 import { ROUTES } from '../routes';
 
 const DashboardChart = lazy(() => import('../components/dashboard/DashboardChart'));
 
-const formatSignedPercent = (value: number): string => {
-  const normalized = formatPercent(Math.abs(value));
-  if (value > 0) return `+${normalized}`;
-  if (value < 0) return `-${normalized}`;
-  return normalized;
-};
 
-const formatSignedCurrency = (value: number): string => {
-  const normalized = formatCurrency(Math.abs(value));
-  if (value > 0) return `+${normalized}`;
-  if (value < 0) return `-${normalized}`;
-  return normalized;
-};
-
-const formatAxisCurrency = (value: number): string => {
-  const formatted = formatCurrency(value);
-  return formatted.replace(/,00$/, '');
-};
 
 const timeframeOptions = [
   { value: '7', label: '7 dias' },
@@ -57,42 +45,7 @@ const timeframeOptions = [
 
 const labelTextClass = 'text-white/65';
 const softLabelTextClass = 'text-white/55';
-const ESPORTE_EMOJI_REGEX = /\p{Extended_Pictographic}/u;
-const normalizeKey = (value: string) =>
-  stripEsporteEmoji(value)
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase();
-const SPORT_ICON_MAP: Record<string, string> = {
-  basquetebol: '⚽️',
-  'futebol americano': '🏈',
-  basquete: '🏀',
-  futebol: '⚽️',
-  tenis: '🎾',
-  volei: '🏐',
-  corridas: '🏎️',
-};
-const SPORT_NAME_MAP: Record<string, string> = {
-  basquetebol: 'Basquete',
-};
-const extractEmoji = (value?: string) => {
-  if (!value) return null;
-  const match = ESPORTE_EMOJI_REGEX.exec(value);
-  return match ? match[0] : null;
-};
-const getSportIcon = (name?: string) => {
-  if (!name) return '🏅';
-  const emoji = extractEmoji(name);
-  if (emoji) return emoji;
-  const key = normalizeKey(name);
-  return SPORT_ICON_MAP[key] ?? '🏅';
-};
-const getSportDisplayName = (name?: string) => {
-  if (!name) return undefined;
-  const baseName = stripEsporteEmoji(name);
-  const key = normalizeKey(baseName);
-  return SPORT_NAME_MAP[key] ?? baseName;
-};
+
 
 interface BreakdownCardItem {
   id: string;

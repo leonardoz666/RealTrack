@@ -30,120 +30,19 @@ import { useApostasManager } from '../hooks/useApostasManager';
 import { cn } from '../components/ui/utils';
 // Tesseract será carregado dinamicamente apenas quando necessário (biblioteca pesada ~2MB)
 import { type ApiBetWithBank, type ApiError, type ApiUploadTicketResponse } from '../types/api';
+import { API_BASE_URL, API_HEALTH_URL, API_UPLOAD_URL } from '../config/api';
+import { needsStatDescriptor, isStatDescriptor, resolveBetStatusClass } from '../utils/betUtils';
+import { toError } from '../utils/errorUtils';
 
-const VITE_API_URL: unknown = import.meta.env.VITE_API_URL;
-const API_BASE_URL = (typeof VITE_API_URL === 'string' && VITE_API_URL.length > 0 ? VITE_API_URL : 'http://localhost:3001/api').replace(/\/$/, '');
-const API_ORIGIN = API_BASE_URL.replace(/\/api$/, '');
-const API_HEALTH_URL = `${API_ORIGIN}/health`;
-const API_UPLOAD_URL = `${API_BASE_URL}/upload/bilhete`;
+import {
+  STATUS_WITH_RETURNS,
+  MARKET_LABEL_PATTERN,
+  MARKET_CONNECTOR_PATTERN,
+  MARKET_STAT_KEYWORDS,
+  normalizeMarketKeyword,
+  containsStatKeyword,
+} from '../constants/marketPatterns';
 
-const STATUS_WITH_RETURNS = ['Ganha', 'Meio Ganha', 'Cashout'];
-const MARKET_LABEL_PATTERN = /^(aposta|odd|retorno|retornos?\spotenciais?|valor|stake|cotação|apostas?)[:]?/i;
-const MARKET_CONNECTOR_PATTERN = /^(?:o|e|ou)\s+/i;
-const MARKET_STAT_KEYWORDS = [
-  'ponto',
-  'pontos',
-  'rebote',
-  'rebotes',
-  'assistencia',
-  'assistencias',
-  'assist',
-  'gol',
-  'gols',
-  'escanteio',
-  'escanteios',
-  'cartao',
-  'cartoes',
-  'cartao amarelo',
-  'cartao vermelho',
-  'faltas',
-  'finalizacao',
-  'finalizacoes',
-  'finalizacao no alvo',
-  'finalizacoes no alvo',
-  'arremesso',
-  'arremessos',
-  'chutes',
-  'triplos',
-  'duplos',
-  'p+r',
-  'p+a',
-  'r+a',
-  'rebotes+pontos',
-  'rebotes+assistencias',
-  'pontos+assistencias',
-  'pontos+rebotes',
-  'rebotes+assist',
-  'pontos+rebotes+assistencias',
-  'passes',
-  'tackles',
-  'defesas',
-  'interceptacoes',
-  'steals',
-  'roubos',
-  'bloqueios',
-  'aces',
-  'games',
-  'sets',
-  'breaks',
-  'quebras'
-];
-
-const normalizeMarketKeyword = (value: string): string =>
-  value
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9+&\s]/g, '')
-    .trim()
-    .toLowerCase();
-
-const containsStatKeyword = (value: string): boolean => {
-  const normalized = normalizeMarketKeyword(value);
-  if (!normalized) {
-    return false;
-  }
-  return MARKET_STAT_KEYWORDS.some((keyword) => normalized.includes(keyword));
-};
-
-const needsStatDescriptor = (segment: string): boolean => {
-  if (!segment) {
-    return false;
-  }
-  if (containsStatKeyword(segment)) {
-    return false;
-  }
-
-  const normalized = normalizeMarketKeyword(segment);
-  if (!normalized) {
-    return false;
-  }
-
-  const raw = segment.trim();
-  if (/\d+\s*\+$/.test(raw)) {
-    return true;
-  }
-  if (/\b(?:mais|menos|over|under|abaixo|acima)\b/.test(normalized)) {
-    return true;
-  }
-  if (/\b(?:mais|menos)\s+de\b/.test(normalized) && /\d/.test(normalized)) {
-    return true;
-  }
-  return false;
-};
-
-const isStatDescriptor = (segment: string): boolean => containsStatKeyword(segment);
-
-const toError = (error: unknown): Error => {
-  if (error instanceof Error) {
-    return error;
-  }
-  if (typeof error === 'string') {
-    return new Error(error);
-  }
-  return new Error('Erro desconhecido');
-};
-
-type StatusStyleKey = keyof typeof betStatusPillVariants;
 
 interface ApostaFormState {
   bancaId: string;
@@ -168,13 +67,6 @@ interface StatusFormState {
   status: string;
   retornoObtido: string;
 }
-
-const resolveBetStatusClass = (status: string): string => {
-  if (status in betStatusPillVariants) {
-    return betStatusPillVariants[status as StatusStyleKey];
-  }
-  return betStatusPillVariants.default;
-};
 
 type UploadTicketData = NonNullable<ApiUploadTicketResponse['data']>;
 type UploadApiError = ApiError & {

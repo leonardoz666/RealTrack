@@ -6,6 +6,7 @@ import { useBancas } from '../hooks/useBancas';
 import { useTipsters } from '../hooks/useTipsters';
 import { usePagination } from '../hooks/usePagination';
 import { apiClient, bancaService, tipsterService, type Banca, type BancaStats, type Tipster } from '../services/api';
+import { type ApiError } from '../types/api';
 import { formatNumber } from '../utils/formatters';
 import { eventBus } from '../utils/eventBus';
 import { cn } from '../components/ui/utils';
@@ -305,7 +306,8 @@ export default function Bancas() {
       }
       invalidateTipstersCache();
       handleCloseTipsterModal();
-    } catch (err: any) {
+    } catch (error) {
+      const err = error as ApiError;
       const errorMessage = err.response?.data?.error;
       setTipsterError(typeof errorMessage === 'string' ? errorMessage : 'Erro ao salvar tipster');
     } finally {
@@ -317,7 +319,8 @@ export default function Bancas() {
     try {
       await tipsterService.toggleAtivo(tipster.id, tipster.ativo);
       invalidateTipstersCache();
-    } catch (err: any) {
+    } catch (error) {
+      const err = error as ApiError;
       const errorMessage = err.response?.data?.error;
       toast.error(typeof errorMessage === 'string' ? errorMessage : 'Erro ao atualizar tipster');
     }
@@ -331,7 +334,8 @@ export default function Bancas() {
     try {
       await tipsterService.remove(tipster.id);
       invalidateTipstersCache();
-    } catch (err: any) {
+    } catch (error) {
+      const err = error as ApiError;
       const errorMessage = err.response?.data?.error;
       toast.error(typeof errorMessage === 'string' ? errorMessage : 'Erro ao deletar tipster');
     }

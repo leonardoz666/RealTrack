@@ -147,11 +147,6 @@ export default function Dashboard() {
     fetchDashboardData,
   } = useDashboardData();
 
-  // Show skeleton on initial load
-  if (loading && metricas.saldoBanca === 0 && metricas.totalApostas === 0) {
-    return <DashboardSkeleton />;
-  }
-
   const {
     containerRef: evolucaoChartRef,
     hasSize: evolucaoChartReady,
@@ -342,6 +337,11 @@ export default function Dashboard() {
   const evolutionChartShellClass =
     'rounded-[28px] border border-white/10 bg-black/10 p-4 sm:p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] backdrop-blur';
   const lucroLineGradientId = 'lucroLineGradient';
+
+  // Show skeleton on initial load
+  if (loading && metricas.saldoBanca === 0 && metricas.totalApostas === 0) {
+    return <DashboardSkeleton />;
+  }
 
   return (
     <div className="space-y-8 text-foreground">

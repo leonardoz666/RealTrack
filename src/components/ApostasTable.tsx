@@ -5,6 +5,8 @@
  */
 
 import { Pencil, Trash2 } from 'lucide-react';
+import { FixedSizeList as List, ListChildComponentProps } from 'react-window';
+import AutoSizer from 'react-virtualized-auto-sizer';
 import { formatCurrency } from '../utils/formatters';
 import { EmptyState } from './ui/empty-state';
 import type { ApiBetWithBank } from '../types/api';
@@ -30,6 +32,14 @@ interface ApostasTableProps {
   showDevButton?: boolean;
   onSeedTestBets?: () => void;
 }
+
+// ============================================
+// Constantes & Styles
+// ============================================
+
+const GRID_TEMPLATE_COLUMNS = "minmax(140px, 1fr) minmax(120px, 1fr) 100px 100px minmax(200px, 2fr) 100px 100px 100px 110px 120px 80px";
+const MIN_TABLE_WIDTH = 1270;
+const ROW_HEIGHT = 64; // Altura aproximada da linha
 
 // ============================================
 // Helpers
@@ -66,6 +76,14 @@ export default function ApostasTable({
   showDevButton = false,
   onSeedTestBets,
 }: ApostasTableProps) {
+  // Dados passados para o item renderizador (Row)
+  const itemData = {
+    items: apostas,
+    onOpenStatusModal,
+    onEdit,
+    onDelete,
+  };
+
   return (
     <div className="rounded-lg border border-white/5 bg-[#0f2d29] p-6 text-white shadow-[0_25px_45px_rgba(0,0,0,0.25)] backdrop-blur-sm">
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
@@ -97,36 +115,46 @@ export default function ApostasTable({
           description="Cadastre uma nova aposta para começar a acompanhar resultados."
         />
       ) : (
-        <div className={cn('mt-4 overflow-hidden rounded-2xl border border-white/10', expanded ? '' : 'max-h-[420px]')}>
-          <div className={cn('overflow-x-auto', expanded ? 'overflow-y-auto' : 'overflow-y-auto')}>
-            <table className="min-w-full divide-y divide-white/10 text-sm text-white">
-              <thead className="bg-white/5 text-left text-xs font-semibold uppercase tracking-[0.3em] text-white/60">
-                <tr>
-                  <th className="px-4 py-3">Casa de Aposta</th>
-                  <th className="px-4 py-3">Tipster</th>
-                  <th className="px-4 py-3">Data</th>
-                  <th className="px-4 py-3">Esporte</th>
-                  <th className="px-4 py-3">Evento</th>
-                  <th className="px-4 py-3">Aposta</th>
-                  <th className="px-4 py-3">Mercado</th>
-                  <th className="px-4 py-3">Stake</th>
-                  <th className="px-4 py-3">Status</th>
-                  <th className="px-4 py-3">Retorno Obtido</th>
-                  <th className="px-4 py-3 text-right">Ações</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/10">
-                {apostas.map((aposta) => (
-                  <ApostaRow
-                    key={aposta.id}
-                    aposta={aposta}
-                    onOpenStatusModal={onOpenStatusModal}
-                    onEdit={onEdit}
-                    onDelete={onDelete}
-                  />
-                ))}
-              </tbody>
-            </table>
+        <div className={cn('mt-4 overflow-hidden rounded-2xl border border-white/10 flex flex-col', expanded ? 'h-[800px]' : 'h-[420px]')}>
+          {/* Container com scroll horizontal para tabelas largas */}
+          <div className="flex-1 overflow-x-auto overflow-y-hidden bg-white/5">
+             <div style={{ minWidth: MIN_TABLE_WIDTH, height: '100%' }} className="flex flex-col">
+                {/* Header */}
+                <div 
+                  className="grid items-center border-b border-white/10 bg-white/5 text-left text-xs font-semibold uppercase tracking-[0.3em] text-white/60"
+                  style={{ gridTemplateColumns: GRID_TEMPLATE_COLUMNS, paddingRight: 8 }} // paddingRight para compensar scrollbar se necessário
+                >
+                  <div className="px-4 py-3">Casa de Aposta</div>
+                  <div className="px-4 py-3">Tipster</div>
+                  <div className="px-4 py-3">Data</div>
+                  <div className="px-4 py-3">Esporte</div>
+                  <div className="px-4 py-3">Evento</div>
+                  <div className="px-4 py-3">Aposta</div>
+                  <div className="px-4 py-3">Mercado</div>
+                  <div className="px-4 py-3">Stake</div>
+                  <div className="px-4 py-3">Status</div>
+                  <div className="px-4 py-3">Retorno</div>
+                  <div className="px-4 py-3 text-right">Ações</div>
+                </div>
+
+                {/* Lista Virtualizada */}
+                <div className="flex-1">
+                  <AutoSizer>
+                    {({ height, width }) => (
+                      <List
+                        height={height}
+                        width={width}
+                        itemCount={apostas.length}
+                        itemSize={ROW_HEIGHT}
+                        itemData={itemData}
+                        className="overflow-y-auto"
+                      >
+                        {ApostaRowRenderer}
+                      </List>
+                    )}
+                  </AutoSizer>
+                </div>
+             </div>
           </div>
         </div>
       )}
@@ -135,69 +163,82 @@ export default function ApostasTable({
 }
 
 // ============================================
-// Componente de Linha
+// Componente de Linha (Renderer)
 // ============================================
 
-interface ApostaRowProps {
-  aposta: ApiBetWithBank;
+interface RowData {
+  items: ApiBetWithBank[];
   onOpenStatusModal: (aposta: ApiBetWithBank) => void;
   onEdit: (aposta: ApiBetWithBank) => void;
   onDelete: (aposta: ApiBetWithBank) => void;
 }
 
-function ApostaRow({ aposta, onOpenStatusModal, onEdit, onDelete }: ApostaRowProps) {
+function ApostaRowRenderer({ index, style, data }: ListChildComponentProps<RowData>) {
+  const aposta = data.items[index];
+  const { onOpenStatusModal, onEdit, onDelete } = data;
   const statusVariant = betStatusPillVariants[aposta.status] ?? betStatusPillVariants.default;
 
   return (
-    <tr className="text-sm text-white">
-      <td className="px-4 py-4 font-medium text-white">{formatOptionalText(aposta.casaDeAposta)}</td>
-      <td className="px-4 py-4 text-white/80">{formatOptionalText(aposta.tipster)}</td>
-      <td className="px-4 py-4 text-white/60">{formatDate(aposta.dataEvento)}</td>
-      <td className="px-4 py-4 text-white/80">{normalizarEsporteParaOpcao(aposta.esporte)}</td>
-      <td className="px-4 py-4 text-white/80">{aposta.evento}</td>
-      <td className="px-4 py-4 text-white/80">{aposta.aposta}</td>
-      <td className="px-4 py-4 text-white/80">{aposta.mercado}</td>
-      <td className="px-4 py-4">
-        <div className="flex flex-col gap-1">
-          <span className="font-semibold text-white">{formatCurrency(aposta.valorApostado)}</span>
-          <span className="text-2xs uppercase tracking-[0.3em] text-white/50">
-            Odd: {aposta.odd}
-          </span>
+    <div 
+      style={style} 
+      className={cn(
+        "grid items-center border-b border-white/5 text-sm transition-colors hover:bg-white/5",
+        index % 2 === 0 ? "bg-transparent" : "bg-white/[0.02]" // Zebra striping opcional
+      )}
+    >
+      <div 
+        className="grid items-center h-full w-full" 
+        style={{ gridTemplateColumns: GRID_TEMPLATE_COLUMNS }}
+      >
+        <div className="px-4 truncate font-medium text-white" title={aposta.casaDeAposta || ''}>{formatOptionalText(aposta.casaDeAposta)}</div>
+        <div className="px-4 truncate text-white/80" title={aposta.tipster || ''}>{formatOptionalText(aposta.tipster)}</div>
+        <div className="px-4 text-white/60">{formatDate(aposta.dataEvento)}</div>
+        <div className="px-4 truncate text-white/80">{normalizarEsporteParaOpcao(aposta.esporte)}</div>
+        <div className="px-4 truncate text-white/80" title={aposta.evento}>{aposta.evento}</div>
+        <div className="px-4 truncate text-white/80" title={aposta.aposta}>{aposta.aposta}</div>
+        <div className="px-4 truncate text-white/80" title={aposta.mercado}>{aposta.mercado}</div>
+        <div className="px-4">
+          <div className="flex flex-col gap-1">
+            <span className="font-semibold text-white">{formatCurrency(aposta.valorApostado)}</span>
+            <span className="text-2xs uppercase tracking-[0.3em] text-white/50">
+              Odd: {aposta.odd}
+            </span>
+          </div>
         </div>
-      </td>
-      <td className="px-4 py-4">
-        <button
-          type="button"
-          onClick={() => onOpenStatusModal(aposta)}
-          className={cn(betStatusPillBaseClass, 'text-xs', statusVariant)}
-        >
-          {getBetStatusIcon(aposta.status, { className: 'h-4 w-4' })}
-          {aposta.status}
-        </button>
-      </td>
-      <td className="px-4 py-4 font-semibold text-white">
-        {aposta.retornoObtido != null ? formatCurrency(aposta.retornoObtido) : '-'}
-      </td>
-      <td className="px-4 py-4">
-        <div className="flex justify-end gap-2">
+        <div className="px-4">
           <button
             type="button"
-            className="inline-flex items-center justify-center rounded-2xl border border-white/15 px-3 py-2 text-xs font-semibold text-white/80 transition hocus:border-brand-emerald/60 hocus:text-brand-emerald"
-            onClick={() => onEdit(aposta)}
-            title="Editar aposta"
+            onClick={() => onOpenStatusModal(aposta)}
+            className={cn(betStatusPillBaseClass, 'text-xs w-full justify-center', statusVariant)}
           >
-            <Pencil size={14} />
-          </button>
-          <button
-            type="button"
-            className="inline-flex items-center justify-center rounded-2xl border border-rose-400/40 px-3 py-2 text-xs font-semibold text-rose-300 transition hocus:bg-rose-500/15"
-            onClick={() => onDelete(aposta)}
-            title="Deletar aposta"
-          >
-            <Trash2 size={14} />
+            {getBetStatusIcon(aposta.status, { className: 'h-4 w-4 shrink-0' })}
+            <span className="truncate">{aposta.status}</span>
           </button>
         </div>
-      </td>
-    </tr>
+        <div className="px-4 font-semibold text-white">
+          {aposta.retornoObtido != null ? formatCurrency(aposta.retornoObtido) : '-'}
+        </div>
+        <div className="px-4">
+          <div className="flex justify-end gap-2">
+            <button
+              type="button"
+              className="inline-flex items-center justify-center rounded-2xl border border-white/15 px-3 py-2 text-xs font-semibold text-white/80 transition hocus:border-brand-emerald/60 hocus:text-brand-emerald"
+              onClick={() => onEdit(aposta)}
+              title="Editar aposta"
+            >
+              <Pencil size={14} />
+            </button>
+            <button
+              type="button"
+              className="inline-flex items-center justify-center rounded-2xl border border-rose-400/40 px-3 py-2 text-xs font-semibold text-rose-300 transition hocus:bg-rose-500/15"
+              onClick={() => onDelete(aposta)}
+              title="Deletar aposta"
+            >
+              <Trash2 size={14} />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

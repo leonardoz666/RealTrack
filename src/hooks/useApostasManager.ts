@@ -4,7 +4,8 @@
  * Centraliza a lógica de CRUD, filtros e estatísticas de apostas
  */
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apostaService, type ApostaStatus } from '../services/api';
 import { eventBus } from '../utils/eventBus';
 import type { ApiBetWithBank } from '../types/api';
@@ -152,139 +153,151 @@ interface UseApostasManagerOptions {
 
 export function useApostasManager(options: UseApostasManagerOptions = {}) {
   const { defaultBancaId = '' } = options;
-
-  // Estados principais
-  const [apostas, setApostas] = useState<ApiBetWithBank[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
+  const queryClient = useQueryClient();
 
   // Filtros
   const [filters, setFilters] = useState<ApostasFilters>(initialFilters);
 
-  // Fetch de apostas
-  const fetchApostas = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      // Busca até 2000 apostas para garantir que todos os cálculos estejam corretos
-      // e o filtro no front-end funcione com todos os dados
+  // Fetch de apostas com React Query
+  const {
+    data: apostas = [],
+    isLoading: loading,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ['apostas'],
+    queryFn: async () => {
       const response = await apostaService.getAll({ limit: 2000 });
-      // apostaService.getAll() returns { apostas: [], total, page, totalPages }
-      // Extract the apostas array from the response
       const apostasData = response.apostas;
-      setApostas(Array.isArray(apostasData) ? apostasData as unknown as ApiBetWithBank[] : []);
-    } catch (err) {
-      console.error('Erro ao buscar apostas:', err);
-      setError(err instanceof Error ? err : new Error('Erro ao buscar apostas'));
-      setApostas([]);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+      return Array.isArray(apostasData) ? (apostasData as unknown as ApiBetWithBank[]) : [];
+    },
+    staleTime: 1000 * 60 * 5, // 5 minutos de cache
+  });
 
-  // Efeito inicial
-  useEffect(() => {
-    void fetchApostas();
-  }, [fetchApostas]);
-
-  // Escutar eventos
+  // Escutar eventos para atualizar cache
   useEffect(() => {
     const unsubscribe = eventBus.on('apostas:updated', () => {
-      void fetchApostas();
+      void refetch();
     });
     return unsubscribe;
-  }, [fetchApostas]);
+  }, [refetch]);
 
-  // Criar aposta
-  const createAposta = useCallback(async (formData: ApostaFormState) => {
-    const dataEventoDate = new Date(formData.dataEvento);
-    const payload = {
-      bancaId: formData.bancaId,
-      esporte: formData.esporte.trim(),
-      evento: formData.evento.trim(),
-      aposta: formData.aposta.trim(),
-      torneio: normalizeOptionalString(formData.torneio),
-      pais: normalizeOptionalString(formData.pais),
-      mercado: formData.mercado.trim(),
-      tipoAposta: formData.tipoAposta,
-      valorApostado: Number.parseFloat(formData.valorApostado),
-      odd: Number.parseFloat(formData.odd),
-      bonus: parseNumberOrFallback(formData.bonus),
-      dataEvento: dataEventoDate.toISOString(),
-      tipster: normalizeOptionalString(formData.tipster),
-      status: formData.status as ApostaStatus,
-      casaDeAposta: formData.casaDeAposta,
-    };
+  // Mutations
+  const createMutation = useMutation({
+    mutationFn: async (formData: ApostaFormState) => {
+      const dataEventoDate = new Date(formData.dataEvento);
+      const payload = {
+        bancaId: formData.bancaId,
+        esporte: formData.esporte.trim(),
+        evento: formData.evento.trim(),
+        aposta: formData.aposta.trim(),
+        torneio: normalizeOptionalString(formData.torneio),
+        pais: normalizeOptionalString(formData.pais),
+        mercado: formData.mercado.trim(),
+        tipoAposta: formData.tipoAposta,
+        valorApostado: Number.parseFloat(formData.valorApostado),
+        odd: Number.parseFloat(formData.odd),
+        bonus: parseNumberOrFallback(formData.bonus),
+        dataEvento: dataEventoDate.toISOString(),
+        tipster: normalizeOptionalString(formData.tipster),
+        status: formData.status as ApostaStatus,
+        casaDeAposta: formData.casaDeAposta,
+      };
+      return apostaService.create(payload);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['apostas'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] }); // Atualizar dashboard também
+    },
+  });
 
-    await apostaService.create(payload);
-    await fetchApostas();
-  }, [fetchApostas]);
+  const updateMutation = useMutation({
+    mutationFn: async ({ id, formData }: { id: string; formData: ApostaFormState }) => {
+      const dataEventoDate = new Date(formData.dataEvento);
+      const payload = {
+        bancaId: formData.bancaId,
+        esporte: formData.esporte.trim(),
+        evento: formData.evento.trim(),
+        aposta: formData.aposta.trim(),
+        torneio: normalizeOptionalString(formData.torneio),
+        pais: normalizeOptionalString(formData.pais),
+        mercado: formData.mercado.trim(),
+        tipoAposta: formData.tipoAposta,
+        valorApostado: Number.parseFloat(formData.valorApostado),
+        odd: Number.parseFloat(formData.odd),
+        bonus: parseNumberOrFallback(formData.bonus),
+        dataEvento: dataEventoDate.toISOString(),
+        tipster: normalizeOptionalString(formData.tipster),
+        status: formData.status as ApostaStatus,
+        casaDeAposta: formData.casaDeAposta,
+        retornoObtido: parseNullableNumber(formData.retornoObtido),
+      };
+      return apostaService.update(id, payload);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['apostas'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] });
+    },
+  });
 
-  // Atualizar aposta
-  const updateAposta = useCallback(async (id: string, formData: ApostaFormState) => {
-    const dataEventoDate = new Date(formData.dataEvento);
-    const payload = {
-      bancaId: formData.bancaId,
-      esporte: formData.esporte.trim(),
-      evento: formData.evento.trim(),
-      aposta: formData.aposta.trim(),
-      torneio: normalizeOptionalString(formData.torneio),
-      pais: normalizeOptionalString(formData.pais),
-      mercado: formData.mercado.trim(),
-      tipoAposta: formData.tipoAposta,
-      valorApostado: Number.parseFloat(formData.valorApostado),
-      odd: Number.parseFloat(formData.odd),
-      bonus: parseNumberOrFallback(formData.bonus),
-      dataEvento: dataEventoDate.toISOString(),
-      tipster: normalizeOptionalString(formData.tipster),
-      status: formData.status as ApostaStatus,
-      casaDeAposta: formData.casaDeAposta,
-      retornoObtido: parseNullableNumber(formData.retornoObtido),
-    };
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      return apostaService.remove(id);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['apostas'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] });
+    },
+  });
 
-    await apostaService.update(id, payload);
-    await fetchApostas();
-  }, [fetchApostas]);
+  const updateStatusMutation = useMutation({
+    mutationFn: async ({
+      id,
+      aposta,
+      statusFormData,
+    }: {
+      id: string;
+      aposta: ApiBetWithBank;
+      statusFormData: StatusFormState;
+    }) => {
+      let retornoObtido: number | undefined;
 
-  // Deletar aposta
-  const deleteAposta = useCallback(async (id: string) => {
-    await apostaService.remove(id);
-    await fetchApostas();
-  }, [fetchApostas]);
-
-  // Atualizar status
-  const updateStatus = useCallback(async (
-    id: string,
-    aposta: ApiBetWithBank,
-    statusFormData: StatusFormState
-  ) => {
-    let retornoObtido: number | undefined;
-
-    if (STATUS_WITH_RETURNS.includes(statusFormData.status)) {
-      const retornoManualValue = parseNullableNumber(statusFormData.retornoObtido);
-      if (retornoManualValue !== undefined && retornoManualValue > 0) {
-        retornoObtido = retornoManualValue;
-      } else {
-        const calculado = calcularRetornoObtido(
-          statusFormData.status,
-          aposta.valorApostado,
-          aposta.odd,
-          retornoManualValue
-        );
-        if (calculado !== null) {
-          retornoObtido = calculado;
+      if (STATUS_WITH_RETURNS.includes(statusFormData.status)) {
+        const retornoManualValue = parseNullableNumber(statusFormData.retornoObtido);
+        if (retornoManualValue !== undefined && retornoManualValue > 0) {
+          retornoObtido = retornoManualValue;
+        } else {
+          const calculado = calcularRetornoObtido(
+            statusFormData.status,
+            aposta.valorApostado,
+            aposta.odd,
+            retornoManualValue
+          );
+          if (calculado !== null) {
+            retornoObtido = calculado;
+          }
         }
       }
-    }
 
-    await apostaService.update(id, {
-      status: statusFormData.status as ApostaStatus,
-      retornoObtido,
-    });
-    await fetchApostas();
-  }, [fetchApostas]);
+      return apostaService.update(id, {
+        status: statusFormData.status as ApostaStatus,
+        retornoObtido,
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['apostas'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] });
+    },
+  });
 
-  // Filtrar apostas
+  // Wrappers para manter a interface original
+  const createAposta = useCallback((formData: ApostaFormState) => createMutation.mutateAsync(formData), [createMutation]);
+  const updateAposta = useCallback((id: string, formData: ApostaFormState) => updateMutation.mutateAsync({ id, formData }), [updateMutation]);
+  const deleteAposta = useCallback((id: string) => deleteMutation.mutateAsync(id), [deleteMutation]);
+  const updateStatus = useCallback((id: string, aposta: ApiBetWithBank, statusFormData: StatusFormState) => 
+    updateStatusMutation.mutateAsync({ id, aposta, statusFormData }), [updateStatusMutation]);
+
+  // Filtrar apostas (mantido igual)
   const filteredApostas = useMemo(() => {
     return apostas.filter((aposta: ApiBetWithBank) => {
       if (filters.esporte && aposta.esporte !== filters.esporte) return false;
@@ -364,7 +377,7 @@ export function useApostasManager(options: UseApostasManagerOptions = {}) {
     apostas,
     filteredApostas,
     loading,
-    error,
+    error: error as Error | null,
     stats,
 
     // Filtros
@@ -375,7 +388,7 @@ export function useApostasManager(options: UseApostasManagerOptions = {}) {
     activeFilterCount,
 
     // Ações
-    fetchApostas,
+    fetchApostas: refetch, // Alias para refetch
     createAposta,
     updateAposta,
     deleteAposta,

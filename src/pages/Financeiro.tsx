@@ -629,7 +629,7 @@ export default function Financeiro() {
         ) : transacoes.length === 0 ? (
           <EmptyState title="Nenhuma transação" description="Cadastre um depósito ou saque para visualizar aqui." />
         ) : (
-          <div className="overflow-hidden rounded-2xl border border-gray-200 dark:border-emerald-700/20">
+          <div className="overflow-x-auto rounded-2xl border border-gray-200 dark:border-emerald-700/20">
             <table className="min-w-full table-auto text-sm text-gray-900 dark:text-white">
               <thead className="bg-gray-50 text-[0.7rem] uppercase tracking-[0.25em] text-gray-500 dark:bg-emerald-900/20 dark:text-emerald-400">
                 <tr>

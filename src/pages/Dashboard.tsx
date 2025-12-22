@@ -750,28 +750,33 @@ function BreakdownList({ items, expandedId, onToggle, emptyMessage }: BreakdownL
             <button
               type="button"
               onClick={() => onToggle(isExpanded ? null : item.id)}
-              className="flex w-full items-center gap-4 px-4 py-4 text-left"
+              className="flex flex-wrap sm:flex-nowrap w-full items-center justify-between gap-4 px-4 py-4 text-left"
               aria-expanded={isExpanded}
             >
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-gray-100 bg-emerald-50 text-2xl text-emerald-600 dark:border-white/10 dark:bg-gradient-to-br dark:from-[#1b3a37] dark:to-[#132826] dark:text-white">
-                {item.icon}
-              </div>
-              <div className="flex-1">
-                <p className="text-base font-semibold text-gray-900 dark:text-white">{item.name}</p>
-                <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-gray-500 dark:text-white/60">
-                  <span>{item.apostas} apostas</span>
-                  <span>•</span>
-                  <span className={cn(rawWinPercent >= 40 ? 'text-emerald-600 dark:text-emerald-300' : rawWinPercent === 0 ? 'text-gray-500 dark:text-white/60' : 'text-rose-600 dark:text-rose-300')}>
-                    {formatPercent(clampedWinPercent)} win
-                  </span>
+              <div className="flex items-center gap-4 flex-1 min-w-[200px]">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-gray-100 bg-emerald-50 text-2xl text-emerald-600 dark:border-white/10 dark:bg-gradient-to-br dark:from-[#1b3a37] dark:to-[#132826] dark:text-white">
+                  {item.icon}
+                </div>
+                <div className="flex-1">
+                  <p className="text-base font-semibold text-gray-900 dark:text-white">{item.name}</p>
+                  <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-gray-500 dark:text-white/60">
+                    <span>{item.apostas} apostas</span>
+                    <span>•</span>
+                    <span className={cn(rawWinPercent >= 40 ? 'text-emerald-600 dark:text-emerald-300' : rawWinPercent === 0 ? 'text-gray-500 dark:text-white/60' : 'text-rose-600 dark:text-rose-300')}>
+                      {formatPercent(clampedWinPercent)} win
+                    </span>
+                  </div>
                 </div>
               </div>
-              <div className={cn('rounded-lg px-3 py-1.5 text-sm font-semibold', roiBadgeClass)}>{formatSignedPercent(roiValue)}</div>
-              <div className="text-right">
-                <p className={cn('text-base font-semibold', lucroClass)}>{formatSignedCurrency(item.lucro)}</p>
-                <p className="text-xs uppercase tracking-wide text-gray-400 dark:text-white/50">Lucro</p>
+
+              <div className="flex items-center gap-4 ml-auto sm:ml-0">
+                <div className={cn('rounded-lg px-3 py-1.5 text-sm font-semibold', roiBadgeClass)}>{formatSignedPercent(roiValue)}</div>
+                <div className="text-right">
+                  <p className={cn('text-base font-semibold', lucroClass)}>{formatSignedCurrency(item.lucro)}</p>
+                  <p className="text-xs uppercase tracking-wide text-gray-400 dark:text-white/50">Lucro</p>
+                </div>
+                <ChevronDown className={cn('ml-2 h-5 w-5 text-gray-400 transition dark:text-white/50', isExpanded && 'rotate-180 text-gray-600 dark:text-white/80')} />
               </div>
-              <ChevronDown className={cn('ml-2 h-5 w-5 text-gray-400 transition dark:text-white/50', isExpanded && 'rotate-180 text-gray-600 dark:text-white/80')} />
             </button>
 
             {isExpanded && (

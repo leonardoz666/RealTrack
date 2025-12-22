@@ -71,7 +71,7 @@ export default function Modal({
         aria-modal="true"
         aria-labelledby={titleId}
         className={cn(
-          'relative w-full rounded-[2.5rem] border border-gray-200 bg-white px-6 pt-6 pb-4 shadow-xl backdrop-blur-3xl animate-slide-up overflow-hidden dark:border-emerald-700/20 dark:bg-transparent dark:bg-gradient-to-br dark:from-emerald-900/90 dark:to-emerald-950/90 dark:shadow-[0_32px_64px_-12px_rgba(0,0,0,0.8)]',
+          'relative w-full rounded-3xl md:rounded-[2.5rem] border border-gray-200 bg-white p-4 md:px-6 md:pt-6 md:pb-4 shadow-xl backdrop-blur-3xl animate-slide-up overflow-hidden dark:border-emerald-700/20 dark:bg-transparent dark:bg-gradient-to-br dark:from-emerald-900/90 dark:to-emerald-950/90 dark:shadow-[0_32px_64px_-12px_rgba(0,0,0,0.8)]',
           SIZE_MAP[size],
           className
         )}

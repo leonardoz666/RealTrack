@@ -220,25 +220,25 @@ export default function ApostasList({
               <div>Status</div>
               <div>Retorno</div>
               <div className="text-right">Ações</div>
-            </div>
+              </div>
 
-            {/* Simple List */}
-            <div className="flex-1 w-full overflow-y-auto">
-              {apostas.map((aposta) => (
-                <Row
-                  key={aposta.id}
-                  aposta={aposta}
-                  onEdit={onEdit}
-                  onDelete={onDelete}
-                  onStatusClick={onStatusClick}
-                  formatCurrency={formatCurrency}
-                  formatDate={formatDate}
-                  normalizeEsporte={normalizeEsporte}
-                  formatOptionalCellText={formatOptionalCellText}
-                />
-              ))}
+              {/* Simple List */}
+              <div className="flex-1 w-full overflow-y-auto">
+                {apostas.map((aposta) => (
+                  <Row
+                    key={aposta.id}
+                    aposta={aposta}
+                    onEdit={onEdit}
+                    onDelete={onDelete}
+                    onStatusClick={onStatusClick}
+                    formatCurrency={formatCurrency}
+                    formatDate={formatDate}
+                    normalizeEsporte={normalizeEsporte}
+                    formatOptionalCellText={formatOptionalCellText}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
         )}
       </div>
     </TooltipProvider>

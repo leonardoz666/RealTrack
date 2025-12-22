@@ -32,7 +32,7 @@ import { cn } from '../components/ui/utils';
 import { toast } from '../utils/toast';
 
 const cardBaseClass =
-  'relative overflow-hidden rounded-[32px] border border-gray-200 bg-white p-12 backdrop-blur-2xl shadow-xl transition-all duration-300 dark:border-emerald-700/20 dark:bg-transparent dark:bg-gradient-to-br dark:from-emerald-900/40 dark:to-emerald-800/20 dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)]';
+  'relative overflow-hidden rounded-[32px] border border-gray-200 bg-white p-6 md:p-12 backdrop-blur-2xl shadow-xl transition-all duration-300 dark:border-emerald-700/20 dark:bg-transparent dark:bg-gradient-to-br dark:from-emerald-900/40 dark:to-emerald-800/20 dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)]';
 const labelClass = 'text-[0.75rem] font-bold uppercase tracking-[0.25em] text-gray-500 dark:text-emerald-400';
 const inputClass =
   'w-full rounded-2xl border border-gray-200 bg-gray-50 px-5 py-3.5 text-sm font-medium text-gray-900 placeholder:text-gray-400 backdrop-blur-md transition-all duration-300 focus:border-emerald-500/50 focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:bg-white dark:border-emerald-700/20 dark:bg-emerald-900/10 dark:text-emerald-100 dark:placeholder:text-emerald-300/60 dark:focus:bg-emerald-900/20';

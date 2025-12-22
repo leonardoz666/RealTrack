@@ -6,7 +6,7 @@ import { useTheme } from '../contexts/ThemeContext';
 import Sidebar from './Sidebar';
 import { subscribeToTelegramUpdate } from '../utils/telegramSync';
 import { useIsMobile } from './ui/use-mobile';
-import { Sheet, SheetContent } from './ui/sheet';
+import { Sheet, SheetContent, SheetTitle, SheetDescription } from './ui/sheet';
 
 const SUPPORT_BOT_USERNAME = typeof import.meta.env.VITE_TELEGRAM_SUPPORT_BOT_USERNAME === 'string' && import.meta.env.VITE_TELEGRAM_SUPPORT_BOT_USERNAME.trim().length > 0
   ? import.meta.env.VITE_TELEGRAM_SUPPORT_BOT_USERNAME.trim()

@@ -355,10 +355,10 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <section className="grid gap-5 lg:grid-cols-5">
+      <section className="grid gap-5 grid-cols-1 md:grid-cols-2 xl:grid-cols-12">
         <div
           className={cn(
-            'col-span-1 flex flex-col justify-between rounded-[32px] border border-gray-200 bg-white p-8 text-gray-900 shadow-xl backdrop-blur-2xl lg:col-span-2 transition-all duration-300 hover:border-gray-300 hover:shadow-lg',
+            'col-span-1 flex flex-col justify-between rounded-[32px] border border-gray-200 bg-white p-8 text-gray-900 shadow-xl backdrop-blur-2xl md:col-span-2 xl:col-span-5 hover:border-gray-300 hover:shadow-lg min-w-0',
             'dark:border-emerald-500/30 dark:bg-gradient-to-br dark:from-[#032b26] dark:via-[#0d5f52] dark:to-[#032b26] dark:text-white dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)]'
           )}
         >
@@ -425,7 +425,7 @@ export default function Dashboard() {
         </div>
 
         {/* Mini Cards Depósitos e Saques */}
-        <div className="flex flex-col gap-4 lg:col-span-1">
+        <div className="flex flex-col gap-4 col-span-1 md:col-span-1 xl:col-span-2 min-w-0">
           <div className={cn(sectionCardClass, 'flex items-center gap-3 p-4 h-full')}>
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400">
               <Wallet size={18} />
@@ -448,7 +448,7 @@ export default function Dashboard() {
 
         <div
           className={cn(
-            'col-span-1 flex flex-col justify-between rounded-[32px] border border-gray-200 bg-white p-8 text-gray-900 shadow-xl backdrop-blur-2xl lg:col-span-2 transition-all duration-300 hover:border-gray-300 hover:shadow-lg',
+            'col-span-1 flex flex-col justify-between rounded-[32px] border border-gray-200 bg-white p-8 text-gray-900 shadow-xl backdrop-blur-2xl md:col-span-1 xl:col-span-5 hover:border-gray-300 hover:shadow-lg min-w-0',
             'dark:border-emerald-500/30 dark:bg-[#022c22] dark:text-white dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)]'
           )}
         >
@@ -465,16 +465,16 @@ export default function Dashboard() {
             <span className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white">{accuracyPercentLabel}</span>
           </div>
 
-          <div className="grid grid-cols-3 divide-x divide-gray-200 dark:divide-white/10 rounded-[24px] bg-gray-50 dark:bg-black/20 p-5 mb-2">
-            <div className="flex flex-col items-center justify-center px-2">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-y-4 sm:gap-y-0 divide-y sm:divide-y-0 sm:divide-x divide-gray-200 dark:divide-white/10 rounded-[24px] bg-gray-50 dark:bg-black/20 p-5 mb-2">
+            <div className="flex flex-col items-center justify-center px-2 py-2 sm:py-0">
               <span className="text-[0.6rem] font-bold uppercase tracking-[0.2em] text-gray-400 dark:text-emerald-100/60 mb-1.5">Apostas</span>
               <span className="text-2xl font-bold text-gray-900 dark:text-white leading-none">{totalApostas}</span>
             </div>
-            <div className="flex flex-col items-center justify-center px-2">
+            <div className="flex flex-col items-center justify-center px-2 py-2 sm:py-0">
               <span className="text-[0.6rem] font-bold uppercase tracking-[0.2em] text-gray-400 dark:text-emerald-100/60 mb-1.5">Greens</span>
               <span className="text-2xl font-bold text-emerald-600 dark:text-[#34d399] leading-none">{apostasGanhas}</span>
             </div>
-            <div className="flex flex-col items-center justify-center px-2">
+            <div className="flex flex-col items-center justify-center px-2 py-2 sm:py-0">
               <span className="text-[0.6rem] font-bold uppercase tracking-[0.2em] text-gray-400 dark:text-emerald-100/60 mb-1.5">Reds</span>
               <span className="text-2xl font-bold text-rose-600 dark:text-[#f87171] leading-none">{derrotasCalculadas}</span>
             </div>
@@ -508,8 +508,8 @@ export default function Dashboard() {
 
       </section>
 
-      <section className="grid gap-6 xl:grid-cols-[2fr_1fr]">
-        <div className={cn(evolutionCardClass, 'space-y-6')}>
+      <section className="grid gap-6 grid-cols-1 xl:grid-cols-3">
+        <div className={cn(evolutionCardClass, 'space-y-6 xl:col-span-2 min-w-0')}>
           <div className="flex flex-wrap items-start justify-between gap-6">
             <div className="flex items-start gap-4">
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-600 dark:bg-white/10 dark:text-[#7efee0]">
@@ -540,7 +540,7 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="mx-auto grid max-w-3xl gap-8 md:grid-cols-3">
+          <div className="grid gap-6 md:grid-cols-3">
             <StatCard
               title="Melhor dia"
               value={formatCurrency(melhorDia && melhorDia.valor ? melhorDia.valor : 0)}
@@ -584,7 +584,7 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className={cn(sectionCardClass, 'space-y-5')}>
+        <div className={cn(sectionCardClass, 'space-y-5 min-w-0')}>
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-lg font-semibold text-foreground">Performance recente</h3>
@@ -658,8 +658,8 @@ export default function Dashboard() {
         </div>
       </section>
 
-      <section className="grid gap-6 xl:grid-cols-2">
-        <div className={cn(sectionCardClass, 'space-y-5')}>
+      <section className="grid gap-6 grid-cols-1 xl:grid-cols-2">
+        <div className={cn(sectionCardClass, 'space-y-5 min-w-0')}>
           <div>
             <h3 className="text-lg font-semibold">Desempenho por esporte</h3>
             <p className={cn('text-sm text-foreground-muted', labelTextClass)}>Descubra onde a banca performa melhor</p>
@@ -672,7 +672,7 @@ export default function Dashboard() {
           />
         </div>
 
-        <div className={cn(sectionCardClass, 'space-y-5')}>
+        <div className={cn(sectionCardClass, 'space-y-5 min-w-0')}>
           <div>
             <h3 className="text-lg font-semibold">Desempenho por casa</h3>
             <p className={cn('text-sm text-foreground-muted', labelTextClass)}>Veja quais casas oferecem melhor ROI</p>

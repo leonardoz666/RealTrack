@@ -385,8 +385,8 @@ export default function Dashboard() {
                 <p className="text-[0.65rem] font-bold uppercase tracking-[0.2em] text-gray-400 dark:text-emerald-100/60 mb-1">Lucro total</p>
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">{formatCurrency(metricas.lucroTotal)}</p>
               </div>
-              <button className="inline-flex items-center gap-2 rounded-full bg-gray-900 px-6 py-2.5 text-sm font-bold text-white transition hover:bg-gray-800 hover:scale-[1.02] active:scale-[0.98] dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100">
-                Ver detalhes <ArrowRight size={16} />
+              <button className="inline-flex items-center gap-1.5 rounded-full bg-gray-900 px-4 py-1.5 text-xs font-bold text-white transition hover:bg-gray-800 hover:scale-[1.02] active:scale-[0.98] dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100">
+                Ver detalhes <ArrowRight size={14} />
               </button>
             </div>
           </div>

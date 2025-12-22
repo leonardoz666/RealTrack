@@ -773,60 +773,60 @@ function MobileBancaCard({
   onTogglePadrao: () => void;
 }) {
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-3 shadow-sm dark:border-emerald-700/20 dark:bg-emerald-900/10">
-      <div className="flex items-center gap-3 mb-4">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-brand-emerald/30 dark:bg-brand-emerald/10 dark:text-brand-emerald">
-          <Wallet className="h-5 w-5" />
+    <div className="rounded-2xl border border-gray-200 bg-white p-2.5 shadow-sm dark:border-emerald-700/20 dark:bg-emerald-900/10">
+      <div className="flex items-center gap-2.5 mb-3">
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-brand-emerald/30 dark:bg-brand-emerald/10 dark:text-brand-emerald">
+          <Wallet className="h-4.5 w-4.5" />
         </div>
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
-            <h3 className="font-semibold text-gray-900 dark:text-white truncate text-base">{banca.nome}</h3>
+            <h3 className="font-semibold text-gray-900 dark:text-white truncate text-sm">{banca.nome}</h3>
           </div>
-          <p className="text-xs text-gray-500 dark:text-white/60 truncate">ID: {banca.id}</p>
+          <p className="text-[0.65rem] text-gray-500 dark:text-white/60 truncate">ID: {banca.id}</p>
         </div>
         <div className="flex items-center gap-1 shrink-0">
           <button
              onClick={onTogglePadrao}
              className={cn(
-               "flex h-8 w-8 items-center justify-center rounded-xl transition",
+               "flex h-7 w-7 items-center justify-center rounded-lg transition",
                banca.padrao
                  ? "bg-amber-100 text-amber-600 hover:bg-amber-200 dark:bg-amber-900/30 dark:text-amber-400" 
                  : "bg-gray-100 text-gray-400 hover:bg-gray-200 dark:bg-white/5 dark:text-white/40"
              )}
              title={banca.padrao ? 'É a banca padrão' : 'Definir como padrão'}
            >
-             <Star className={cn("h-4 w-4", banca.padrao && "fill-current")} />
+             <Star className={cn("h-3.5 w-3.5", banca.padrao && "fill-current")} />
            </button>
            
           <button
              onClick={onToggleStatus}
              className={cn(
-               "flex h-8 w-8 items-center justify-center rounded-xl transition",
+               "flex h-7 w-7 items-center justify-center rounded-lg transition",
                banca.status === 'Ativa'
                  ? "bg-emerald-600 text-white hover:bg-emerald-700 dark:bg-brand-emerald/20 dark:text-brand-emerald dark:hover:bg-brand-emerald/30" 
                  : "bg-gray-200 text-gray-500 hover:bg-gray-300 dark:bg-white/5 dark:text-white/40 dark:hover:bg-white/10"
              )}
              title={banca.status === 'Ativa' ? 'Desativar' : 'Ativar'}
            >
-             {banca.status === 'Ativa' ? <Check className="h-4 w-4" /> : <X className="h-4 w-4" />}
+             {banca.status === 'Ativa' ? <Check className="h-3.5 w-3.5" /> : <X className="h-3.5 w-3.5" />}
            </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-4 gap-2 mb-3">
-         <ActionButton icon={<LineChart className="h-4 w-4" />} onClick={onOpenStats} label="Dados" />
-         <ActionButton icon={<Share2 className="h-4 w-4" />} onClick={onCopyLink} label="Link" />
-         <ActionButton icon={<Pencil className="h-4 w-4" />} onClick={onEdit} label="Editar" />
-         <ActionButton icon={<Trash2 className="h-4 w-4" />} onClick={onDelete} label="Excluir" variant="danger" />
+      <div className="grid grid-cols-4 gap-2 mb-2">
+         <ActionButton icon={<LineChart className="h-3.5 w-3.5" />} onClick={onOpenStats} label="Dados" />
+         <ActionButton icon={<Share2 className="h-3.5 w-3.5" />} onClick={onCopyLink} label="Link" />
+         <ActionButton icon={<Pencil className="h-3.5 w-3.5" />} onClick={onEdit} label="Editar" />
+         <ActionButton icon={<Trash2 className="h-3.5 w-3.5" />} onClick={onDelete} label="Excluir" variant="danger" />
       </div>
 
       {banca.descricao && (
-        <p className="text-sm text-gray-600 dark:text-white/70 mb-3 line-clamp-2 px-1">
+        <p className="text-xs text-gray-600 dark:text-white/70 mb-2 line-clamp-2 px-1">
           {banca.descricao}
         </p>
       )}
       
-      <div className="flex justify-between text-xs text-gray-400 dark:text-white/40 px-1 pt-2 border-t border-gray-100 dark:border-white/5">
+      <div className="flex justify-between text-[0.65rem] text-gray-400 dark:text-white/40 px-1 pt-2 border-t border-gray-100 dark:border-white/5">
          <span>Visto: {banca.ultimaVisualizacao}</span>
          <span>Criado: {banca.criadoEm}</span>
       </div>
@@ -839,14 +839,14 @@ function ActionButton({ icon, onClick, label, variant = 'default' }: { icon: Rea
       <button
         onClick={onClick}
         className={cn(
-          "flex flex-col items-center justify-center gap-1 py-2 rounded-xl border transition",
+          "flex flex-col items-center justify-center gap-0.5 py-1.5 rounded-xl border transition",
           variant === 'danger'
             ? "border-rose-100 bg-rose-50 text-rose-600 hover:bg-rose-100 dark:border-rose-500/20 dark:bg-rose-500/10 dark:text-rose-400"
             : "border-gray-100 bg-gray-50 text-gray-600 hover:bg-gray-100 dark:border-white/10 dark:bg-white/5 dark:text-white/70"
         )}
       >
         {icon}
-        <span className="text-[0.65rem] font-medium">{label}</span>
+        <span className="text-[0.6rem] font-medium">{label}</span>
       </button>
    )
 }

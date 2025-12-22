@@ -504,64 +504,64 @@ const Sidebar = ({ collapsed, onToggle, mobile = false }: SidebarProps) => {
               </li>
             </ul>
           </nav>
-
-          {!collapsed && (
-            <div className={`mb-6 ${sectionPadding}`}>
-              <div className="rounded-[24px] border border-gray-200 bg-white p-4 shadow-sm dark:border-emerald-700/20 dark:bg-transparent dark:bg-gradient-to-br dark:from-emerald-900/40 dark:to-emerald-800/20 dark:backdrop-blur-2xl">
-                <div className="mb-3 flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
-                    <div className={`flex h-7 w-7 items-center justify-center rounded-lg ${planVisual.badgeClass}`}>
-                      <PlanIcon className={`h-4 w-4 ${planVisual.iconClass}`} strokeWidth={2.5} />
-                    </div>
-                    <span className="text-sm font-semibold text-gray-900 dark:text-white">{planoNome}</span>
-                  </div>
-                  <button
-                    type="button"
-                    className="rounded-full p-2 text-gray-500 transition-colors hover:text-gray-900 disabled:cursor-not-allowed disabled:opacity-50 dark:text-white/70 dark:hover:text-white"
-                    aria-label="Atualizar consumo"
-                    disabled={consumoLoading}
-                  >
-                    <RefreshCw className={`h-4 w-4 ${consumoLoading ? 'animate-spin' : ''}`} strokeWidth={2} />
-                  </button>
-                </div>
-
-                <div>
-                  <div className="mb-1 flex items-center justify-between">
-                    <span className="text-xs text-gray-500 dark:text-white/70">Limite Diário</span>
-                    <span className="text-xs font-semibold text-emerald-700 dark:text-emerald-300">{isLoading ? 'Carregando...' : consumoInfo.label}</span>
-                  </div>
-                  <div className="h-1.5 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-white/10">
-                    {consumoInfo.isUnlimited ? (
-                      <div className="h-full w-full rounded-full bg-brand-linear" />
-                    ) : (
-                      <div
-                        className="h-full rounded-full bg-brand-linear transition-all"
-                        style={{ width: `${Math.min(consumoInfo.percent, 100)}%` }}
-                      />
-                    )}
-                  </div>
-                  {consumoError && (
-                    <div className="mt-2 flex items-center justify-between text-xs text-rose-600 dark:text-rose-300">
-                      <span>{consumoError}</span>
-                      <button
-                        type="button"
-                        className="font-semibold text-rose-700 underline-offset-2 transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-40 dark:text-rose-200"
-                        onClick={handleRefreshConsumo}
-                        disabled={consumoLoading}
-                      >
-                        Tentar novamente
-                      </button>
-                    </div>
-                  )}
-                </div>
-
-                <p className="mt-2 text-[11px] text-gray-500 dark:text-white/70">Renova {isLoading ? '...' : resetTime}</p>
-              </div>
-            </div>
-          )}
         </div>
 
-        <div className={`${sectionPadding} py-6 border-t border-gray-100 dark:border-white/5`}>
+        {!collapsed && (
+          <div className={`mb-6 ${sectionPadding} flex-shrink-0`}>
+            <div className="rounded-[24px] border border-gray-200 bg-white p-4 shadow-sm dark:border-emerald-700/20 dark:bg-transparent dark:bg-gradient-to-br dark:from-emerald-900/40 dark:to-emerald-800/20 dark:backdrop-blur-2xl">
+              <div className="mb-3 flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <div className={`flex h-7 w-7 items-center justify-center rounded-lg ${planVisual.badgeClass}`}>
+                    <PlanIcon className={`h-4 w-4 ${planVisual.iconClass}`} strokeWidth={2.5} />
+                  </div>
+                  <span className="text-sm font-semibold text-gray-900 dark:text-white">{planoNome}</span>
+                </div>
+                <button
+                  type="button"
+                  className="rounded-full p-2 text-gray-500 transition-colors hover:text-gray-900 disabled:cursor-not-allowed disabled:opacity-50 dark:text-white/70 dark:hover:text-white"
+                  aria-label="Atualizar consumo"
+                  disabled={consumoLoading}
+                >
+                  <RefreshCw className={`h-4 w-4 ${consumoLoading ? 'animate-spin' : ''}`} strokeWidth={2} />
+                </button>
+              </div>
+
+              <div>
+                <div className="mb-1 flex items-center justify-between">
+                  <span className="text-xs text-gray-500 dark:text-white/70">Limite Diário</span>
+                  <span className="text-xs font-semibold text-emerald-700 dark:text-emerald-300">{isLoading ? 'Carregando...' : consumoInfo.label}</span>
+                </div>
+                <div className="h-1.5 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-white/10">
+                  {consumoInfo.isUnlimited ? (
+                    <div className="h-full w-full rounded-full bg-brand-linear" />
+                  ) : (
+                    <div
+                      className="h-full rounded-full bg-brand-linear transition-all"
+                      style={{ width: `${Math.min(consumoInfo.percent, 100)}%` }}
+                    />
+                  )}
+                </div>
+                {consumoError && (
+                  <div className="mt-2 flex items-center justify-between text-xs text-rose-600 dark:text-rose-300">
+                    <span>{consumoError}</span>
+                    <button
+                      type="button"
+                      className="font-semibold text-rose-700 underline-offset-2 transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-40 dark:text-rose-200"
+                      onClick={handleRefreshConsumo}
+                      disabled={consumoLoading}
+                    >
+                      Tentar novamente
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              <p className="mt-2 text-[11px] text-gray-500 dark:text-white/70">Renova {isLoading ? '...' : resetTime}</p>
+            </div>
+          </div>
+        )}
+
+        <div className={`${sectionPadding} py-6 border-t border-gray-100 dark:border-white/5 flex-shrink-0`}>
           <div className={`flex items-center ${collapsed ? 'justify-center' : 'justify-between'}`}>
             <div className="flex items-center gap-3">
               {perfil?.fotoPerfil ? (

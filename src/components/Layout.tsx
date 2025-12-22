@@ -57,7 +57,7 @@ const Layout = () => {
             <span className="text-lg font-semibold">Real Comando</span>
           </div>
           <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-            <SheetContent side="left" className="w-64 p-0">
+            <SheetContent side="left" className="w-64 p-0 h-[100dvh]">
               <SheetTitle className="sr-only">Menu de Navegação</SheetTitle>
               <SheetDescription className="sr-only">
                 Menu lateral para navegação entre as páginas do sistema

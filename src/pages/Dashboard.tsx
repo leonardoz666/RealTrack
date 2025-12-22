@@ -446,40 +446,64 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className={cn(sectionCardClass, 'space-y-4 lg:col-span-2')}>
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-600 dark:bg-brand-emerald/15 dark:text-brand-emerald">
-                <Trophy className="h-5 w-5" />
+        <div
+          className={cn(
+            'col-span-1 flex flex-col justify-between rounded-[32px] border border-gray-200 bg-white p-8 text-gray-900 shadow-xl backdrop-blur-2xl lg:col-span-2 transition-all duration-300 hover:border-gray-300 hover:shadow-lg',
+            'dark:border-emerald-500/30 dark:bg-[#022c22] dark:text-white dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)]'
+          )}
+        >
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-4">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-emerald-500/30 bg-emerald-500/10 text-emerald-400">
+                <Trophy size={20} strokeWidth={2} />
               </div>
               <div>
-                <p className="text-sm font-semibold text-foreground">Taxa de acerto</p>
-                <p className={cn('text-xs text-foreground-muted', softLabelTextClass)}>Taxa atual</p>
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white leading-none">Taxa de Acerto</h3>
+                <p className="text-[0.65rem] font-bold uppercase tracking-[0.15em] text-emerald-600 dark:text-emerald-400/80 mt-1.5">Performance Atual</p>
               </div>
             </div>
-            <span className="text-3xl font-semibold text-foreground">{accuracyPercentLabel}</span>
+            <span className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white">{accuracyPercentLabel}</span>
           </div>
-          <div className="grid gap-4 rounded-2xl border border-gray-100 bg-gray-50 p-4 text-sm text-foreground sm:grid-cols-3 dark:border-white/5 dark:bg-white/5">
-            <div className="rounded-xl p-2 transition-colors hover:bg-gray-100 dark:hover:bg-white/10">
-              <p className={cn('text-2xs uppercase tracking-[0.3em] text-foreground-muted', softLabelTextClass)}>Apostas</p>
-              <p className="mt-1 text-xl font-semibold text-foreground">{totalApostas}</p>
+
+          <div className="grid grid-cols-3 divide-x divide-gray-200 dark:divide-white/10 rounded-[24px] bg-gray-50 dark:bg-black/20 p-5 mb-2">
+            <div className="flex flex-col items-center justify-center px-2">
+              <span className="text-[0.6rem] font-bold uppercase tracking-[0.2em] text-gray-400 dark:text-emerald-100/60 mb-1.5">Apostas</span>
+              <span className="text-2xl font-bold text-gray-900 dark:text-white leading-none">{totalApostas}</span>
             </div>
-            <div className="rounded-xl p-2 transition-colors hover:bg-gray-100 dark:hover:bg-white/10">
-              <p className={cn('text-2xs uppercase tracking-[0.3em] text-foreground-muted', softLabelTextClass)}>Greens</p>
-              <p className="mt-1 text-xl font-semibold text-emerald-600 dark:text-emerald-400">{apostasGanhas}</p>
+            <div className="flex flex-col items-center justify-center px-2">
+              <span className="text-[0.6rem] font-bold uppercase tracking-[0.2em] text-gray-400 dark:text-emerald-100/60 mb-1.5">Greens</span>
+              <span className="text-2xl font-bold text-emerald-600 dark:text-[#34d399] leading-none">{apostasGanhas}</span>
             </div>
-            <div className="rounded-xl p-2 transition-colors hover:bg-gray-100 dark:hover:bg-white/10">
-              <p className={cn('text-2xs uppercase tracking-[0.3em] text-foreground-muted', softLabelTextClass)}>Reds</p>
-              <p className="mt-1 text-xl font-semibold text-rose-600 dark:text-rose-400">{derrotasCalculadas}</p>
+            <div className="flex flex-col items-center justify-center px-2">
+              <span className="text-[0.6rem] font-bold uppercase tracking-[0.2em] text-gray-400 dark:text-emerald-100/60 mb-1.5">Reds</span>
+              <span className="text-2xl font-bold text-rose-600 dark:text-[#f87171] leading-none">{derrotasCalculadas}</span>
             </div>
           </div>
-          <div className="rounded-full bg-foreground/10 p-0.5">
-            <div
-              className="h-3 rounded-full bg-gradient-to-r from-[#10ad7b] via-[#11b08f] to-[#12b4a8] shadow-[0_0_10px_rgba(16,185,129,0.25)] transition-[width] duration-500"
-              style={{ width: `${(accuracyPercent * 100).toFixed(1)}%` }}
-            />
+
+          <div className="space-y-3">
+            <div className="flex justify-between items-end text-sm">
+              <span className="font-medium text-gray-700 dark:text-emerald-100/80">Progresso</span>
+              <span className="text-xs text-gray-500 dark:text-emerald-100/50">{accuracyDetailText}</span>
+            </div>
+            <div className="h-2.5 w-full rounded-full bg-gray-100 dark:bg-black/30 overflow-hidden">
+              <div 
+                className="h-full rounded-full bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.6)] relative"
+                style={{ width: `${(accuracyPercent * 100).toFixed(1)}%` }}
+              >
+                <div className="absolute right-0 top-0 bottom-0 w-1 bg-white/50 rounded-full blur-[1px]" />
+              </div>
+            </div>
           </div>
-          <p className={cn('text-xs text-foreground-muted', softLabelTextClass)}>{accuracyPercentLabel} ({accuracyDetailText})</p>
+
+          <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100 dark:border-white/5">
+            <div className="flex items-center gap-2">
+              <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="text-xs font-medium text-gray-500 dark:text-emerald-100/50">Atualizado agora</span>
+            </div>
+            <button className="flex items-center gap-1 text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors">
+              Ver detalhes <ArrowRight size={12} />
+            </button>
+          </div>
         </div>
 
       </section>

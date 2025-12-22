@@ -371,205 +371,207 @@ const Sidebar = ({ collapsed, onToggle, mobile = false }: SidebarProps) => {
         </button>
       )}
 
-      <div className="flex h-full w-full flex-col overflow-y-auto overflow-x-hidden bg-white border-r border-gray-200 text-gray-900 dark:bg-app-layout-bg dark:border-white/10 dark:text-white">
-        <div className={`${sectionPadding} pt-6 pb-8`}>
-          <div className={`flex items-center gap-3 ${collapsed ? 'justify-center' : ''}`}>
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#14b8a6]">
-              <Target className="h-6 w-6 text-white" strokeWidth={2.5} />
+      <div className="flex h-full w-full flex-col bg-white border-r border-gray-200 text-gray-900 dark:bg-app-layout-bg dark:border-white/10 dark:text-white">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden">
+          <div className={`${sectionPadding} pt-6 pb-8`}>
+            <div className={`flex items-center gap-3 ${collapsed ? 'justify-center' : ''}`}>
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#14b8a6]">
+                <Target className="h-6 w-6 text-white" strokeWidth={2.5} />
+              </div>
+              {!collapsed && (
+                <div className="flex flex-col">
+                  <h1 className="text-gray-900 dark:text-white tracking-tight">Real Comando</h1>
+                  <p className="text-sm text-[#14b8a6]">Planilha Esportiva</p>
+                </div>
+              )}
             </div>
-                {!collapsed && (
-              <div className="flex flex-col">
-                <h1 className="text-gray-900 dark:text-white tracking-tight">Real Comando</h1>
-                <p className="text-sm text-[#14b8a6]">Planilha Esportiva</p>
-              </div>
-            )}
           </div>
-        </div>
 
-        {!collapsed && (
-          <div className={`mb-6 ${sectionPadding}`} ref={bancaDropdownRef}>
-            <button
-              type="button"
-              className="flex w-full items-center justify-between rounded-lg border border-gray-200 bg-gray-50 px-3 py-3 transition-all hover:bg-gray-100 hover:border-gray-300 dark:border-emerald-600/20 dark:bg-emerald-950/30 dark:hover:bg-emerald-900/40 dark:hover:border-emerald-600/30"
-              onClick={toggleBancaDropdown}
-              aria-expanded={isBancaDropdownOpen}
-            >
-              <div className="flex items-center gap-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-600 shadow-lg shadow-emerald-600/20">
-                  <Layers className="h-5 w-5 text-white" strokeWidth={2} />
-                </div>
-                <div className="flex flex-col items-start">
-                  <span className="text-xs text-gray-500 dark:text-emerald-100/60">Banca Atual</span>
-                  <span className="text-sm font-medium text-gray-900 dark:text-white">
-                    {bancaPanelLoading ? 'Carregando...' : currentBanca?.nome ?? 'Nenhuma banca'}
-                  </span>
-                </div>
-              </div>
-              <ChevronDown
-                className={`h-4 w-4 text-gray-400 dark:text-emerald-100/50 transition-transform ${isBancaDropdownOpen ? 'rotate-180' : ''}`}
-                strokeWidth={2}
-              />
-            </button>
-
-            {isBancaDropdownOpen && (
-              <div className="mt-2 space-y-2 rounded-lg border border-gray-200 bg-white p-2 shadow-xl dark:border-emerald-600/20 dark:bg-emerald-950 dark:shadow-black/40">
-                {bancaPanelLoading ? (
-                  <div className="flex h-20 items-center justify-center text-sm text-gray-500 dark:text-white/80">
-                    Carregando bancas...
+          {!collapsed && (
+            <div className={`mb-6 ${sectionPadding}`} ref={bancaDropdownRef}>
+              <button
+                type="button"
+                className="flex w-full items-center justify-between rounded-lg border border-gray-200 bg-gray-50 px-3 py-3 transition-all hover:bg-gray-100 hover:border-gray-300 dark:border-emerald-600/20 dark:bg-emerald-950/30 dark:hover:bg-emerald-900/40 dark:hover:border-emerald-600/30"
+                onClick={toggleBancaDropdown}
+                aria-expanded={isBancaDropdownOpen}
+              >
+                <div className="flex items-center gap-3">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-600 shadow-lg shadow-emerald-600/20">
+                    <Layers className="h-5 w-5 text-white" strokeWidth={2} />
                   </div>
-                ) : bancas.length === 0 ? (
-                  <div className="text-sm text-gray-500 dark:text-white/80">Nenhuma banca cadastrada ainda.</div>
-                ) : (
-                  <div className="grid grid-cols-1 gap-1">
-                    {[...bancas]
-                      .sort((a, b) => {
-                        if (a.padrao === b.padrao) return 0;
-                        return a.padrao ? -1 : 1;
-                      })
-                      .map((banca) => (
-                        <button
-                          key={banca.id}
-                          type="button"
-                          className={`flex flex-col rounded-lg border px-3 py-2.5 text-left transition-all ${
-                            banca.padrao
-                              ? 'border-emerald-600/50 bg-emerald-50 dark:bg-emerald-900/20'
-                              : 'border-transparent hover:bg-gray-50 dark:hover:bg-white/5'
-                          }`}
-                          onClick={() => handleSelectBanca(banca.id)}
-                          disabled={updatingBancaId === banca.id}
-                        >
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm font-medium text-gray-900 dark:text-white">{banca.nome}</span>
-                            {banca.padrao && (
-                              <span className="rounded bg-emerald-600/20 px-1.5 py-0.5 text-[10px] font-medium text-emerald-600 dark:text-emerald-400">
-                                Atual
-                              </span>
-                            )}
-                          </div>
-                          <div className="mt-0.5 flex items-center justify-between text-xs text-gray-500 dark:text-white/60">
-                            <span className="inline-flex items-center gap-2">
-                              <span className="rounded bg-gray-100 dark:bg-white/10 px-1.5 py-0.5 text-[10px]">{banca.status}</span>
-                            </span>
-                            <span className="ml-2 flex-1 truncate text-right">{banca.descricao}</span>
-                          </div>
-                        </button>
-                      ))}
+                  <div className="flex flex-col items-start">
+                    <span className="text-xs text-gray-500 dark:text-emerald-100/60">Banca Atual</span>
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">
+                      {bancaPanelLoading ? 'Carregando...' : currentBanca?.nome ?? 'Nenhuma banca'}
+                    </span>
                   </div>
-                )}
-
-                <button
-                  type="button"
-                  className="flex w-full items-center justify-center gap-2 rounded-lg border border-transparent bg-emerald-600 px-3 py-2 text-xs font-semibold text-white shadow-lg shadow-emerald-600/20 transition-colors hover:bg-emerald-700 dark:border-emerald-600/30 dark:bg-brand-emerald/15 dark:text-brand-emerald dark:hover:bg-brand-emerald/25"
-                  onClick={handleCreateBanca}
-                >
-                  + Nova Banca
-                </button>
-              </div>
-            )}
-          </div>
-        )}
-
-        <nav className={`flex-1 ${sectionPadding}`}>
-          <ul className="space-y-1">
-            <li>
-              <NavLink to={ROUTES.DASHBOARD} className={({ isActive }) => navLinkClasses(isActive, collapsed)}>
-                <LayoutGrid className="h-5 w-5" strokeWidth={2} />
-                {!collapsed && <span>Início</span>}
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to={ROUTES.BANCAS} className={({ isActive }) => navLinkClasses(isActive, collapsed)}>
-                <Layers className="h-5 w-5" strokeWidth={2} />
-                {!collapsed && <span>Bancas</span>}
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to={ROUTES.ATUALIZAR} className={({ isActive }) => navLinkClasses(isActive, collapsed)}>
-                <RefreshCw className="h-5 w-5" strokeWidth={2} />
-                {!collapsed && <span>Apostas</span>}
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to={ROUTES.FINANCEIRO} className={({ isActive }) => navLinkClasses(isActive, collapsed)}>
-                <Wallet className="h-5 w-5" strokeWidth={2} />
-                {!collapsed && <span>Financeiro</span>}
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to={ROUTES.ANALISE} className={({ isActive }) => navLinkClasses(isActive, collapsed)}>
-                <BarChart3 className="h-5 w-5" strokeWidth={2} />
-                {!collapsed && <span>Análise</span>}
-              </NavLink>
-            </li>
-          </ul>
-        </nav>
-
-        {!collapsed && (
-          <div className={`mb-6 ${sectionPadding}`}>
-            <div className="rounded-[24px] border border-gray-200 bg-white p-4 shadow-sm dark:border-emerald-700/20 dark:bg-transparent dark:bg-gradient-to-br dark:from-emerald-900/40 dark:to-emerald-800/20 dark:backdrop-blur-2xl">
-              <div className="mb-3 flex items-center justify-between gap-2">
-                <div className="flex items-center gap-2">
-                  <div className={`flex h-7 w-7 items-center justify-center rounded-lg ${planVisual.badgeClass}`}>
-                    <PlanIcon className={`h-4 w-4 ${planVisual.iconClass}`} strokeWidth={2.5} />
-                  </div>
-                  <span className="text-sm font-semibold text-gray-900 dark:text-white">{planoNome}</span>
                 </div>
-                <button
-                  type="button"
-                  className="rounded-full p-2 text-gray-500 transition-colors hover:text-gray-900 disabled:cursor-not-allowed disabled:opacity-50 dark:text-white/70 dark:hover:text-white"
-                  aria-label="Atualizar consumo"
-                  disabled={consumoLoading}
-                >
-                  <RefreshCw className={`h-4 w-4 ${consumoLoading ? 'animate-spin' : ''}`} strokeWidth={2} />
-                </button>
-              </div>
+                <ChevronDown
+                  className={`h-4 w-4 text-gray-400 dark:text-emerald-100/50 transition-transform ${isBancaDropdownOpen ? 'rotate-180' : ''}`}
+                  strokeWidth={2}
+                />
+              </button>
 
-              <div>
-                <div className="mb-1 flex items-center justify-between">
-                  <span className="text-xs text-gray-500 dark:text-white/70">Limite Diário</span>
-                  <span className="text-xs font-semibold text-emerald-700 dark:text-emerald-300">{isLoading ? 'Carregando...' : consumoInfo.label}</span>
-                </div>
-                <div className="h-1.5 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-white/10">
-                  {consumoInfo.isUnlimited ? (
-                    <div className="h-full w-full rounded-full bg-brand-linear" />
+              {isBancaDropdownOpen && (
+                <div className="mt-2 space-y-2 rounded-lg border border-gray-200 bg-white p-2 shadow-xl dark:border-emerald-600/20 dark:bg-emerald-950 dark:shadow-black/40">
+                  {bancaPanelLoading ? (
+                    <div className="flex h-20 items-center justify-center text-sm text-gray-500 dark:text-white/80">
+                      Carregando bancas...
+                    </div>
+                  ) : bancas.length === 0 ? (
+                    <div className="text-sm text-gray-500 dark:text-white/80">Nenhuma banca cadastrada ainda.</div>
                   ) : (
-                    <div
-                      className="h-full rounded-full bg-brand-linear transition-all"
-                      style={{ width: `${Math.min(consumoInfo.percent, 100)}%` }}
-                    />
+                    <div className="grid grid-cols-1 gap-1">
+                      {[...bancas]
+                        .sort((a, b) => {
+                          if (a.padrao === b.padrao) return 0;
+                          return a.padrao ? -1 : 1;
+                        })
+                        .map((banca) => (
+                          <button
+                            key={banca.id}
+                            type="button"
+                            className={`flex flex-col rounded-lg border px-3 py-2.5 text-left transition-all ${
+                              banca.padrao
+                                ? 'border-emerald-600/50 bg-emerald-50 dark:bg-emerald-900/20'
+                                : 'border-transparent hover:bg-gray-50 dark:hover:bg-white/5'
+                            }`}
+                            onClick={() => handleSelectBanca(banca.id)}
+                            disabled={updatingBancaId === banca.id}
+                          >
+                            <div className="flex items-center justify-between">
+                              <span className="text-sm font-medium text-gray-900 dark:text-white">{banca.nome}</span>
+                              {banca.padrao && (
+                                <span className="rounded bg-emerald-600/20 px-1.5 py-0.5 text-[10px] font-medium text-emerald-600 dark:text-emerald-400">
+                                  Atual
+                                </span>
+                              )}
+                            </div>
+                            <div className="mt-0.5 flex items-center justify-between text-xs text-gray-500 dark:text-white/60">
+                              <span className="inline-flex items-center gap-2">
+                                <span className="rounded bg-gray-100 dark:bg-white/10 px-1.5 py-0.5 text-[10px]">{banca.status}</span>
+                              </span>
+                              <span className="ml-2 flex-1 truncate text-right">{banca.descricao}</span>
+                            </div>
+                          </button>
+                        ))}
+                    </div>
+                  )}
+
+                  <button
+                    type="button"
+                    className="flex w-full items-center justify-center gap-2 rounded-lg border border-transparent bg-emerald-600 px-3 py-2 text-xs font-semibold text-white shadow-lg shadow-emerald-600/20 transition-colors hover:bg-emerald-700 dark:border-emerald-600/30 dark:bg-brand-emerald/15 dark:text-brand-emerald dark:hover:bg-brand-emerald/25"
+                    onClick={handleCreateBanca}
+                  >
+                    + Nova Banca
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
+          <nav className={`flex-1 ${sectionPadding}`}>
+            <ul className="space-y-1">
+              <li>
+                <NavLink to={ROUTES.DASHBOARD} className={({ isActive }) => navLinkClasses(isActive, collapsed)}>
+                  <LayoutGrid className="h-5 w-5" strokeWidth={2} />
+                  {!collapsed && <span>Início</span>}
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to={ROUTES.BANCAS} className={({ isActive }) => navLinkClasses(isActive, collapsed)}>
+                  <Layers className="h-5 w-5" strokeWidth={2} />
+                  {!collapsed && <span>Bancas</span>}
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to={ROUTES.ATUALIZAR} className={({ isActive }) => navLinkClasses(isActive, collapsed)}>
+                  <RefreshCw className="h-5 w-5" strokeWidth={2} />
+                  {!collapsed && <span>Apostas</span>}
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to={ROUTES.FINANCEIRO} className={({ isActive }) => navLinkClasses(isActive, collapsed)}>
+                  <Wallet className="h-5 w-5" strokeWidth={2} />
+                  {!collapsed && <span>Financeiro</span>}
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to={ROUTES.ANALISE} className={({ isActive }) => navLinkClasses(isActive, collapsed)}>
+                  <BarChart3 className="h-5 w-5" strokeWidth={2} />
+                  {!collapsed && <span>Análise</span>}
+                </NavLink>
+              </li>
+            </ul>
+          </nav>
+
+          {!collapsed && (
+            <div className={`mb-6 ${sectionPadding}`}>
+              <div className="rounded-[24px] border border-gray-200 bg-white p-4 shadow-sm dark:border-emerald-700/20 dark:bg-transparent dark:bg-gradient-to-br dark:from-emerald-900/40 dark:to-emerald-800/20 dark:backdrop-blur-2xl">
+                <div className="mb-3 flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <div className={`flex h-7 w-7 items-center justify-center rounded-lg ${planVisual.badgeClass}`}>
+                      <PlanIcon className={`h-4 w-4 ${planVisual.iconClass}`} strokeWidth={2.5} />
+                    </div>
+                    <span className="text-sm font-semibold text-gray-900 dark:text-white">{planoNome}</span>
+                  </div>
+                  <button
+                    type="button"
+                    className="rounded-full p-2 text-gray-500 transition-colors hover:text-gray-900 disabled:cursor-not-allowed disabled:opacity-50 dark:text-white/70 dark:hover:text-white"
+                    aria-label="Atualizar consumo"
+                    disabled={consumoLoading}
+                  >
+                    <RefreshCw className={`h-4 w-4 ${consumoLoading ? 'animate-spin' : ''}`} strokeWidth={2} />
+                  </button>
+                </div>
+
+                <div>
+                  <div className="mb-1 flex items-center justify-between">
+                    <span className="text-xs text-gray-500 dark:text-white/70">Limite Diário</span>
+                    <span className="text-xs font-semibold text-emerald-700 dark:text-emerald-300">{isLoading ? 'Carregando...' : consumoInfo.label}</span>
+                  </div>
+                  <div className="h-1.5 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-white/10">
+                    {consumoInfo.isUnlimited ? (
+                      <div className="h-full w-full rounded-full bg-brand-linear" />
+                    ) : (
+                      <div
+                        className="h-full rounded-full bg-brand-linear transition-all"
+                        style={{ width: `${Math.min(consumoInfo.percent, 100)}%` }}
+                      />
+                    )}
+                  </div>
+                  {consumoError && (
+                    <div className="mt-2 flex items-center justify-between text-xs text-rose-600 dark:text-rose-300">
+                      <span>{consumoError}</span>
+                      <button
+                        type="button"
+                        className="font-semibold text-rose-700 underline-offset-2 transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-40 dark:text-rose-200"
+                        onClick={handleRefreshConsumo}
+                        disabled={consumoLoading}
+                      >
+                        Tentar novamente
+                      </button>
+                    </div>
                   )}
                 </div>
-                {consumoError && (
-                  <div className="mt-2 flex items-center justify-between text-xs text-rose-600 dark:text-rose-300">
-                    <span>{consumoError}</span>
-                    <button
-                      type="button"
-                      className="font-semibold text-rose-700 underline-offset-2 transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-40 dark:text-rose-200"
-                      onClick={handleRefreshConsumo}
-                      disabled={consumoLoading}
-                    >
-                      Tentar novamente
-                    </button>
-                  </div>
-                )}
+
+                <p className="mt-2 text-[11px] text-gray-500 dark:text-white/70">Renova {isLoading ? '...' : resetTime}</p>
               </div>
-
-              <p className="mt-2 text-[11px] text-gray-500 dark:text-white/70">Renova {isLoading ? '...' : resetTime}</p>
             </div>
-          </div>
-        )}
+          )}
+        </div>
 
-        <div className={`${sectionPadding} pb-6`}>
+        <div className={`${sectionPadding} py-6 border-t border-gray-100 dark:border-white/5`}>
           <div className={`flex items-center ${collapsed ? 'justify-center' : 'justify-between'}`}>
-              <div className="flex items-center gap-3">
-                {perfil?.fotoPerfil ? (
-                  <img src={perfil.fotoPerfil} alt="Foto de perfil" className="h-9 w-9 rounded-full object-cover" />
-                ) : (
-                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#14b8a6]">
-                    <Target className="h-5 w-5 text-white" strokeWidth={2.5} />
-                  </div>
-                )}
-                {!collapsed && <span className="text-gray-900 dark:text-white">{nickname}</span>}
+            <div className="flex items-center gap-3">
+              {perfil?.fotoPerfil ? (
+                <img src={perfil.fotoPerfil} alt="Foto de perfil" className="h-9 w-9 rounded-full object-cover" />
+              ) : (
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#14b8a6]">
+                  <Target className="h-5 w-5 text-white" strokeWidth={2.5} />
+                </div>
+              )}
+              {!collapsed && <span className="text-gray-900 dark:text-white">{nickname}</span>}
             </div>
             {!collapsed && (
               <div className="flex items-center gap-2">

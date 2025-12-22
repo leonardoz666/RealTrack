@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState, lazy, Suspense } from 'react';
 import {
   ArrowDownRight,
   ArrowUpRight,
+  ArrowRight,
   CalendarDays,
   ChevronDown,
   Download,
@@ -9,11 +10,14 @@ import {
   Loader2,
   Plus,
   TrendingUp,
+  TrendingDown,
   Trophy,
   Wallet,
   Upload,
+  Hourglass,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import StatCard from '../components/StatCard';
 import FilterPopover from '../components/FilterPopover';
 import DropdownSelect from '../components/DropdownSelect';
 import DateInput from '../components/DateInput';
@@ -31,6 +35,10 @@ import {
   getSportIcon,
   getSportDisplayName,
 } from '../utils/dashboardUtils';
+import {
+  betStatusPillBaseClass,
+  betStatusPillVariants,
+} from '../constants/betStatusStyles';
 import { ROUTES } from '../routes';
 
 const DashboardChart = lazy(() => import('../components/dashboard/DashboardChart'));
@@ -206,89 +214,20 @@ export default function Dashboard() {
   const crescimentoLabel = formatSignedPercent(crescimentoPercentual);
   const crescimentoNegativo = crescimentoPercentual < 0;
   const GrowthTrendIcon = crescimentoNegativo ? ArrowDownRight : ArrowUpRight;
-  const growthColorClass = crescimentoNegativo ? 'text-rose-300' : 'text-brand-neon-light';
+  const growthColorClass = crescimentoNegativo ? 'text-rose-600 dark:text-rose-300' : 'text-emerald-600 dark:text-brand-neon-light';
 
   const filterInputClass =
-    'mt-2 w-full rounded-2xl border border-border/40 bg-background px-3 py-2 text-sm text-foreground placeholder:text-foreground-muted transition focus-visible:border-brand-emerald focus-visible:ring-2 focus-visible:ring-brand-emerald/30';
+    'mt-2 w-full rounded-2xl border border-gray-300 dark:border-border/40 bg-background px-3 py-2 text-sm text-foreground placeholder:text-foreground-muted transition focus-visible:border-emerald-500 dark:focus-visible:border-brand-emerald focus-visible:ring-2 focus-visible:ring-emerald-500/30 dark:focus-visible:ring-brand-emerald/30';
 
-  const sectionCardClass = 'rounded-[32px] border border-gray-200 bg-white p-6 shadow-xl backdrop-blur-2xl transition-all duration-300 hover:scale-[1.015] hover:border-gray-300 hover:shadow-lg dark:border-emerald-700/20 dark:bg-transparent dark:bg-gradient-to-br dark:from-emerald-900/40 dark:to-emerald-800/20 dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] dark:hover:border-emerald-600/30 dark:hover:shadow-emerald-500/10';
-const evolutionCardClass =
-  'rounded-[32px] border border-gray-200 bg-white p-6 sm:p-8 text-gray-900 shadow-xl backdrop-blur-2xl transition-all duration-300 hover:scale-[1.015] hover:border-gray-300 hover:shadow-lg dark:border-emerald-700/20 dark:bg-transparent dark:bg-gradient-to-br dark:from-emerald-900/40 dark:to-emerald-800/20 dark:text-white dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] dark:hover:border-emerald-600/30 dark:hover:shadow-emerald-500/10';
-  const evolutionMetricCardClassBase = [
-    'relative',
-    'rounded-2xl',
-    'p-4',
-    'bg-gray-50',
-    'backdrop-blur-2xl',
-    'border',
-    'border-gray-200',
-    'shadow-sm',
-    'transition-all',
-    'duration-300',
-    'hover:scale-[1.015]',
-    'hover:border-gray-300',
-    'dark:bg-white/[0.06]',
-    'dark:border-white/20',
-    'dark:shadow-[0_8px_40px_rgba(0,0,0,0.6)]',
-    'dark:hover:border-white/30',
-  ].join(' ');
+  const sectionCardClass =
+    'rounded-[32px] border border-gray-200 bg-white p-6 text-gray-900 shadow-xl backdrop-blur-2xl transition hover:-translate-y-0.5 hover:shadow-lg dark:border-emerald-700/20 dark:bg-transparent dark:bg-gradient-to-br dark:from-emerald-900/40 dark:to-emerald-800/20 dark:text-white dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] dark:hover:shadow-glow';
+  const evolutionCardClass =
+    'rounded-[32px] border border-gray-200 bg-white p-6 sm:p-8 text-gray-900 shadow-xl backdrop-blur-2xl transition hover:-translate-y-0.5 hover:shadow-lg dark:border-emerald-700/20 dark:bg-transparent dark:bg-gradient-to-br dark:from-emerald-900/40 dark:to-emerald-800/20 dark:text-white dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] dark:hover:shadow-glow';
 
-  const evolutionMetricCardClassMelhor = [
-    'relative',
-    'rounded-2xl',
-    'p-4',
-    'bg-emerald-50',
-    'backdrop-blur-2xl',
-    'border',
-    'border-emerald-200',
-    'shadow-sm',
-    'transition-all',
-    'duration-300',
-    'hover:scale-[1.015]',
-    'hover:border-emerald-300',
-    'dark:bg-emerald-900/40',
-    'dark:border-emerald-500/50',
-    'dark:shadow-[0_8px_40px_rgba(16,185,129,0.1)]',
-    'dark:hover:border-emerald-500/60',
-  ].join(' ');
-
-  const evolutionMetricCardClassPior = [
-    'relative',
-    'rounded-2xl',
-    'p-4',
-    'bg-rose-50',
-    'backdrop-blur-2xl',
-    'border',
-    'border-rose-200',
-    'shadow-sm',
-    'transition-all',
-    'duration-300',
-    'hover:scale-[1.015]',
-    'hover:border-rose-300',
-    'dark:bg-rose-900/40',
-    'dark:border-rose-500/50',
-    'dark:shadow-[0_8px_40px_rgba(244,63,94,0.1)]',
-    'dark:hover:border-rose-500/60',
-  ].join(' ');
-
-  const evolutionMetricCardClassMedia = [
-    'relative',
-    'rounded-2xl',
-    'p-4',
-    'bg-blue-900/40',
-    'backdrop-blur-2xl',
-    'border',
-    'border-blue-500/50',
-    'shadow-[0_8px_40px_rgba(59,130,246,0.1)]',
-    'transition-all',
-    'duration-300',
-    'hover:scale-[1.015]',
-    'hover:border-blue-500/60',
-  ].join(' ');
   const timeframeSwitchBaseClass =
     'rounded-full px-4 py-1.5 text-xs font-semibold uppercase tracking-wide transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-neon/40';
   const evolutionChartShellClass =
-    'rounded-[28px] border border-white/10 bg-black/10 p-4 sm:p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] backdrop-blur transition-all duration-300 hover:border-white/20 hover:bg-black/20';
+    'rounded-[28px] border border-gray-200 bg-gray-50/50 p-4 sm:p-6 shadow-sm backdrop-blur transition-all duration-300 hover:border-gray-300 hover:bg-gray-50 dark:border-white/10 dark:bg-black/10 dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] dark:hover:border-white/20 dark:hover:bg-black/20';
   const lucroLineGradientId = 'lucroLineGradient';
 
   // Show skeleton on initial load
@@ -419,45 +358,68 @@ const evolutionCardClass =
       <section className="grid gap-5 lg:grid-cols-5">
         <div
           className={cn(
-            'col-span-1 space-y-6 rounded-lg border border-border/30 p-6 text-slate-100 shadow-card lg:col-span-2 transition-all duration-300 hover:scale-[1.01 hover:shadow-[0_0_40px_rgba(16,185,129,0.15)] hover:border-emerald-500/30',
-            'bg-bank-hero'
+            'col-span-1 flex flex-col justify-between rounded-[32px] border border-gray-200 bg-white p-8 text-gray-900 shadow-xl backdrop-blur-2xl lg:col-span-2 transition-all duration-300 hover:border-gray-300 hover:shadow-lg',
+            'dark:border-emerald-500/30 dark:bg-gradient-to-br dark:from-[#032b26] dark:via-[#0d5f52] dark:to-[#032b26] dark:text-white dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)]'
           )}
         >
-          <div className="flex flex-wrap items-start justify-between gap-4">
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-widest text-white/60">Saldo da banca</p>
-              <p className="text-4xl font-bold tracking-tight mt-1">{formatCurrency(metricas.saldoBanca)}</p>
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-emerald-500 dark:text-[#5eead4]">Saldo da banca</p>
+              <span className={cn(
+                "inline-flex items-center gap-1 rounded-full px-3 py-1 text-sm font-bold",
+                metricas.roi >= 0 
+                  ? "bg-emerald-100 text-emerald-600 dark:bg-emerald-400/20 dark:text-emerald-300"
+                  : "bg-rose-100 text-rose-600 dark:bg-rose-400/20 dark:text-rose-300"
+              )}>
+                {metricas.roi >= 0 ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
+                {formatSignedPercent(metricas.roi)}
+              </span>
             </div>
-            <span className="inline-flex items-center gap-2 rounded-2xl border border-emerald-400/30 bg-emerald-400/10 px-4 py-2 text-sm font-bold text-emerald-100 shadow-glow">
-              <TrendingUp size={16} />
-              {formatSignedPercent(metricas.roi)}
-            </span>
-          </div>
+            
+            <p className="text-5xl font-bold tracking-tight text-gray-900 dark:text-white">
+              {formatCurrency(metricas.saldoBanca)}
+            </p>
 
-          <div className="grid gap-6 md:grid-cols-2 pt-2">
-            <div className="space-y-1 rounded-xl p-3 transition-colors hover:bg-white/10">
-              <p className="text-white/60 font-semibold uppercase tracking-wider text-[0.7rem]">Lucro total</p>
-              <p className="text-2xl font-bold text-white leading-tight">{formatCurrency(metricas.lucroTotal)}</p>
-            </div>
-            <div className="flex items-end justify-end">
-              <button className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-white/20 hover:scale-[1.02] active:scale-[0.98]">
-                Ver detalhes <ArrowUpRight size={16} />
+            <div className="flex items-end justify-between">
+              <div>
+                <p className="text-[0.65rem] font-bold uppercase tracking-[0.2em] text-gray-400 dark:text-emerald-100/60 mb-1">Lucro total</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{formatCurrency(metricas.lucroTotal)}</p>
+              </div>
+              <button className="inline-flex items-center gap-2 rounded-full bg-gray-900 px-6 py-2.5 text-sm font-bold text-white transition hover:bg-gray-800 hover:scale-[1.02] active:scale-[0.98] dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100">
+                Ver detalhes <ArrowRight size={16} />
               </button>
             </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-4 pt-4 border-t border-white/10">
-            <div className="space-y-1 rounded-xl p-2 transition-colors hover:bg-white/10">
-              <span className="text-white/50 text-[0.65rem] font-bold uppercase tracking-widest">Total Investido</span>
-              <p className="text-base font-bold text-white">{formatCurrency(metricas.totalInvestido)}</p>
+          <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4 rounded-3xl bg-gray-50 p-6 dark:bg-[#000000]/20 backdrop-blur-md">
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <div className="flex h-6 w-6 items-center justify-center rounded bg-blue-100 text-blue-600 dark:bg-blue-500/20 dark:text-blue-300">
+                   <Wallet size={14} strokeWidth={2.5} />
+                </div>
+                <span className="text-[0.65rem] font-bold uppercase tracking-[0.15em] text-gray-500 dark:text-emerald-100/70">Total Investido</span>
+              </div>
+              <p className="text-xl font-bold text-gray-900 dark:text-white">{formatCurrency(metricas.totalInvestido)}</p>
             </div>
-            <div className="space-y-1 text-center rounded-xl p-2 transition-colors hover:bg-white/10">
-              <span className="text-white/50 text-[0.65rem] font-bold uppercase tracking-widest">Valor Pendente</span>
-              <p className="text-base font-bold text-amber-300">{formatCurrency(metricas.totalInvestidoPendente || 0)}</p>
+
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <div className="flex h-6 w-6 items-center justify-center rounded bg-amber-100 text-amber-600 dark:bg-amber-500/20 dark:text-amber-300">
+                   <Hourglass size={14} strokeWidth={2.5} />
+                </div>
+                <span className="text-[0.65rem] font-bold uppercase tracking-[0.15em] text-gray-500 dark:text-emerald-100/70">Valor Pendente</span>
+              </div>
+              <p className="text-xl font-bold text-amber-600 dark:text-amber-300">{formatCurrency(metricas.totalInvestidoPendente || 0)}</p>
             </div>
-            <div className="space-y-1 text-right rounded-xl p-2 transition-colors hover:bg-white/10">
-              <span className="text-white/50 text-[0.65rem] font-bold uppercase tracking-widest">Valor Perdido</span>
-              <p className="text-base font-bold text-rose-300">{formatCurrency(metricas.valorPerdido || 0)}</p>
+
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <div className="flex h-6 w-6 items-center justify-center rounded bg-rose-100 text-rose-600 dark:bg-rose-500/20 dark:text-rose-300">
+                   <TrendingDown size={14} strokeWidth={2.5} />
+                </div>
+                <span className="text-[0.65rem] font-bold uppercase tracking-[0.15em] text-gray-500 dark:text-emerald-100/70">Valor Perdido</span>
+              </div>
+              <p className="text-xl font-bold text-rose-600 dark:text-rose-300">{formatCurrency(metricas.valorPerdido || 0)}</p>
             </div>
           </div>
         </div>
@@ -465,21 +427,21 @@ const evolutionCardClass =
         {/* Mini Cards Depósitos e Saques */}
         <div className="flex flex-col gap-4 lg:col-span-1">
           <div className={cn(sectionCardClass, 'flex items-center gap-3 p-4 h-full')}>
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-400">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400">
               <Wallet size={18} />
             </div>
             <div>
-              <p className="text-[0.6rem] font-bold uppercase tracking-[0.2em] text-white/50">Depósitos</p>
-              <p className="text-lg font-bold text-white leading-tight mt-0.5">{formatCurrency(metricas.totalDepositado)}</p>
+              <p className="text-[0.6rem] font-bold uppercase tracking-[0.2em] text-gray-500 dark:text-white/50">Depósitos</p>
+              <p className="text-lg font-bold text-gray-900 dark:text-white leading-tight mt-0.5">{formatCurrency(metricas.totalDepositado)}</p>
             </div>
           </div>
           <div className={cn(sectionCardClass, 'flex items-center gap-3 p-4 h-full')}>
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-400">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400">
               <Upload size={18} />
             </div>
             <div>
-              <p className="text-[0.6rem] font-bold uppercase tracking-[0.2em] text-white/50">Saques</p>
-              <p className="text-lg font-bold text-white leading-tight mt-0.5">{formatCurrency(metricas.totalSacado)}</p>
+              <p className="text-[0.6rem] font-bold uppercase tracking-[0.2em] text-gray-500 dark:text-white/50">Saques</p>
+              <p className="text-lg font-bold text-gray-900 dark:text-white leading-tight mt-0.5">{formatCurrency(metricas.totalSacado)}</p>
             </div>
           </div>
         </div>
@@ -487,7 +449,7 @@ const evolutionCardClass =
         <div className={cn(sectionCardClass, 'space-y-4 lg:col-span-2')}>
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-brand-emerald/15 text-brand-emerald">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-600 dark:bg-brand-emerald/15 dark:text-brand-emerald">
                 <Trophy className="h-5 w-5" />
               </div>
               <div>
@@ -497,18 +459,18 @@ const evolutionCardClass =
             </div>
             <span className="text-3xl font-semibold text-foreground">{accuracyPercentLabel}</span>
           </div>
-          <div className="grid gap-4 rounded-2xl border border-white/5 bg-white/5 p-4 text-sm text-foreground sm:grid-cols-3">
-            <div className="rounded-xl p-2 transition-colors hover:bg-white/10">
+          <div className="grid gap-4 rounded-2xl border border-gray-100 bg-gray-50 p-4 text-sm text-foreground sm:grid-cols-3 dark:border-white/5 dark:bg-white/5">
+            <div className="rounded-xl p-2 transition-colors hover:bg-gray-100 dark:hover:bg-white/10">
               <p className={cn('text-2xs uppercase tracking-[0.3em] text-foreground-muted', softLabelTextClass)}>Apostas</p>
               <p className="mt-1 text-xl font-semibold text-foreground">{totalApostas}</p>
             </div>
-            <div className="rounded-xl p-2 transition-colors hover:bg-white/10">
+            <div className="rounded-xl p-2 transition-colors hover:bg-gray-100 dark:hover:bg-white/10">
               <p className={cn('text-2xs uppercase tracking-[0.3em] text-foreground-muted', softLabelTextClass)}>Greens</p>
-              <p className="mt-1 text-xl font-semibold text-emerald-400">{apostasGanhas}</p>
+              <p className="mt-1 text-xl font-semibold text-emerald-600 dark:text-emerald-400">{apostasGanhas}</p>
             </div>
-            <div className="rounded-xl p-2 transition-colors hover:bg-white/10">
+            <div className="rounded-xl p-2 transition-colors hover:bg-gray-100 dark:hover:bg-white/10">
               <p className={cn('text-2xs uppercase tracking-[0.3em] text-foreground-muted', softLabelTextClass)}>Reds</p>
-              <p className="mt-1 text-xl font-semibold text-rose-400">{derrotasCalculadas}</p>
+              <p className="mt-1 text-xl font-semibold text-rose-600 dark:text-rose-400">{derrotasCalculadas}</p>
             </div>
           </div>
           <div className="rounded-full bg-foreground/10 p-0.5">
@@ -526,15 +488,15 @@ const evolutionCardClass =
         <div className={cn(evolutionCardClass, 'space-y-6')}>
           <div className="flex flex-wrap items-start justify-between gap-6">
             <div className="flex items-start gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 text-[#7efee0]">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-600 dark:bg-white/10 dark:text-[#7efee0]">
                 <CalendarDays className="h-6 w-6" />
               </div>
               <div>
-                <p className="text-2xl font-semibold text-white">Evolução do Lucro</p>
-                <p className="text-sm text-white/70">Acompanhe o desempenho financeiro do seu negócio.</p>
+                <p className="text-2xl font-semibold text-gray-900 dark:text-white">Evolução do Lucro</p>
+                <p className="text-sm text-gray-500 dark:text-white/70">Acompanhe o desempenho financeiro do seu negócio.</p>
               </div>
             </div>
-            <div className="flex items-center gap-2 rounded-full border border-white/10 bg-black/20 p-1">
+            <div className="flex items-center gap-2 rounded-full border border-gray-200 bg-gray-100 p-1 dark:border-white/10 dark:bg-black/20">
               {timeframeOptions.map((option) => (
                 <button
                   key={option.value}
@@ -542,8 +504,8 @@ const evolutionCardClass =
                   className={cn(
                     timeframeSwitchBaseClass,
                     periodoGrafico === option.value
-                      ? 'bg-[#1fe7cb] text-[#031d1a] shadow-[0_15px_30px_rgba(31,231,203,0.35)]'
-                      : 'text-white/65 hover:text-white'
+                      ? 'bg-white text-gray-900 shadow-sm dark:bg-[#1fe7cb] dark:text-[#031d1a] dark:shadow-[0_15px_30px_rgba(31,231,203,0.35)]'
+                      : 'text-gray-500 hover:text-gray-900 dark:text-white/65 dark:hover:text-white'
                   )}
                   onClick={() => setPeriodoGrafico(option.value)}
                   disabled={loading}
@@ -555,46 +517,27 @@ const evolutionCardClass =
           </div>
 
           <div className="mx-auto grid max-w-3xl gap-8 md:grid-cols-3">
-            {/* <div className={evolutionMetricCardClass}>
-              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-white/60">Total acumulado</p>
-              <p className="mt-2 text-3xl font-semibold text-white">{formatCurrency(lucroPeriodo)}</p>
-              <p className={cn('mt-3 flex items-center gap-2 text-sm font-semibold', growthColorClass)}>
-                <GrowthTrendIcon className="h-4 w-4" /> {crescimentoLabel} vs período anterior
-              </p>
-            </div> */}
-            <div className={evolutionMetricCardClassMelhor}>
-              <div className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-br from-emerald-500/10 via-transparent to-transparent opacity-50" />
-              <div className="relative z-10">
-                <div className="mb-2 flex items-center gap-2">
-                  <CalendarDays className="h-4 w-4 text-emerald-500" />
-                  <p className="text-[10px] font-bold tracking-widest text-emerald-500 uppercase">Melhor dia</p>
-                </div>
-                <p className="text-2xl font-bold text-white">{formatCurrency(melhorDia && melhorDia.valor ? melhorDia.valor : 0)}</p>
-                <p className="mt-1 text-xs font-medium text-emerald-500/60">{melhorDia && melhorDia.data ? melhorDia.data : ''}</p>
-              </div>
-            </div>
-            <div className={evolutionMetricCardClassPior}>
-              <div className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-br from-rose-500/10 via-transparent to-transparent opacity-50" />
-              <div className="relative z-10">
-                <div className="mb-2 flex items-center gap-2">
-                  <CalendarDays className="h-4 w-4 text-rose-500" />
-                  <p className="text-[10px] font-bold tracking-widest text-rose-500 uppercase">Pior dia</p>
-                </div>
-                <p className="text-2xl font-bold text-white">{formatCurrency(piorDia && piorDia.valor ? piorDia.valor : 0)}</p>
-                <p className="mt-1 text-xs font-medium text-rose-500/60">{piorDia && piorDia.data ? piorDia.data : ''}</p>
-              </div>
-            </div>
-            <div className={evolutionMetricCardClassMedia}>
-              <div className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-500/10 via-transparent to-transparent opacity-50" />
-              <div className="relative z-10">
-                <div className="mb-2 flex items-center gap-2">
-                  <CalendarDays className="h-4 w-4 text-blue-500" />
-                  <p className="text-[10px] font-bold tracking-widest text-blue-500 uppercase">Média diária</p>
-                </div>
-                <p className="text-2xl font-bold text-white">{formatCurrency(mediaDiaria || 0)}</p>
-                <p className="mt-1 text-xs font-medium text-blue-500/60">Últimos {periodoDiasLabel}</p>
-              </div>
-            </div>
+            <StatCard
+              title="Melhor dia"
+              value={formatCurrency(melhorDia && melhorDia.valor ? melhorDia.valor : 0)}
+              helper={melhorDia && melhorDia.data ? melhorDia.data : 'Sem dados'}
+              icon={<CalendarDays className="h-5 w-5" />}
+              color="emerald"
+            />
+            <StatCard
+              title="Pior dia"
+              value={formatCurrency(piorDia && piorDia.valor ? piorDia.valor : 0)}
+              helper={piorDia && piorDia.data ? piorDia.data : 'Sem dados'}
+              icon={<CalendarDays className="h-5 w-5" />}
+              color="red"
+            />
+            <StatCard
+              title="Média diária"
+              value={formatCurrency(mediaDiaria || 0)}
+              helper={`Últimos ${periodoDiasLabel}`}
+              icon={<CalendarDays className="h-5 w-5" />}
+              color="blue"
+            />
           </div>
 
           <div className={evolutionChartShellClass}>
@@ -635,15 +578,27 @@ const evolutionCardClass =
           ) : (
             <div className="space-y-3">
               {apostasRecentes.slice(0, 5).map((aposta) => {
-                const status = aposta.status?.toUpperCase() ?? 'PENDENTE';
-                const positive = status === 'GANHOU';
-                const negative = status === 'PERDEU';
-                const statusClass = positive
-                  ? 'border border-emerald-500/20 bg-emerald-500/10 text-emerald-400'
-                  : negative
-                    ? 'border border-red-500/30 bg-red-500/15 text-red-500'
-                    : 'border border-white/10 bg-white/5 text-white/70';
-                const valueClass = positive ? 'text-emerald-400' : negative ? 'text-rose-400' : 'text-foreground';
+                const rawStatus = aposta.status ?? 'Pendente';
+                
+                // Helper para normalizar o status
+                const getStatusKey = (s: string): keyof typeof betStatusPillVariants => {
+                  const upper = s.toUpperCase();
+                  if (upper === 'GANHOU' || upper === 'GANHA') return 'Ganha';
+                  if (upper === 'PERDEU' || upper === 'PERDIDA') return 'Perdida';
+                  if (upper === 'MEIO GANHA') return 'Meio Ganha';
+                  if (upper === 'MEIO PERDIDA') return 'Meio Perdida';
+                  
+                  const match = Object.keys(betStatusPillVariants).find(k => k.toUpperCase() === upper);
+                  return (match as keyof typeof betStatusPillVariants) || 'default';
+                };
+
+                const statusKey = getStatusKey(rawStatus);
+                const statusClass = betStatusPillVariants[statusKey];
+
+                const isPositive = statusKey === 'Ganha' || statusKey === 'Meio Ganha';
+                const isNegative = statusKey === 'Perdida' || statusKey === 'Meio Perdida';
+                
+                const valueClass = isPositive ? 'text-emerald-600 dark:text-emerald-400' : isNegative ? 'text-rose-600 dark:text-rose-400' : 'text-gray-900 dark:text-foreground';
                 const rawDate = aposta.dataEvento ? new Date(aposta.dataEvento) : null;
                 const formattedDate = rawDate && !Number.isNaN(rawDate.getTime())
                   ? rawDate.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })
@@ -655,17 +610,17 @@ const evolutionCardClass =
                 return (
                   <div
                     key={aposta.id}
-                    className="flex items-center justify-between rounded-2xl border border-white/5 bg-white/5 px-4 py-3 text-sm transition-all duration-300 hover:bg-white/10 hover:border-white/20 hover:scale-[1.01]"
+                    className="flex items-center justify-between rounded-2xl border border-gray-100 bg-gray-50 px-4 py-3 text-sm transition-all duration-300 hover:bg-gray-100 hover:border-gray-200 hover:scale-[1.01] dark:border-white/5 dark:bg-white/5 dark:hover:bg-white/10 dark:hover:border-white/20"
                   >
                     <div className="space-y-0.5">
-                      <p className="font-semibold text-foreground">{description}</p>
+                      <p className="font-semibold text-gray-900 dark:text-foreground">{description}</p>
                       <p className={cn('text-xs text-foreground-muted', softLabelTextClass)}>
                         {formattedDate} · Odd {oddLabel} · {bettingHouse}
                       </p>
                     </div>
                     <div className="flex items-center gap-3">
-                      <span className={cn('rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide', statusClass)}>
-                        {status}
+                      <span className={cn(betStatusPillBaseClass, statusClass)}>
+                        {rawStatus}
                       </span>
                       <span className={cn('text-base font-semibold', valueClass)}>
                         {formatSignedCurrency(aposta.lucro ?? 0)}
@@ -726,7 +681,7 @@ function BreakdownList({ items, expandedId, onToggle, emptyMessage }: BreakdownL
     return (
       <div
         className={cn(
-          'rounded-2xl border border-dashed border-white/10 bg-[#0b1f1f]/60 px-4 py-10 text-center text-sm text-white/60 backdrop-blur',
+          'rounded-2xl border border-dashed border-gray-200 bg-gray-50 px-4 py-10 text-center text-sm text-gray-500 backdrop-blur dark:border-white/10 dark:bg-[#0b1f1f]/60 dark:text-white/60',
           labelTextClass
         )}
       >
@@ -753,19 +708,19 @@ function BreakdownList({ items, expandedId, onToggle, emptyMessage }: BreakdownL
               : 'from-rose-500 to-red-500';
         const roiBadgeClass =
           roiValue > 0
-            ? 'border border-emerald-500/30 bg-emerald-500/15 text-emerald-300'
+            ? 'border border-emerald-200 bg-emerald-50 text-emerald-600 dark:border-emerald-500/30 dark:bg-emerald-500/15 dark:text-emerald-300'
             : roiValue < 0
-              ? 'border border-rose-500/30 bg-rose-500/15 text-rose-300'
-              : 'border border-white/10 bg-white/5 text-white/70';
-        const lucroClass = lucroPositive ? 'text-emerald-300' : lucroNeutral ? 'text-white/70' : 'text-rose-300';
+              ? 'border border-rose-200 bg-rose-50 text-rose-600 dark:border-rose-500/30 dark:bg-rose-500/15 dark:text-rose-300'
+              : 'border border-gray-200 bg-gray-50 text-gray-500 dark:border-white/10 dark:bg-white/5 dark:text-white/70';
+        const lucroClass = lucroPositive ? 'text-emerald-600 dark:text-emerald-300' : lucroNeutral ? 'text-gray-500 dark:text-white/70' : 'text-rose-600 dark:text-rose-300';
         const roiNormalized = Math.max(0, Math.min(100, (roiValue + 100) / 2));
 
         return (
           <div
             key={item.id}
             className={cn(
-              'rounded-2xl border bg-[#0b1f1f] text-foreground shadow-[0_25px_35px_rgba(0,0,0,0.35)] transition-all duration-300 backdrop-blur-sm',
-              isExpanded ? 'border-emerald-500/40 shadow-emerald-500/10' : 'border-white/5 hover:border-white/20 hover:scale-[1.01]'
+              'rounded-2xl border bg-white text-foreground shadow-sm transition-all duration-300 backdrop-blur-sm dark:bg-[#0b1f1f] dark:shadow-[0_25px_35px_rgba(0,0,0,0.35)]',
+              isExpanded ? 'border-emerald-500/40 shadow-emerald-500/10' : 'border-gray-200 hover:border-gray-300 hover:scale-[1.01] dark:border-white/5 dark:hover:border-white/20'
             )}
           >
             <button
@@ -774,15 +729,15 @@ function BreakdownList({ items, expandedId, onToggle, emptyMessage }: BreakdownL
               className="flex w-full items-center gap-4 px-4 py-4 text-left"
               aria-expanded={isExpanded}
             >
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-white/10 bg-gradient-to-br from-[#1b3a37] to-[#132826] text-2xl">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-gray-100 bg-emerald-50 text-2xl text-emerald-600 dark:border-white/10 dark:bg-gradient-to-br dark:from-[#1b3a37] dark:to-[#132826] dark:text-white">
                 {item.icon}
               </div>
               <div className="flex-1">
-                <p className="text-base font-semibold text-white">{item.name}</p>
-                <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-white/60">
+                <p className="text-base font-semibold text-gray-900 dark:text-white">{item.name}</p>
+                <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-gray-500 dark:text-white/60">
                   <span>{item.apostas} apostas</span>
                   <span>•</span>
-                  <span className={cn(rawWinPercent >= 40 ? 'text-emerald-300' : rawWinPercent === 0 ? 'text-white/60' : 'text-rose-300')}>
+                  <span className={cn(rawWinPercent >= 40 ? 'text-emerald-600 dark:text-emerald-300' : rawWinPercent === 0 ? 'text-gray-500 dark:text-white/60' : 'text-rose-600 dark:text-rose-300')}>
                     {formatPercent(clampedWinPercent)} win
                   </span>
                 </div>
@@ -790,14 +745,14 @@ function BreakdownList({ items, expandedId, onToggle, emptyMessage }: BreakdownL
               <div className={cn('rounded-lg px-3 py-1.5 text-sm font-semibold', roiBadgeClass)}>{formatSignedPercent(roiValue)}</div>
               <div className="text-right">
                 <p className={cn('text-base font-semibold', lucroClass)}>{formatSignedCurrency(item.lucro)}</p>
-                <p className="text-xs uppercase tracking-wide text-white/50">Lucro</p>
+                <p className="text-xs uppercase tracking-wide text-gray-400 dark:text-white/50">Lucro</p>
               </div>
-              <ChevronDown className={cn('ml-2 h-5 w-5 text-white/50 transition', isExpanded && 'rotate-180 text-white/80')} />
+              <ChevronDown className={cn('ml-2 h-5 w-5 text-gray-400 transition dark:text-white/50', isExpanded && 'rotate-180 text-gray-600 dark:text-white/80')} />
             </button>
 
             {isExpanded && (
-              <div className="border-t border-white/10 bg-white/5 px-4 pb-5 pt-4">
-                <div className="grid gap-3 pt-2 text-sm text-white sm:grid-cols-2 lg:grid-cols-4">
+              <div className="border-t border-gray-100 bg-gray-50 px-4 pb-5 pt-4 dark:border-white/10 dark:bg-white/5">
+                <div className="grid gap-3 pt-2 text-sm text-gray-900 dark:text-white sm:grid-cols-2 lg:grid-cols-4">
                   <BreakdownStat label="Apostas" value={item.apostas.toString()} />
                   <BreakdownStat
                     label="Vitórias"
@@ -814,7 +769,7 @@ function BreakdownList({ items, expandedId, onToggle, emptyMessage }: BreakdownL
                 </div>
 
                 {item.extraStats?.length ? (
-                  <div className="mt-3 grid gap-3 text-sm text-white sm:grid-cols-2 lg:grid-cols-4">
+                  <div className="mt-3 grid gap-3 text-sm text-gray-900 dark:text-white sm:grid-cols-2 lg:grid-cols-4">
                     {item.extraStats.map((extra) => (
                       <BreakdownStat
                         key={`${item.id}-${extra.label}`}
@@ -828,11 +783,11 @@ function BreakdownList({ items, expandedId, onToggle, emptyMessage }: BreakdownL
                 ) : null}
 
                 <div className="mt-5">
-                  <div className="flex items-center justify-between text-xs text-white/60">
+                  <div className="flex items-center justify-between text-xs text-gray-500 dark:text-white/60">
                     <span>Taxa de aproveitamento</span>
                     <span>{formatPercent(clampedWinPercent)}</span>
                   </div>
-                  <div className="mt-2 h-2 rounded-full border border-white/10 bg-[#071312]">
+                  <div className="mt-2 h-2 rounded-full border border-gray-200 bg-gray-200 dark:border-white/10 dark:bg-[#071312]">
                     <div
                       className={cn('h-full rounded-full bg-gradient-to-r transition-all duration-500', progressColor)}
                       style={{ width: `${clampedWinPercent}%` }}
@@ -840,7 +795,7 @@ function BreakdownList({ items, expandedId, onToggle, emptyMessage }: BreakdownL
                   </div>
                 </div>
 
-                <div className="mt-4 flex flex-col gap-3 text-xs text-white/60 sm:flex-row sm:items-center sm:justify-between">
+                <div className="mt-4 flex flex-col gap-3 text-xs text-gray-500 dark:text-white/60 sm:flex-row sm:items-center sm:justify-between">
                   <span>Retorno sobre investimento</span>
                   <div className="flex items-center gap-3">
                     <div className="flex gap-1">
@@ -853,12 +808,12 @@ function BreakdownList({ items, expandedId, onToggle, emptyMessage }: BreakdownL
                             : roiNormalized >= 40
                               ? 'bg-amber-500'
                               : 'bg-rose-500'
-                          : 'bg-white/10';
+                          : 'bg-gray-200 dark:bg-white/10';
 
                         return <span key={`${item.id}-roi-${index}`} className={cn('h-6 w-1.5 rounded-sm transition', fillClass)} />;
                       })}
                     </div>
-                    <span className={cn('text-sm font-semibold', roiValue > 0 ? 'text-emerald-300' : roiValue < 0 ? 'text-rose-300' : 'text-white/70')}>
+                    <span className={cn('text-sm font-semibold', roiValue > 0 ? 'text-emerald-600 dark:text-emerald-300' : roiValue < 0 ? 'text-rose-600 dark:text-rose-300' : 'text-gray-500 dark:text-white/70')}>
                       {formatSignedPercent(roiValue)}
                     </span>
                   </div>
@@ -884,18 +839,18 @@ function BreakdownStat({
   highlight?: 'positive' | 'negative';
 }) {
   return (
-    <div className="rounded-xl border border-white/10 bg-[#0d2424] p-3">
-      <p className="text-[10px] uppercase tracking-[0.25em] text-white/45">{label}</p>
+    <div className="rounded-xl border border-gray-200 bg-white p-3 dark:border-white/10 dark:bg-[#0d2424]">
+      <p className="text-[10px] uppercase tracking-[0.25em] text-gray-400 dark:text-white/45">{label}</p>
       <p
         className={cn(
-          'mt-2 text-xl font-semibold text-white',
-          highlight === 'positive' && 'text-emerald-300',
-          highlight === 'negative' && 'text-rose-300'
+          'mt-2 text-xl font-semibold text-gray-900 dark:text-white',
+          highlight === 'positive' && 'text-emerald-600 dark:text-emerald-300',
+          highlight === 'negative' && 'text-rose-600 dark:text-rose-300'
         )}
       >
         {value}
       </p>
-      {helper && <p className="text-xs text-white/60">{helper}</p>}
+      {helper && <p className="text-xs text-gray-500 dark:text-white/60">{helper}</p>}
     </div>
   );
 }

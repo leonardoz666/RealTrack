@@ -71,21 +71,21 @@ export const chartTheme = {
   lineDot: {
     r: 4,
     strokeWidth: 2,
-    stroke: '#2563eb',
-    fill: 'rgba(37, 99, 235, 0.35)'
+    stroke: 'var(--success)',
+    fill: 'rgba(var(--success-rgb), 0.35)'
   },
   lineActiveDot: {
     r: 6,
     strokeWidth: 2,
-    stroke: '#2563eb',
+    stroke: 'var(--success)',
     fill: 'var(--surface)'
   },
   gradients: {
     roi: {
       id: ROI_GRADIENT_ID,
       stops: [
-        { offset: '0%', color: '#2563eb', opacity: 0.95 },
-        { offset: '100%', color: '#2563eb', opacity: 0.2 }
+        { offset: '0%', color: 'var(--success)', opacity: 0.95 },
+        { offset: '100%', color: 'var(--success)', opacity: 0.2 }
       ]
     },
     odds: {

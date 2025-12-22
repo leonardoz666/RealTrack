@@ -42,7 +42,7 @@ export function AnaliseFilters({ value, onChange }: AnaliseFiltersProps) {
   const fieldClass = 'flex flex-col gap-2 rounded-2xl border border-border/40 bg-background-card/40 p-2 shadow-sm shadow-black/0 backdrop-blur';
   const labelClass = 'text-2xs font-semibold uppercase tracking-[0.35em] text-foreground-muted';
   const inputClass =
-    'w-full rounded-2xl border border-border/50 bg-background px-3 py-2 text-sm text-foreground placeholder:text-foreground-muted shadow-sm transition focus-visible:border-brand-emerald focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-emerald/30';
+    'w-full rounded-2xl border border-gray-300 dark:border-border/50 bg-background px-3 py-2 text-sm text-foreground placeholder:text-foreground-muted shadow-sm transition focus-visible:border-emerald-500 dark:focus-visible:border-brand-emerald focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/30 dark:focus-visible:ring-brand-emerald/30';
   const hintClass = 'text-xs leading-relaxed text-foreground-muted';
 
   const handleFilterChange = useCallback(

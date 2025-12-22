@@ -49,12 +49,12 @@ function FilterPopoverAnalise({ open, onClose, onClear, children, footer, maxWid
 	return (
 		<div
 			ref={popoverRef}
-			className="absolute right-0 top-full mt-2 z-50 w-auto max-w-none rounded-lg border border-border/30 bg-background-card p-2 shadow-lg overflow-visible"
+			className="absolute right-0 top-full mt-2 z-50 w-auto max-w-none rounded-lg border border-gray-200 bg-background-card p-2 shadow-lg overflow-visible dark:border-border/30"
 			style={{ minWidth: 360, maxWidth: maxWidthStyle }}
 			role="dialog"
 			aria-modal="true"
 		>
-			<div className="flex items-center justify-between gap-2 border-b border-border/20 pb-2">
+			<div className="flex items-center justify-between gap-2 border-b border-gray-200 pb-2 dark:border-border/20">
 				<p className="text-sm font-semibold uppercase tracking-[0.3em] text-foreground-muted">Filtros</p>
 				<div className="flex items-center gap-3 text-sm font-semibold">
 					{onClear && (
@@ -68,7 +68,7 @@ function FilterPopoverAnalise({ open, onClose, onClear, children, footer, maxWid
 					)}
 					<button
 						type="button"
-						className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-border/40 bg-background text-foreground transition hocus:border-brand-emerald/60 hocus:text-brand-emerald"
+						className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-gray-200 bg-background text-foreground transition hocus:border-brand-emerald/60 hocus:text-brand-emerald dark:border-border/40"
 						onClick={onClose}
 						aria-label="Fechar filtros"
 					>
@@ -78,7 +78,7 @@ function FilterPopoverAnalise({ open, onClose, onClear, children, footer, maxWid
 			</div>
 			<div className="mt-2 flex flex-col gap-1">
 				<div className="max-h-[60vh] space-y-1 overflow-y-auto pr-0">{children}</div>
-				{footer && <div className="border-t border-border/20 pt-2">{footer}</div>}
+				{footer && <div className="border-t border-gray-200 pt-2 dark:border-border/20">{footer}</div>}
 			</div>
 		</div>
 	);

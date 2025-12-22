@@ -1,7 +1,5 @@
 import { AlertTriangle, Check, Copy, Eye, LineChart, Loader2, Pencil, Plus, Share2, Trash2, User, X } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
-import { FixedSizeList as List, type ListChildComponentProps } from 'react-window';
-import AutoSizer from 'react-virtualized-auto-sizer';
 import { useBancas } from '../hooks/useBancas';
 import { useTipsters } from '../hooks/useTipsters';
 import { usePagination } from '../hooks/usePagination';
@@ -342,21 +340,6 @@ export default function Bancas() {
     }
   }, [invalidateTipstersCache]);
 
-  const Row = useCallback(({ index, style }: ListChildComponentProps) => {
-    const tipster = paginatedTipsters[index];
-    if (!tipster) return null;
-    return (
-      <div style={style} className="pr-2">
-        <TipsterCard
-          tipster={tipster}
-          onEdit={() => handleOpenTipsterModal(tipster)}
-          onDelete={() => handleDeleteTipster(tipster)}
-          onToggleActive={() => handleToggleTipsterActive(tipster)}
-        />
-      </div>
-    );
-  }, [paginatedTipsters, handleDeleteTipster, handleOpenTipsterModal, handleToggleTipsterActive]);
-
   return (
     <div className="space-y-6 text-foreground">
       <div className="flex flex-wrap items-center justify-between gap-4">
@@ -541,20 +524,16 @@ export default function Bancas() {
               </div>
             ) : (
               <div className="space-y-4">
-                <div className="h-[400px] w-full lg:h-[500px]">
-                  <AutoSizer>
-                    {({ height, width }) => (
-                      <List
-                        height={height}
-                        itemCount={paginatedTipsters.length}
-                        itemSize={90}
-                        width={width}
-                        className="scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-white/10"
-                      >
-                        {Row}
-                      </List>
-                    )}
-                  </AutoSizer>
+                <div className="space-y-2">
+                  {paginatedTipsters.map((tipster) => (
+                    <TipsterCard
+                      key={tipster.id}
+                      tipster={tipster}
+                      onEdit={() => handleOpenTipsterModal(tipster)}
+                      onDelete={() => handleDeleteTipster(tipster)}
+                      onToggleActive={() => handleToggleTipsterActive(tipster)}
+                    />
+                  ))}
                 </div>
 
                 {totalPages > 1 && (
@@ -1023,38 +1002,46 @@ function TipsterCard({
   onToggleActive: () => void;
 }) {
   return (
-    <div className="flex items-center justify-between gap-4 rounded-2xl border border-gray-200 bg-gray-50 p-4 transition hover:bg-gray-100 dark:border-emerald-700/20 dark:bg-emerald-900/20 dark:hover:bg-emerald-800/20">
-      <div className="flex items-center gap-4">
-        <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-brand-emerald/30 dark:bg-brand-emerald/10 dark:text-brand-emerald">
-          <User className="h-5 w-5" />
+    <div className="flex items-center justify-between gap-3 rounded-2xl border border-gray-200 bg-gray-50 p-3 transition hover:bg-gray-100 dark:border-emerald-700/20 dark:bg-emerald-900/20 dark:hover:bg-emerald-800/20">
+      <div className="flex items-center gap-3">
+        <div className="flex h-8 w-8 items-center justify-center rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-brand-emerald/30 dark:bg-brand-emerald/10 dark:text-brand-emerald">
+          <User className="h-4 w-4" />
         </div>
         <div>
-          <p className="font-semibold text-gray-900 dark:text-white">{tipster.nome || 'Sem nome'}</p>
+          <p className="text-sm font-semibold text-gray-900 dark:text-white">{tipster.nome || 'Sem nome'}</p>
           <div className="flex items-center gap-2">
             <div className={cn('h-1.5 w-1.5 rounded-full', tipster.ativo ? 'bg-emerald-600 dark:bg-brand-emerald' : 'bg-rose-500')} />
-            <p className="text-xs text-gray-500 dark:text-white/50">{tipster.ativo ? 'Ativo' : 'Inativo'}</p>
+            <p className="text-[0.65rem] uppercase tracking-wider font-medium text-gray-500 dark:text-white/50">{tipster.ativo ? 'Ativo' : 'Inativo'}</p>
           </div>
         </div>
       </div>
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1">
         <button
           onClick={onToggleActive}
-          className={tipster.ativo ? primaryButtonClass : ghostButtonClass}
+          className={cn(
+            "flex h-8 w-8 items-center justify-center rounded-xl transition",
+            tipster.ativo 
+              ? "bg-emerald-600 text-white hover:bg-emerald-700 dark:bg-brand-emerald/20 dark:text-brand-emerald dark:hover:bg-brand-emerald/30" 
+              : "bg-gray-200 text-gray-500 hover:bg-gray-300 dark:bg-white/5 dark:text-white/40 dark:hover:bg-white/10"
+          )}
           title={tipster.ativo ? 'Desativar' : 'Ativar'}
         >
-          {tipster.ativo ? <Check className="h-4 w-4" /> : <X className="h-4 w-4" />}
+          {tipster.ativo ? <Check className="h-3.5 w-3.5" /> : <X className="h-3.5 w-3.5" />}
         </button>
-        <ActionIconButton
-          label="Editar tipster"
-          icon={<Pencil className="h-4 w-4" />}
+        <button
           onClick={onEdit}
-        />
-        <ActionIconButton
-          label="Excluir tipster"
-          icon={<Trash2 className="h-4 w-4" />}
-          variant="danger"
+          className="flex h-8 w-8 items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-500 transition hover:bg-gray-50 dark:border-white/10 dark:bg-white/5 dark:text-white/60 dark:hover:bg-white/10"
+          title="Editar tipster"
+        >
+          <Pencil className="h-3.5 w-3.5" />
+        </button>
+        <button
           onClick={onDelete}
-        />
+          className="flex h-8 w-8 items-center justify-center rounded-xl border border-rose-200 bg-rose-50 text-rose-600 transition hover:bg-rose-100 dark:border-rose-500/20 dark:bg-rose-500/10 dark:text-rose-400 dark:hover:bg-rose-500/20"
+          title="Excluir tipster"
+        >
+          <Trash2 className="h-3.5 w-3.5" />
+        </button>
       </div>
     </div>
   );

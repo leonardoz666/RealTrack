@@ -102,7 +102,7 @@ export default function DropdownSelect({ options, value, onChange, placeholder =
     };
   }, [open, filteredOptions, updateFade]);
 
-  const defaultButtonClass = 'w-full inline-flex items-center justify-between rounded-lg border border-border/30 bg-background px-3 py-2 text-sm text-foreground';
+  const defaultButtonClass = 'w-full inline-flex items-center justify-between rounded-lg border border-gray-200 bg-background px-3 py-2 text-sm text-foreground dark:border-border/30';
   const buttonClass = useWrapperClass ? defaultButtonClass : (className ? `inline-flex items-center justify-between ${className}` : defaultButtonClass);
 
   return (
@@ -127,7 +127,7 @@ export default function DropdownSelect({ options, value, onChange, placeholder =
             data-ignore-click-outside
             style={{ maxHeight: '20rem' }}
             onScroll={updateFade}
-            className="max-h-80 overflow-auto thin-scrollbar rounded-md border border-border/30 bg-background p-1 text-sm shadow-lg"
+            className="max-h-80 overflow-auto thin-scrollbar rounded-md border border-gray-200 bg-background p-1 text-sm shadow-lg dark:border-border/30"
           >
           {searchable ? (
             <li className="px-2 pb-1 flex justify-start">
@@ -137,7 +137,7 @@ export default function DropdownSelect({ options, value, onChange, placeholder =
                 value={filterText}
                 onChange={(e) => setFilterText(e.target.value)}
                 placeholder="Pesquisar..."
-                className="w-full max-w-[220px] rounded-md border border-border/30 bg-background px-2 py-1 text-sm text-foreground placeholder:text-foreground/50 outline-none"
+                className="w-full max-w-[220px] rounded-md border border-gray-200 bg-background px-2 py-1 text-sm text-foreground placeholder:text-foreground/50 outline-none dark:border-border/30"
                 aria-label="Pesquisar"
                 data-ignore-click-outside
               />
@@ -149,7 +149,7 @@ export default function DropdownSelect({ options, value, onChange, placeholder =
               key={opt.value}
               role="option"
               aria-selected={opt.value === value}
-              className={`cursor-pointer rounded px-2 py-2 hover:bg-white/5 ${opt.value === value ? 'font-semibold' : ''}`}
+              className={`cursor-pointer rounded px-2 py-2 hover:bg-gray-100 dark:hover:bg-white/5 ${opt.value === value ? 'font-semibold' : ''}`}
               onClick={() => {
                 onChange(opt.value);
                 setOpen(false);

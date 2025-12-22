@@ -452,7 +452,7 @@ const Sidebar = ({ collapsed, onToggle }: SidebarProps) => {
 
                 <button
                   type="button"
-                  className="flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-emerald-600/30 px-3 py-2 text-xs font-medium text-emerald-400 transition-colors hover:border-emerald-600 hover:bg-emerald-600/10"
+                  className="flex w-full items-center justify-center gap-2 rounded-lg border border-transparent bg-emerald-600 px-3 py-2 text-xs font-semibold text-white shadow-lg shadow-emerald-600/20 transition-colors hover:bg-emerald-700 dark:border-emerald-600/30 dark:bg-brand-emerald/15 dark:text-brand-emerald dark:hover:bg-brand-emerald/25"
                   onClick={handleCreateBanca}
                 >
                   + Nova Banca
@@ -499,17 +499,17 @@ const Sidebar = ({ collapsed, onToggle }: SidebarProps) => {
 
         {!collapsed && (
           <div className={`mb-6 ${sectionPadding}`}>
-            <div className="rounded-lg border border-emerald-700/20 bg-gradient-to-br from-emerald-900/40 to-emerald-800/20 p-4 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.3)]">
-                  <div className="mb-3 flex items-center justify-between gap-2">
+            <div className="rounded-[24px] border border-gray-200 bg-white p-4 shadow-sm dark:border-emerald-700/20 dark:bg-transparent dark:bg-gradient-to-br dark:from-emerald-900/40 dark:to-emerald-800/20 dark:backdrop-blur-2xl">
+              <div className="mb-3 flex items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
                   <div className={`flex h-7 w-7 items-center justify-center rounded-lg ${planVisual.badgeClass}`}>
                     <PlanIcon className={`h-4 w-4 ${planVisual.iconClass}`} strokeWidth={2.5} />
                   </div>
-                  <span className="text-white">{planoNome}</span>
+                  <span className="text-sm font-semibold text-gray-900 dark:text-white">{planoNome}</span>
                 </div>
                 <button
                   type="button"
-                  className="rounded-full p-2 text-white/80 transition-colors hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+                  className="rounded-full p-2 text-gray-500 transition-colors hover:text-gray-900 disabled:cursor-not-allowed disabled:opacity-50 dark:text-white/70 dark:hover:text-white"
                   aria-label="Atualizar consumo"
                   disabled={consumoLoading}
                 >
@@ -517,27 +517,27 @@ const Sidebar = ({ collapsed, onToggle }: SidebarProps) => {
                 </button>
               </div>
 
-              <div className="mb-3">
-                <div className="mb-2 flex items-center justify-between">
-                  <span className="text-sm text-white/80">Limite Diário</span>
-                  <span className="text-white">{isLoading ? 'Carregando...' : consumoInfo.label}</span>
+              <div>
+                <div className="mb-1 flex items-center justify-between">
+                  <span className="text-xs text-gray-500 dark:text-white/70">Limite Diário</span>
+                  <span className="text-xs font-semibold text-emerald-700 dark:text-emerald-300">{isLoading ? 'Carregando...' : consumoInfo.label}</span>
                 </div>
-                <div className="h-1.5 w-full overflow-hidden rounded-full bg-[#0a2e2a]">
+                <div className="h-1.5 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-white/10">
                   {consumoInfo.isUnlimited ? (
-                    <div className="h-full w-full rounded-full bg-brand-teal" />
+                    <div className="h-full w-full rounded-full bg-brand-linear" />
                   ) : (
                     <div
-                      className="h-full rounded-full bg-brand-teal transition-all"
+                      className="h-full rounded-full bg-brand-linear transition-all"
                       style={{ width: `${Math.min(consumoInfo.percent, 100)}%` }}
                     />
                   )}
                 </div>
                 {consumoError && (
-                  <div className="mt-2 flex items-center justify-between text-xs text-red-400">
+                  <div className="mt-2 flex items-center justify-between text-xs text-rose-600 dark:text-rose-300">
                     <span>{consumoError}</span>
                     <button
                       type="button"
-                      className="font-semibold text-red-200 underline-offset-2 transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-40"
+                      className="font-semibold text-rose-700 underline-offset-2 transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-40 dark:text-rose-200"
                       onClick={handleRefreshConsumo}
                       disabled={consumoLoading}
                     >
@@ -547,7 +547,7 @@ const Sidebar = ({ collapsed, onToggle }: SidebarProps) => {
                 )}
               </div>
 
-              <p className="text-xs text-white/80">Renova {isLoading ? '...' : resetTime}</p>
+              <p className="mt-2 text-[11px] text-gray-500 dark:text-white/70">Renova {isLoading ? '...' : resetTime}</p>
             </div>
           </div>
         )}
@@ -562,13 +562,13 @@ const Sidebar = ({ collapsed, onToggle }: SidebarProps) => {
                     <Target className="h-5 w-5 text-white" strokeWidth={2.5} />
                   </div>
                 )}
-                {!collapsed && <span className="text-white">{nickname}</span>}
+                {!collapsed && <span className="text-gray-900 dark:text-white">{nickname}</span>}
             </div>
             {!collapsed && (
               <div className="flex items-center gap-2">
                 <button
                   type="button"
-                  className="flex h-8 w-8 items-center justify-center text-white/80 transition-colors hover:text-white"
+                  className="flex h-8 w-8 items-center justify-center text-gray-500 transition-colors hover:text-gray-900 dark:text-white/80 dark:hover:text-white"
                   aria-label="Configurações"
                   onClick={handleOpenSettings}
                 >

@@ -11,64 +11,64 @@ interface StatCardProps {
   color?: StatCardColor;
 }
 
-const COLOR_STYLES: Record<StatCardColor, { icon: string; helper: string; card?: string; title?: string; value?: string }> = {
+const COLOR_STYLES: Record<StatCardColor, { wrapper: string; title: string; value: string; helper: string }> = {
   emerald: {
-    icon: 'border-brand-emerald/40 bg-brand-emerald/15 text-brand-emerald',
-    helper: 'text-brand-emerald/70',
+    wrapper: 'bg-emerald-200 border-emerald-300 dark:bg-emerald-500/25 dark:border-emerald-500/40',
+    title: 'text-emerald-900 dark:text-emerald-500',
+    value: 'text-gray-950 dark:text-white',
+    helper: 'text-emerald-800 dark:text-emerald-400',
   },
   blue: {
-    icon: 'border-sky-400/40 bg-sky-400/15 text-sky-300',
-    helper: 'text-sky-200/80',
+    wrapper: 'bg-blue-200 border-blue-300 dark:bg-blue-500/25 dark:border-blue-500/40',
+    title: 'text-blue-900 dark:text-blue-500',
+    value: 'text-gray-950 dark:text-white',
+    helper: 'text-blue-800 dark:text-blue-400',
   },
   red: {
-    icon: 'border-rose-400/40 bg-rose-400/15 text-rose-300',
-    helper: 'text-rose-200/80',
+    wrapper: 'bg-rose-200 border-rose-300 dark:bg-rose-500/30 dark:border-rose-500/50',
+    title: 'text-rose-900 dark:text-rose-500',
+    value: 'text-gray-950 dark:text-white',
+    helper: 'text-rose-800 dark:text-rose-400',
   },
   purple: {
-    icon: 'border-violet-400/40 bg-violet-400/15 text-violet-200',
-    helper: 'text-violet-200/80',
+    wrapper: 'bg-violet-200 border-violet-300 dark:bg-violet-500/25 dark:border-violet-500/40',
+    title: 'text-violet-900 dark:text-violet-500',
+    value: 'text-gray-950 dark:text-white',
+    helper: 'text-violet-800 dark:text-violet-400',
   },
   amber: {
-    icon: 'border-[#ffb347]/40 bg-[#ff8a00]/20 text-[#ffe6b8]',
-    helper: 'text-[#ffd36b]',
-    card:
-      'bg-gradient-to-br from-[#4a1e00] via-[#6c2c00] to-[#8e3b00] border border-[#ffb347]/40 shadow-[0_25px_45px_rgba(255,138,0,0.25)]',
-    title: 'text-[#ffdca8]',
-    value: 'text-[#fff4d8]',
+    wrapper: 'bg-amber-200 border-amber-300 dark:bg-amber-500/25 dark:border-amber-500/40',
+    title: 'text-amber-900 dark:text-amber-500',
+    value: 'text-gray-950 dark:text-white',
+    helper: 'text-amber-800 dark:text-amber-400',
   },
   cyan: {
-    icon: 'border-cyan-400/40 bg-cyan-400/15 text-cyan-200',
-    helper: 'text-cyan-100/80',
+    wrapper: 'bg-cyan-200 border-cyan-300 dark:bg-cyan-500/25 dark:border-cyan-500/40',
+    title: 'text-cyan-900 dark:text-cyan-500',
+    value: 'text-gray-950 dark:text-white',
+    helper: 'text-cyan-800 dark:text-cyan-400',
   },
 };
 
 const STAT_CARD_BASE =
-  'rounded-[32px] border border-emerald-700/20 bg-gradient-to-br from-emerald-900/40 to-emerald-800/20 p-6 text-white shadow-[0_20px_50px_rgba(0,0,0,0.3)] backdrop-blur-2xl transition hover:-translate-y-0.5 hover:shadow-glow';
+  'rounded-[32px] border p-6 flex flex-col justify-center transition duration-300 hover:-translate-y-0.5 relative overflow-hidden backdrop-blur-sm';
 
-function StatCard({ title, value, helper, icon, color = 'purple' }: StatCardProps) {
+function StatCard({ title, value, helper, icon, color = 'emerald' }: StatCardProps) {
   const style = COLOR_STYLES[color];
 
   return (
-    <div className={cn(STAT_CARD_BASE, style.card)}>
-      <div className="flex items-start justify-between gap-4">
-        <p className={cn('text-sm font-semibold uppercase tracking-[0.3em] text-white/60', style.title)}>{title}</p>
-        {icon && (
-          <span
-            className={cn(
-              'flex h-11 w-11 items-center justify-center rounded-2xl border text-lg',
-              style.icon
-            )}
-          >
-            {icon}
-          </span>
-        )}
+    <div className={cn(STAT_CARD_BASE, style.wrapper)}>
+      <div className={cn('flex items-center gap-2 mb-2', style.title)}>
+        {icon}
+        <span className="text-xs font-bold uppercase tracking-[0.2em]">{title}</span>
       </div>
-      <p className={cn('mt-4 text-3xl font-semibold text-white', style.value)}>{value}</p>
-      {helper && <p className={cn('mt-2 text-sm font-medium', style.helper)}>{helper}</p>}
+      <p className={cn('text-3xl font-bold tracking-tight', style.value)}>{value}</p>
+      {helper && <p className={cn('mt-1 text-xs font-medium', style.helper)}>{helper}</p>}
     </div>
   );
 }
 
 // Memoizar para evitar re-renders desnecessários quando props não mudam
 export default memo(StatCard);
+
 

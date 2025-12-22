@@ -72,10 +72,10 @@ export default function ApostaForm({
 
   const activeTipsters = tipsters.filter((t) => (t as any).ativo !== false);
 
-  const inputStyles = "h-11 bg-white/5 border-white/10 text-white placeholder:text-white/20 focus-visible:ring-brand-emerald/50 focus-visible:border-brand-emerald/50";
-  const labelStyles = "text-[11px] font-bold uppercase tracking-wider text-white/50";
-  const selectTriggerStyles = "h-11 bg-white/5 border-white/10 text-white focus:ring-brand-emerald/50";
-  const selectContentStyles = "bg-[#1a1a1a] border-white/10 text-white";
+  const inputStyles = "h-11 rounded-md border border-gray-300 bg-white text-gray-900 placeholder:text-gray-500 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:border-emerald-500 dark:bg-white/5 dark:border-white/10 dark:text-white dark:placeholder:text-white/20 dark:focus-visible:ring-brand-emerald/50 dark:focus-visible:border-brand-emerald/50";
+  const labelStyles = "text-[11px] font-bold uppercase tracking-wider text-gray-700 dark:text-white/50";
+  const selectTriggerStyles = "h-11 rounded-md border border-gray-300 bg-white text-gray-900 focus:ring-emerald-500 dark:bg-white/5 dark:border-white/10 dark:text-white";
+  const selectContentStyles = "bg-popover border border-gray-200 text-popover-foreground dark:bg-[#1a1a1a] dark:border-white/10 dark:text-white";
 
   return (
     <>
@@ -365,10 +365,10 @@ export default function ApostaForm({
               </div>
             </div>
 
-            <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-brand-emerald/10 to-transparent p-4 border border-brand-emerald/20 shadow-[0_20px_40px_-12px_rgba(0,0,0,0.5)]">
+            <div className="relative overflow-hidden rounded-[2rem] p-4 border border-gray-200 bg-gradient-to-br from-emerald-50 to-white shadow-sm dark:from-brand-emerald/10 dark:to-transparent dark:border-brand-emerald/20 dark:shadow-[0_20px_40px_-12px_rgba(0,0,0,0.5)]">
               {/* Box Header */}
               <div className="flex items-center justify-between mb-3">
-                <span className="text-[10px] font-black uppercase tracking-widest text-white/40">RETORNO</span>
+                <span className="text-[10px] font-black uppercase tracking-widest text-gray-500 dark:text-white/40">RETORNO</span>
                 <div className="flex items-center gap-1.5 rounded-full bg-brand-emerald/10 px-2 py-0.5 border border-brand-emerald/20">
                   <div className="h-1.5 w-1.5 rounded-full bg-brand-emerald animate-pulse" />
                   <span className="text-[9px] font-bold text-brand-emerald uppercase tracking-tighter">LIVE</span>
@@ -381,7 +381,7 @@ export default function ApostaForm({
               </div>
 
               <div className="flex items-center gap-2 group cursor-default">
-                <p className="text-[10px] font-medium text-white/40">Lucro potencial</p>
+                <p className="text-[10px] font-medium text-gray-500 dark:text-white/40">Lucro potencial</p>
                 <ChevronRight size={10} className="text-brand-emerald/50 transition-transform group-hover:translate-x-0.5" />
                 <span className="text-xs font-bold text-brand-emerald ml-auto">
                   R$ {profit.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
@@ -393,12 +393,12 @@ export default function ApostaForm({
             </div>
 
             {/* Buttons and notice moved from footer */}
-            <div className="pt-6 border-t border-white/5 space-y-4">
+            <div className="pt-6 border-t border-gray-200 dark:border-white/5 space-y-4">
               <div className="flex flex-col gap-3">
                 <Button
                   type="submit"
                   disabled={saving}
-                  className="w-full h-auto inline-flex items-center justify-center gap-2 rounded-lg bg-brand-emerald px-6 py-3 text-sm font-black text-black shadow-[0_10px_30px_rgba(16,185,129,0.3)] transition-all hover:scale-[1.02] hover:bg-brand-emerald/90 active:scale-[0.98] disabled:opacity-50 disabled:hover:scale-100"
+                  className="w-full h-auto inline-flex items-center justify-center gap-2 rounded-lg bg-emerald-600 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-600/20 transition-all hover:scale-[1.02] hover:bg-emerald-700 active:scale-[0.98] disabled:opacity-50 disabled:hover:scale-100"
                 >
                   {saving ? 'Salvando...' : isEditing ? 'Salvar Alterações' : 'Criar Aposta'}
                   {!saving && <ChevronRight size={18} />}
@@ -407,12 +407,12 @@ export default function ApostaForm({
                   type="button"
                   variant="outline"
                   onClick={() => onCancel?.()}
-                  className="w-full h-auto px-6 py-3 rounded-lg border-white/10 bg-transparent text-sm font-bold text-white/60 hover:bg-white/5 hover:text-white transition-all outline-none border"
+                  className="w-full h-auto px-6 py-3 rounded-lg border border-gray-300 bg-transparent text-sm font-bold text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-all outline-none dark:border-white/10 dark:text-white/60 dark:hover:bg-white/5 dark:hover:text-white"
                 >
                   Cancelar
                 </Button>
               </div>
-              <div className="text-[10px] text-center font-medium text-white/20">
+              <div className="text-[10px] text-center font-medium text-gray-400 dark:text-white/20">
                 Todos os campos são obrigatórios
               </div>
             </div>

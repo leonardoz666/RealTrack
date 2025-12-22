@@ -17,11 +17,11 @@ const DashboardChart = ({ data, width, height, isLoading }: DashboardChartProps)
 
   const chartTooltipStyles = useMemo(
     () => ({
-      backgroundColor: 'rgba(3, 21, 19, 0.95)',
-      border: '1px solid rgba(31, 231, 203, 0.25)',
+      backgroundColor: chartTheme.colors.tooltipBg,
+      border: `1px solid ${chartTheme.colors.tooltipBorder}`,
       borderRadius: 16,
-      boxShadow: '0 20px 40px rgba(0,0,0,0.35)',
-      color: '#f4fffc',
+      boxShadow: chartTheme.colors.tooltipShadow,
+      color: chartTheme.colors.text,
       padding: '12px 16px',
     }),
     []
@@ -33,7 +33,7 @@ const DashboardChart = ({ data, width, height, isLoading }: DashboardChartProps)
 
   if (!data || data.length === 0) {
       return (
-          <div className="flex h-full items-center justify-center rounded-2xl border border-dashed border-white/10 text-xs font-medium text-white/60">
+          <div className="flex h-full items-center justify-center rounded-2xl border border-dashed border-gray-300 text-xs font-medium text-gray-500 dark:border-white/10 dark:text-white/60">
               Sem dados para exibir
           </div>
       );
@@ -48,29 +48,29 @@ const DashboardChart = ({ data, width, height, isLoading }: DashboardChartProps)
     >
       <defs>
         <linearGradient id={lucroLineGradientId} x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#35ffe4" />
-          <stop offset="100%" stopColor="#1ddfd0" />
+          <stop offset="0%" stopColor="var(--success)" stopOpacity={0.8} />
+          <stop offset="100%" stopColor="var(--success)" stopOpacity={1} />
         </linearGradient>
       </defs>
-      <CartesianGrid stroke="rgba(255,255,255,0.08)" strokeDasharray="4 4" vertical={false} />
+      <CartesianGrid stroke={chartTheme.colors.grid} strokeDasharray="4 4" vertical={false} />
       <XAxis
         dataKey="date"
         axisLine={false}
         tickLine={false}
-        tick={{ ...chartTheme.axisTick, fill: 'rgba(255,255,255,0.7)' }}
+        tick={{ ...chartTheme.axisTick, fill: chartTheme.colors.axis }}
         tickMargin={12}
       />
       <YAxis
         axisLine={false}
         tickLine={false}
         width={70}
-        tick={{ ...chartTheme.axisTick, fill: 'rgba(255,255,255,0.7)' }}
+        tick={{ ...chartTheme.axisTick, fill: chartTheme.colors.axis }}
         tickFormatter={formatAxisCurrency}
       />
       <Tooltip
         contentStyle={chartTooltipStyles}
-        itemStyle={{ color: chartTheme.colors.brand.neon }}
-        labelStyle={{ color: chartTheme.colors.brand.tooltipLabel, fontWeight: 600 }}
+        itemStyle={{ color: 'var(--success)' }}
+        labelStyle={{ color: chartTheme.colors.tooltipLabel, fontWeight: 600 }}
         formatter={(value: number) => [formatCurrency(value), 'Lucro diário']}
         labelFormatter={(label: string) => `Dia ${label}`}
       />
@@ -79,8 +79,8 @@ const DashboardChart = ({ data, width, height, isLoading }: DashboardChartProps)
         dataKey="diário"
         stroke={`url(#${lucroLineGradientId})`}
         strokeWidth={3}
-        dot={{ r: 4, strokeWidth: 0, fill: chartTheme.colors.brand.neonLight }}
-        activeDot={{ r: 6, fill: chartTheme.colors.brand.neonLight, stroke: '#042620', strokeWidth: 2 }}
+        dot={{ r: 4, strokeWidth: 0, fill: 'var(--success)' }}
+        activeDot={{ r: 6, fill: 'var(--success)', stroke: chartTheme.colors.axis, strokeWidth: 2 }}
       />
     </LineChart>
   );

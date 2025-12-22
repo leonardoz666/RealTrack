@@ -1,5 +1,3 @@
-import { FixedSizeList as List, type ListChildComponentProps } from 'react-window';
-import AutoSizer from 'react-virtualized-auto-sizer';
 import { Pencil, Trash2 } from 'lucide-react';
 import { EmptyState } from '../ui/empty-state';
 import { cn } from '../ui/utils';
@@ -24,17 +22,17 @@ interface ApostasListProps {
 }
 
 const tableActionButtonClass =
-  'inline-flex h-8 w-8 items-center justify-center rounded-lg border border-emerald-500/20 bg-emerald-500/10 text-emerald-100 transition hover:border-emerald-400/40 hover:bg-emerald-500/20 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/30';
+  'inline-flex h-8 w-8 items-center justify-center rounded-lg border border-emerald-500/20 bg-emerald-500/10 text-emerald-600 transition hover:border-emerald-400/40 hover:bg-emerald-500/20 hover:text-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/30 dark:text-emerald-100 dark:hover:text-white';
 const tableActionButtonDangerClass =
-  'inline-flex h-8 w-8 items-center justify-center rounded-lg border border-rose-400/40 bg-rose-500/10 text-rose-200 transition hover:bg-rose-500/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400/40';
+  'inline-flex h-8 w-8 items-center justify-center rounded-lg border border-rose-400/40 bg-rose-500/10 text-rose-600 transition hover:bg-rose-500/20 hover:text-rose-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400/40 dark:text-rose-200 dark:hover:text-white';
 
 // Grid configuration for consistent alignment between header and rows
 // Total must cover the width. Using grid-cols-12 or arbitrary values.
 // We use a custom grid template for fine control.
 const GRID_TEMPLATE = "minmax(90px, 0.6fr) minmax(100px, 0.8fr) minmax(90px, 0.7fr) minmax(100px, 0.8fr) minmax(140px, 1.2fr) minmax(160px, 1.4fr) minmax(100px, 0.8fr) minmax(90px, 0.7fr) minmax(110px, 0.9fr) minmax(100px, 0.8fr) 80px";
 
-interface RowContext {
-  apostas: ApiBetWithBank[];
+interface RowProps {
+  aposta: ApiBetWithBank;
   onEdit: (aposta: ApiBetWithBank) => void;
   onDelete: (aposta: ApiBetWithBank) => void;
   onStatusClick: (aposta: ApiBetWithBank) => void;
@@ -58,34 +56,27 @@ const CellTooltip = ({ children, content }: { children: React.ReactNode; content
   );
 };
 
-const Row = ({ index, style, data }: ListChildComponentProps<RowContext>) => {
-  const { 
-    apostas, 
-    onEdit, 
-    onDelete, 
-    onStatusClick, 
-    formatCurrency, 
-    formatDate,
-    normalizeEsporte,
-    formatOptionalCellText 
-  } = data;
-  
-  const aposta = apostas[index];
+const Row = ({ 
+  aposta, 
+  onEdit, 
+  onDelete, 
+  onStatusClick, 
+  formatCurrency, 
+  formatDate,
+  normalizeEsporte,
+  formatOptionalCellText 
+}: RowProps) => {
   const marketSelections = extractMarketSelections(aposta.mercado);
   const marketDisplay = marketSelections.length > 0 ? marketSelections.join(', ') : formatOptionalCellText(aposta.mercado);
   const statusClass = resolveBetStatusClass(aposta.status);
 
   return (
-    <div className="group">
+    <div className="group border-b border-gray-200 hover:bg-gray-50 dark:border-white/5 dark:hover:bg-white/5 transition-colors text-sm text-gray-900 dark:text-white">
       <div 
-        style={style} 
-        className="grid items-center gap-4 px-6 border-b border-gray-200 hover:bg-gray-50 dark:border-emerald-700/10 dark:hover:bg-emerald-900/20 transition-colors h-full text-sm text-gray-900 dark:text-white"
+        className="grid items-center gap-4 px-6 py-4"
+        style={{ gridTemplateColumns: GRID_TEMPLATE }}
       >
-        <div 
-          className="grid items-center gap-4 h-full w-full"
-          style={{ gridTemplateColumns: GRID_TEMPLATE }}
-        >
-          <CellTooltip content={aposta.casaDeAposta || ''}>
+        <CellTooltip content={aposta.casaDeAposta || ''}>
           <div className="truncate font-medium text-gray-900 dark:text-white">
             {formatOptionalCellText(aposta.casaDeAposta)}
           </div>
@@ -102,34 +93,34 @@ const Row = ({ index, style, data }: ListChildComponentProps<RowContext>) => {
         </div>
         
         <CellTooltip content={normalizeEsporte(aposta.esporte)}>
-          <div className="whitespace-normal break-words line-clamp-3 text-white/80 leading-tight">
+          <div className="whitespace-normal break-words line-clamp-3 text-gray-700 dark:text-white/80 leading-tight">
             {normalizeEsporte(aposta.esporte)}
           </div>
         </CellTooltip>
         
         <CellTooltip content={aposta.evento}>
-          <div className="whitespace-normal break-words line-clamp-3 text-white leading-tight">
+          <div className="whitespace-normal break-words line-clamp-3 text-gray-900 dark:text-white leading-tight">
             {aposta.evento}
           </div>
         </CellTooltip>
         
         <CellTooltip content={aposta.aposta || ''}>
-          <div className="whitespace-normal break-words line-clamp-3 text-white/80 leading-tight">
+          <div className="whitespace-normal break-words line-clamp-3 text-gray-700 dark:text-white/80 leading-tight">
             {formatOptionalCellText(aposta.aposta)}
           </div>
         </CellTooltip>
         
         <CellTooltip content={marketDisplay}>
-          <div className="whitespace-normal break-words line-clamp-3 text-white/80 leading-tight">
+          <div className="whitespace-normal break-words line-clamp-3 text-gray-700 dark:text-white/80 leading-tight">
             {marketDisplay}
           </div>
         </CellTooltip>
         
         <div className="flex flex-col">
-          <span className="truncate text-base font-semibold text-white">
+          <span className="truncate text-base font-semibold text-gray-900 dark:text-white">
             {formatCurrency(aposta.valorApostado)}
           </span>
-          <span className="text-xs text-white/50 font-medium">
+          <span className="text-xs text-gray-500 dark:text-white/50 font-medium">
             ODD: {aposta.odd ? aposta.odd.toFixed(2) : '-'}
           </span>
         </div>
@@ -172,7 +163,6 @@ const Row = ({ index, style, data }: ListChildComponentProps<RowContext>) => {
         </div>
       </div>
     </div>
-  </div>
   );
 };
 
@@ -207,7 +197,7 @@ export default function ApostasList({
 
   return (
     <TooltipProvider>
-      <div className="rounded-[32px] border border-emerald-700/20 bg-gradient-to-br from-emerald-900/40 to-emerald-800/20 py-6 text-white shadow-[0_20px_50px_rgba(0,0,0,0.3)] backdrop-blur-2xl space-y-6 flex flex-col h-full min-h-[500px]">
+      <div className="rounded-[32px] border border-gray-200 bg-white py-6 text-gray-900 shadow-xl backdrop-blur-2xl dark:border-emerald-700/20 dark:bg-transparent dark:bg-gradient-to-br dark:from-emerald-900/40 dark:to-emerald-800/20 dark:text-white dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] space-y-6 flex flex-col h-full min-h-[500px]">
         {apostas.length === 0 ? (
           <div className="px-6">
             <EmptyState title="Nenhuma aposta" description="Cadastre uma nova aposta para começar a acompanhar resultados." />
@@ -216,7 +206,7 @@ export default function ApostasList({
           <div className="flex-1 flex flex-col overflow-hidden h-full">
             {/* Header */}
             <div 
-              className="grid gap-4 pl-6 py-3 border-b border-emerald-700/20 text-[0.7rem] uppercase tracking-[0.18em] text-emerald-400 font-bold shrink-0"
+              className="grid gap-4 pl-6 py-3 border-b border-gray-100 text-[0.7rem] uppercase tracking-[0.18em] text-gray-500 font-bold shrink-0 dark:border-white/10 dark:text-white/60"
               style={{ gridTemplateColumns: GRID_TEMPLATE, paddingRight: '40px' /* Scrollbar compensation + padding */ }}
             >
               <div>Casa</div>
@@ -232,22 +222,21 @@ export default function ApostasList({
               <div className="text-right">Ações</div>
             </div>
 
-            {/* Virtualized List */}
-            <div className="flex-1 w-full">
-              <AutoSizer>
-                {({ height, width }) => (
-                  <List
-                    height={height}
-                    itemCount={apostas.length}
-                    itemSize={90} // Increased height to allow text wrapping
-                    width={width}
-                    overscanCount={5}
-                    itemData={itemData}
-                  >
-                    {Row}
-                  </List>
-                )}
-              </AutoSizer>
+            {/* Simple List */}
+            <div className="flex-1 w-full overflow-y-auto">
+              {apostas.map((aposta) => (
+                <Row
+                  key={aposta.id}
+                  aposta={aposta}
+                  onEdit={onEdit}
+                  onDelete={onDelete}
+                  onStatusClick={onStatusClick}
+                  formatCurrency={formatCurrency}
+                  formatDate={formatDate}
+                  normalizeEsporte={normalizeEsporte}
+                  formatOptionalCellText={formatOptionalCellText}
+                />
+              ))}
             </div>
           </div>
         )}

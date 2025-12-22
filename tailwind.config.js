@@ -88,6 +88,14 @@ export default {
           muted: rgbVar('--ui-muted-surface'),
           card: rgbVar('--ui-card'),
         },
+        popover: {
+          DEFAULT: rgbVar('--ui-popover'),
+          foreground: rgbVar('--ui-popover-foreground'),
+        },
+        accent: {
+          DEFAULT: rgbVar('--ui-accent'),
+          foreground: rgbVar('--ui-accent-foreground'),
+        },
         foreground: {
           DEFAULT: rgbVar('--ui-foreground'),
           muted: rgbVar('--ui-foreground-muted'),

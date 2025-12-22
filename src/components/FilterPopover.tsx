@@ -76,12 +76,12 @@ function FilterPopover({ open, onClose, onClear, children, footer, maxWidth = '6
   return (
     <div
       ref={popoverRef}
-      className="absolute right-0 top-full mt-2 z-50 w-auto max-w-none rounded-lg border border-border/30 bg-background-card p-3 shadow-lg overflow-hidden group"
+      className="absolute right-0 top-full mt-2 z-50 w-auto max-w-none rounded-lg border border-gray-200 bg-background-card p-3 shadow-lg overflow-hidden group dark:border-border/30"
       style={{ minWidth: 280, maxWidth: maxWidthStyle }}
       role="dialog"
       aria-modal="true"
     >
-      <div className="flex items-center justify-between gap-3 border-b border-border/20 pb-3">
+      <div className="flex items-center justify-between gap-3 border-b border-gray-200 pb-3 dark:border-border/20">
         <p className="text-sm font-semibold uppercase tracking-[0.3em] text-foreground-muted">Filtros</p>
         <div className="flex items-center gap-3 text-sm font-semibold">
           {onClear && (
@@ -95,7 +95,7 @@ function FilterPopover({ open, onClose, onClear, children, footer, maxWidth = '6
           )}
           <button
             type="button"
-            className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-border/40 bg-background text-foreground transition hocus:border-brand-emerald/60 hocus:text-brand-emerald"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-gray-200 bg-background text-foreground transition hocus:border-brand-emerald/60 hocus:text-brand-emerald dark:border-border/40"
             onClick={onClose}
             aria-label="Fechar filtros"
           >
@@ -120,7 +120,7 @@ function FilterPopover({ open, onClose, onClear, children, footer, maxWidth = '6
           />
         ) : null}
 
-        {footer && <div className="border-t border-border/20 pt-2">{footer}</div>}
+        {footer && <div className="border-t border-gray-200 pt-3 dark:border-border/20">{footer}</div>}
       </div>
     </div>
   );

@@ -30,26 +30,8 @@ import type {
   AnaliseViewState 
 } from '../utils/typeGuards';
 
-const evolutionMetricCardClassBase = [
-    'relative',
-    'rounded-2xl',
-    'p-4',
-    'bg-gray-50',
-    'backdrop-blur-2xl',
-    'border',
-    'border-gray-200',
-    'shadow-sm',
-    'transition-all',
-    'duration-300',
-    'hover:scale-[1.015]',
-    'hover:border-gray-300',
-    'dark:bg-white/[0.06]',
-    'dark:border-white/20',
-    'dark:shadow-[0_8px_40px_rgba(0,0,0,0.6)]',
-    'dark:hover:border-white/30',
-  ].join(' ');
-
 const heatmapRows = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
+
 const heatmapCols = ['Manhã (06-12)', 'Tarde (12-18)', 'Noite (18-24)', 'Madrugada (00-06)'];
 
 const defaultDistribuicaoOdds: OddsChartPoint[] = [
@@ -233,8 +215,18 @@ export default function Analise() {
   const stats = [
     { title: 'Apostas Filtradas', value: totalApostas.toString(), helper: 'Total de apostas', color: 'blue' as const },
     { title: 'Investimento Filtrado', value: formatCurrency(totalInvestido), helper: 'Total investido', color: 'purple' as const },
-    { title: 'Lucro Filtrado', value: formatCurrency(totalLucro), helper: 'Lucro/prejuízo total', color: 'emerald' as const },
-    { title: 'ROI Filtrado', value: formatPercent(roiMedio), helper: 'Retorno sobre investimento', color: 'amber' as const }
+    { 
+      title: 'Lucro Filtrado', 
+      value: formatCurrency(totalLucro), 
+      helper: 'Lucro/prejuízo total', 
+      color: totalLucro >= 0 ? 'emerald' : 'red' 
+    },
+    { 
+      title: 'ROI Filtrado', 
+      value: formatPercent(roiMedio), 
+      helper: 'Retorno sobre investimento', 
+      color: roiMedio >= 0 ? 'amber' : 'red' 
+    }
   ];
   const statGridClass = 'grid gap-6 sm:grid-cols-2 xl:grid-cols-4';
   const chartGridClass = 'grid gap-6 lg:grid-cols-2';
@@ -260,9 +252,9 @@ export default function Analise() {
         <div className={statGridClass}>
           {stats.map((stat) => (
             <Skeleton key={stat.title} className={`${skeletonCardClass} space-y-3`}>
-              <div className="text-xs font-semibold uppercase tracking-[0.25em] text-white/60">{stat.title}</div>
-              <div className="text-3xl font-semibold text-white">...</div>
-              <p className="text-sm text-white/50">{stat.helper}</p>
+              <div className="text-xs font-semibold uppercase tracking-[0.25em] text-gray-400 dark:text-white/60">{stat.title}</div>
+              <div className="text-3xl font-semibold text-gray-900 dark:text-white">...</div>
+              <p className="text-sm text-gray-500 dark:text-white/50">{stat.helper}</p>
             </Skeleton>
           ))}
         </div>
@@ -366,7 +358,7 @@ export default function Analise() {
         </div>
         <div className={chartCardInteractiveClass}>
           <h3 className={chartTitleClass}>Heatmap de Performance</h3>
-          <div className="mt-6 overflow-x-auto text-white">
+          <div className="mt-6 overflow-x-auto text-gray-900 dark:text-white">
             <div
               className="grid gap-2 text-xs"
               style={{ gridTemplateColumns: `120px repeat(${heatmapCols.length}, minmax(0, 1fr))` }}
@@ -375,14 +367,14 @@ export default function Analise() {
               {heatmapCols.map((col) => (
                 <span
                   key={col}
-                  className="text-center text-[0.7rem] font-semibold uppercase tracking-wide text-white/60"
+                  className="text-center text-[0.7rem] font-semibold uppercase tracking-wide text-gray-500 dark:text-white/60"
                 >
                   {col.split(' ')[0]}
                 </span>
               ))}
               {heatmapRows.map((row) => (
                 <div key={row} className="contents">
-                  <span className="flex items-center text-sm font-semibold text-white">{row}</span>
+                  <span className="flex items-center text-sm font-semibold text-gray-900 dark:text-white">{row}</span>
                   {heatmapCols.map((col) => {
                     const rowData = heatmap[row];
                     const cellData = rowData?.[col];
@@ -391,11 +383,16 @@ export default function Analise() {
                     const colorClass = getHeatmapColorClass(roi);
                     const opacity = getHeatmapOpacity(roi, investido);
                     const title = investido > 0 ? `ROI: ${formatPercent(roi)}\nInvestido: ${formatCurrency(investido)}` : undefined;
+                    
+                    const isYellow = colorClass.includes('warning');
+                    const textColorClass = isYellow 
+                      ? 'text-gray-900' 
+                      : (opacity > 0.5 ? 'text-white' : 'text-gray-900 dark:text-white');
 
                     return (
                       <div
                         key={`${row}-${col}`}
-                        className={`flex h-10 items-center justify-center rounded-2xl text-[0.7rem] font-semibold transition ${colorClass} ${opacity > 0.5 ? 'text-white' : 'text-slate-900'} ${investido > 0 ? 'cursor-pointer' : 'cursor-default'}`}
+                        className={`flex h-10 items-center justify-center rounded-2xl text-[0.7rem] font-semibold transition ${colorClass} ${textColorClass} ${investido > 0 ? 'cursor-pointer' : 'cursor-default'}`}
                         style={{ opacity }}
                         title={title}
                       >

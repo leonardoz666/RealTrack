@@ -114,29 +114,29 @@ export default function DatePicker({ value, onChange, onClose, alignLeft = false
   return (
     <div
       ref={pickerRef}
-      className={`absolute z-[1000] w-[320px] max-w-[90vw] overflow-hidden rounded-lg border border-skin-border text-skin-text shadow-[0_12px_30px_rgba(0,0,0,0.18)] bg-app-layout-bg ${containerPositionClasses}`}
+      className={`absolute z-[1000] w-[320px] max-w-[90vw] overflow-hidden rounded-lg border border-skin-border text-skin-text shadow-[0_12px_30px_rgba(0,0,0,0.18)] bg-background ${containerPositionClasses}`}
       onClick={(e) => {
         e.stopPropagation();
       }}
     >
-      <div className="w-full flex-1 flex-col p-2 bg-app-layout-bg">
+      <div className="w-full flex-1 flex-col p-2 bg-background">
         {/* Header compacto reduzido */}
         <div className="mb-2 flex items-center justify-center">
-          <div className="inline-flex items-center gap-2 rounded-md border border-white/10 bg-white/5 px-2 py-1.5">
+          <div className="inline-flex items-center gap-2 rounded-md border border-border/30 bg-gray-50 dark:bg-white/5 dark:border-white/10 px-2 py-1.5">
             <button type="button" onClick={goToPreviousMonth} className="rounded-md p-1 text-foreground-muted hover:text-foreground transition" aria-label="Mês anterior">
               <ChevronLeft size={16} />
             </button>
 
             <div className="flex items-center gap-1 text-xs font-semibold text-foreground">
-              <select value={getMonth(currentMonth)} onChange={(e) => handleMonthSelect(Number(e.target.value))} className="dark-select appearance-none bg-transparent px-1 py-0.5 outline-none text-foreground">
+              <select value={getMonth(currentMonth)} onChange={(e) => handleMonthSelect(Number(e.target.value))} className="appearance-none bg-transparent px-1 py-0.5 outline-none text-foreground cursor-pointer [&>option]:bg-background [&>option]:text-foreground">
                 {monthNames.map((month, index) => (
-                  <option key={month} value={index} className="bg-transparent text-foreground">{month}</option>
+                  <option key={month} value={index} className="bg-background text-foreground">{month}</option>
                 ))}
               </select>
 
-              <select value={currentYear} onChange={(e) => handleYearSelect(Number(e.target.value))} className="dark-select appearance-none bg-transparent px-1 py-0.5 outline-none text-foreground">
+              <select value={currentYear} onChange={(e) => handleYearSelect(Number(e.target.value))} className="appearance-none bg-transparent px-1 py-0.5 outline-none text-foreground cursor-pointer [&>option]:bg-background [&>option]:text-foreground">
                 {years.map((year) => (
-                  <option key={year} value={year} className="bg-transparent text-foreground">{year}</option>
+                  <option key={year} value={year} className="bg-background text-foreground">{year}</option>
                 ))}
               </select>
             </div>

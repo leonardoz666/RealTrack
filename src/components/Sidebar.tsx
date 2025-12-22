@@ -372,7 +372,7 @@ const Sidebar = ({ collapsed, onToggle, mobile = false }: SidebarProps) => {
       )}
 
       <div className="flex h-full w-full flex-col bg-white border-r border-gray-200 text-gray-900 dark:bg-app-layout-bg dark:border-white/10 dark:text-white">
-        <div className="flex-1 overflow-y-auto overflow-x-hidden">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0">
           <div className={`${sectionPadding} pt-6 pb-8`}>
             <div className={`flex items-center gap-3 ${collapsed ? 'justify-center' : ''}`}>
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#14b8a6]">

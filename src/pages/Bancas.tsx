@@ -487,36 +487,45 @@ export default function Bancas() {
                           <SwitchControl
                             checked={banca.padrao}
                             onToggle={() => void handleTogglePadrao(banca)}
-                            label={`Alternar banca padrão para ${banca.nome}`}
+                            label={`Alternar banca padrão ${banca.nome}`}
                           />
                         </td>
-                        <td className="px-4 py-4 align-middle text-gray-600 dark:text-white/70">{banca.ultimaVisualizacao}</td>
-                        <td className="px-4 py-4 align-middle text-gray-600 dark:text-white/70">{banca.criadoEm}</td>
-                        <td className="px-4 py-4 align-middle">
+                        <td className="px-4 py-4 align-middle text-gray-500 dark:text-white/60">{banca.ultimaVisualizacao}</td>
+                        <td className="px-4 py-4 align-middle text-gray-500 dark:text-white/60">{banca.criadoEm}</td>
+                        <td className="px-4 py-4 align-middle text-right">
                           <div className="flex justify-end gap-2">
-                            <ActionIconButton
-                              label="Ver estatísticas"
-                              icon={<LineChart className="h-4 w-4" />}
+                            <button
+                              type="button"
+                              className={cn(ghostButtonClass, 'h-8 w-8 rounded-lg p-0 text-gray-500 hover:bg-gray-100 hover:text-emerald-600 dark:text-white/60 dark:hover:bg-white/10 dark:hover:text-emerald-400')}
                               onClick={() => void handleOpenStats(banca)}
-                            />
-                            <ActionIconButton
-                              label="Copiar link de compartilhamento"
-                              icon={<Share2 className="h-4 w-4" />}
-                              onClick={() => {
-                                void copyToClipboard(banca.stats.infoLink.url);
-                              }}
-                            />
-                            <ActionIconButton
-                              label="Editar banca"
-                              icon={<Pencil className="h-4 w-4" />}
+                              title="Ver estatísticas"
+                            >
+                              <LineChart className="h-4 w-4" />
+                            </button>
+                            <button
+                              type="button"
+                              className={cn(ghostButtonClass, 'h-8 w-8 rounded-lg p-0 text-gray-500 hover:bg-gray-100 hover:text-emerald-600 dark:text-white/60 dark:hover:bg-white/10 dark:hover:text-emerald-400')}
+                              onClick={() => void copyToClipboard(banca.stats.infoLink.url)}
+                              title="Copiar link"
+                            >
+                              <Share2 className="h-4 w-4" />
+                            </button>
+                            <button
+                              type="button"
+                              className={cn(ghostButtonClass, 'h-8 w-8 rounded-lg p-0 text-gray-500 hover:bg-gray-100 hover:text-emerald-600 dark:text-white/60 dark:hover:bg-white/10 dark:hover:text-emerald-400')}
                               onClick={() => openEditModal(banca)}
-                            />
-                            <ActionIconButton
-                              label="Excluir banca"
-                              icon={<Trash2 className="h-4 w-4" />}
-                              variant="danger"
+                              title="Editar banca"
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </button>
+                            <button
+                              type="button"
+                              className={cn(ghostButtonClass, 'h-8 w-8 rounded-lg p-0 text-rose-500 hover:bg-rose-50 hover:text-rose-600 dark:text-rose-400 dark:hover:bg-rose-500/10 dark:hover:text-rose-300')}
                               onClick={() => setConfirmDelete({ open: true, banca, loading: false })}
-                            />
+                              title="Excluir banca"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
                           </div>
                         </td>
                       </tr>

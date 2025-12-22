@@ -2,8 +2,8 @@ import { Skeleton } from "../ui/skeleton";
 import { cn } from "../ui/utils";
 
 export function DashboardSkeleton() {
-  const sectionCardClass = "rounded-lg border border-white/5 bg-app-dark p-6 shadow-[0_25px_45px_rgba(0,0,0,0.25)] backdrop-blur-sm";
-  const evolutionCardClass = "rounded-lg border border-white/5 bg-app-darker p-6 sm:p-8";
+  const sectionCardClass = "rounded-[32px] border border-gray-200 bg-white p-6 shadow-xl backdrop-blur-2xl dark:border-emerald-700/20 dark:bg-transparent dark:bg-gradient-to-br dark:from-emerald-900/40 dark:to-emerald-800/20 dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)]";
+  const evolutionCardClass = "rounded-[28px] border border-gray-200 bg-gray-50/50 p-6 shadow-sm backdrop-blur dark:border-white/10 dark:bg-black/10 dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]";
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
@@ -25,7 +25,7 @@ export function DashboardSkeleton() {
 
       <section className="grid gap-5 lg:grid-cols-5">
         {/* Bank Roll Card */}
-        <div className="col-span-1 space-y-6 rounded-lg border border-border/30 p-6 shadow-card lg:col-span-2 bg-bank-hero">
+        <div className="col-span-1 space-y-6 rounded-[32px] border border-border/30 p-6 shadow-card lg:col-span-2 bg-bank-hero">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div className="space-y-2">
               <Skeleton className="h-3 w-24 bg-white/20" />

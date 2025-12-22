@@ -85,9 +85,10 @@ const getPlanVisual = (planName?: string) => {
 interface SidebarProps {
   collapsed: boolean;
   onToggle: () => void;
+  mobile?: boolean;
 }
 
-const Sidebar = ({ collapsed, onToggle }: SidebarProps) => {
+const Sidebar = ({ collapsed, onToggle, mobile = false }: SidebarProps) => {
   const { perfil, loading: perfilLoading } = usePerfil();
   const { bancas, loading: bancasLoading, refetch: refetchBancas } = useBancas();
   const [consumoPlano, setConsumoPlano] = useState<ConsumoPlano | null>(null);
@@ -351,18 +352,24 @@ const Sidebar = ({ collapsed, onToggle }: SidebarProps) => {
 
   return (
     <div
-      className={`fixed top-0 left-0 z-40 flex h-screen flex-shrink-0 transition-all duration-300 ${
-        collapsed ? 'w-20' : 'w-64'
-      }`}
+      className={
+        mobile
+          ? 'flex h-full w-full flex-col bg-white dark:bg-app-card'
+          : `fixed top-0 left-0 z-40 flex h-screen flex-shrink-0 transition-all duration-300 ${
+              collapsed ? 'w-20' : 'w-64'
+            }`
+      }
     >
-      <button
-        type="button"
-        className="absolute right-0 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 translate-x-1/2 items-center justify-center rounded-full bg-[#14b8a6] text-white shadow-lg shadow-[#14b8a6]/30"
-        onClick={onToggle}
-        aria-label={collapsed ? 'Expandir sidebar' : 'Recolher sidebar'}
-      >
-        {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-      </button>
+      {!mobile && (
+        <button
+          type="button"
+          className="absolute right-0 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 translate-x-1/2 items-center justify-center rounded-full bg-[#14b8a6] text-white shadow-lg shadow-[#14b8a6]/30"
+          onClick={onToggle}
+          aria-label={collapsed ? 'Expandir sidebar' : 'Recolher sidebar'}
+        >
+          {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+        </button>
+      )}
 
       <div className="flex h-full w-full flex-col overflow-y-auto overflow-x-hidden bg-white border-r border-gray-200 text-gray-900 dark:bg-app-layout-bg dark:border-white/10 dark:text-white">
         <div className={`${sectionPadding} pt-6 pb-8`}>

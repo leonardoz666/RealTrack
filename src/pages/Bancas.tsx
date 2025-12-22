@@ -9,6 +9,7 @@ import { formatNumber } from '../utils/formatters';
 import { eventBus } from '../utils/eventBus';
 import { cn } from '../components/ui/utils';
 import { toast } from '../utils/toast';
+import { useIsMobile } from '../components/ui/use-mobile';
 
 interface EditFormState {
   nome: string;
@@ -58,6 +59,7 @@ export default function Bancas() {
   const [activeTab, setActiveTab] = useState<'bancas' | 'tipsters'>('bancas');
   const { bancas: remoteBancas, loading: bancasLoading, error: bancasError, invalidateCache: invalidateBancasCache } = useBancas();
   const { tipsters, loading: tipstersLoading, invalidateCache: invalidateTipstersCache } = useTipsters();
+  const isMobile = useIsMobile();
 
   const [bancas, setBancas] = useState<Banca[]>(remoteBancas);
   const [selectedBanco, setSelectedBanco] = useState<Banca | null>(null);
@@ -427,6 +429,70 @@ export default function Bancas() {
             ) : bancas.length === 0 ? (
               <div className="rounded-2xl border border-dashed border-gray-300 px-6 py-12 text-center text-sm text-gray-500 dark:border-white/15 dark:text-white/70">
                 Nenhuma banca cadastrada ainda.
+              </div>
+            ) : isMobile ? (
+              <div className="space-y-4">
+                {bancas.map((banca) => (
+                  <div key={banca.id} className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-emerald-700/20 dark:bg-emerald-900/10">
+                    <div className="flex justify-between items-start mb-3">
+                      <div>
+                        <h3 className="font-semibold text-gray-900 dark:text-white">{banca.nome}</h3>
+                        <p className="text-xs text-gray-500 dark:text-white/60">ID: {banca.id}</p>
+                      </div>
+                      <div className="flex gap-1">
+                        <ActionIconButton
+                          label="Ver estatísticas"
+                          icon={<LineChart className="h-4 w-4" />}
+                          onClick={() => void handleOpenStats(banca)}
+                        />
+                        <ActionIconButton
+                          label="Copiar link"
+                          icon={<Share2 className="h-4 w-4" />}
+                          onClick={() => {
+                            void copyToClipboard(banca.stats.infoLink.url);
+                          }}
+                        />
+                        <ActionIconButton
+                          label="Editar banca"
+                          icon={<Pencil className="h-4 w-4" />}
+                          onClick={() => openEditModal(banca)}
+                        />
+                        <ActionIconButton
+                          label="Excluir banca"
+                          icon={<Trash2 className="h-4 w-4" />}
+                          variant="danger"
+                          onClick={() => setConfirmDelete({ open: true, banca, loading: false })}
+                        />
+                      </div>
+                    </div>
+                    
+                    <p className="text-sm text-gray-600 dark:text-white/70 mb-4">{banca.descricao}</p>
+                    
+                    <div className="grid grid-cols-2 gap-4 text-sm bg-gray-50 dark:bg-black/20 p-3 rounded-xl mb-3">
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-500 dark:text-white/60">Status</span>
+                        <SwitchControl
+                          checked={banca.status === 'Ativa'}
+                          onToggle={() => void handleToggleStatus(banca)}
+                          label="Status"
+                        />
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-500 dark:text-white/60">Padrão</span>
+                        <SwitchControl
+                          checked={banca.padrao}
+                          onToggle={() => void handleTogglePadrao(banca)}
+                          label="Padrão"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="flex justify-between text-xs text-gray-400 dark:text-white/40">
+                       <span>Visto: {banca.ultimaVisualizacao}</span>
+                       <span>Criado: {banca.criadoEm}</span>
+                    </div>
+                  </div>
+                ))}
               </div>
             ) : (
               <div className="overflow-x-auto rounded-2xl border border-gray-200 dark:border-emerald-700/20">
@@ -1003,19 +1069,19 @@ function TipsterCard({
 }) {
   return (
     <div className="flex items-center justify-between gap-3 rounded-2xl border border-gray-200 bg-gray-50 p-3 transition hover:bg-gray-100 dark:border-emerald-700/20 dark:bg-emerald-900/20 dark:hover:bg-emerald-800/20">
-      <div className="flex items-center gap-3">
-        <div className="flex h-8 w-8 items-center justify-center rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-brand-emerald/30 dark:bg-brand-emerald/10 dark:text-brand-emerald">
+      <div className="flex items-center gap-3 flex-1 min-w-0">
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-brand-emerald/30 dark:bg-brand-emerald/10 dark:text-brand-emerald">
           <User className="h-4 w-4" />
         </div>
-        <div>
-          <p className="text-sm font-semibold text-gray-900 dark:text-white">{tipster.nome || 'Sem nome'}</p>
+        <div className="min-w-0 flex-1">
+          <p className="text-sm font-semibold text-gray-900 truncate dark:text-white">{tipster.nome || 'Sem nome'}</p>
           <div className="flex items-center gap-2">
-            <div className={cn('h-1.5 w-1.5 rounded-full', tipster.ativo ? 'bg-emerald-600 dark:bg-brand-emerald' : 'bg-rose-500')} />
+            <div className={cn('h-1.5 w-1.5 rounded-full shrink-0', tipster.ativo ? 'bg-emerald-600 dark:bg-brand-emerald' : 'bg-rose-500')} />
             <p className="text-[0.65rem] uppercase tracking-wider font-medium text-gray-500 dark:text-white/50">{tipster.ativo ? 'Ativo' : 'Inativo'}</p>
           </div>
         </div>
       </div>
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-1 shrink-0">
         <button
           onClick={onToggleActive}
           className={cn(

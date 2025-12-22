@@ -38,6 +38,7 @@ import {
   type ApiFinancialTransaction,
 } from '../types/api';
 import { cn } from '../components/ui/utils';
+import { useIsMobile } from '../components/ui/use-mobile';
 
 type TipoFiltro = TipoTransacao | '';
 
@@ -121,6 +122,7 @@ const getCurrencyParts = (value: number) => {
 };
 
 export default function Financeiro() {
+  const isMobile = useIsMobile();
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -628,6 +630,67 @@ export default function Financeiro() {
           </div>
         ) : transacoes.length === 0 ? (
           <EmptyState title="Nenhuma transação" description="Cadastre um depósito ou saque para visualizar aqui." />
+        ) : isMobile ? (
+          <div className="space-y-4">
+            {transacoes.map((transacao) => (
+              <div key={transacao.id} className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-emerald-700/20 dark:bg-emerald-900/10">
+                <div className="flex justify-between items-start mb-3">
+                  <div>
+                    <span
+                      className={cn(
+                        'inline-flex rounded-full px-2 py-0.5 text-xs font-semibold mb-2',
+                        transacao.tipo === 'Depósito' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300' : 'bg-rose-100 text-rose-700 dark:bg-rose-500/15 dark:text-rose-300'
+                      )}
+                    >
+                      {transacao.tipo}
+                    </span>
+                    <h3 className="font-semibold text-gray-900 dark:text-white">{transacao.casaDeAposta}</h3>
+                  </div>
+                  <div className="flex gap-1">
+                    <button
+                      type="button"
+                      className={tableActionButtonClass}
+                      onClick={() => handleEditTransacao(transacao)}
+                      aria-label="Editar transação"
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </button>
+                    <button
+                      type="button"
+                      className={tableActionButtonDangerClass}
+                      onClick={() => handleDeleteTransacao(transacao)}
+                      aria-label="Remover transação"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="flex justify-between items-end">
+                  <div>
+                    <p className="text-xs text-gray-500 dark:text-white/60 mb-1">Valor</p>
+                    <p className={cn(
+                      'text-lg font-bold',
+                      transacao.tipo === 'Depósito' ? 'text-emerald-600 dark:text-emerald-300' : 'text-rose-600 dark:text-rose-300'
+                    )}>
+                      {formatCurrency(transacao.valor)}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xs text-gray-500 dark:text-white/60 mb-1">Data</p>
+                    <p className="text-sm text-gray-900 dark:text-white">{formatDate(transacao.dataTransacao)}</p>
+                  </div>
+                </div>
+
+                {transacao.observacao?.trim() && (
+                  <div className="mt-3 pt-3 border-t border-gray-100 dark:border-white/5">
+                    <p className="text-xs text-gray-500 dark:text-white/60">Observação</p>
+                    <p className="text-sm text-gray-700 dark:text-white/80 mt-1">{transacao.observacao}</p>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
         ) : (
           <div className="overflow-x-auto rounded-2xl border border-gray-200 dark:border-emerald-700/20">
             <table className="min-w-full table-auto text-sm text-gray-900 dark:text-white">

@@ -1,6 +1,7 @@
 import { Pencil, Trash2 } from 'lucide-react';
 import { EmptyState } from '../ui/empty-state';
 import { cn } from '../ui/utils';
+import { useIsMobile } from '../ui/use-mobile';
 import {
   Tooltip,
   TooltipContent,
@@ -41,6 +42,95 @@ interface RowProps {
   normalizeEsporte: (esporte: string) => string;
   formatOptionalCellText: (value?: string | null) => string;
 }
+
+const MobileBetCard = ({ 
+  aposta, 
+  onEdit, 
+  onDelete, 
+  onStatusClick, 
+  formatCurrency, 
+  formatDate,
+  normalizeEsporte,
+  formatOptionalCellText 
+}: RowProps) => {
+  const statusClass = resolveBetStatusClass(aposta.status);
+  
+  return (
+    <div className="border border-gray-200 rounded-2xl p-4 bg-white dark:bg-white/5 dark:border-white/10 shadow-sm transition-all active:scale-[0.99]">
+      <div className="flex justify-between items-start mb-3">
+        <div className="flex-1 mr-3 min-w-0">
+          <h4 className="font-bold text-gray-900 dark:text-white text-sm line-clamp-2 leading-tight mb-1">
+            {aposta.evento}
+          </h4>
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-gray-500 dark:text-white/60">
+            <span>{formatDate(aposta.dataEvento)}</span>
+            <span className="w-1 h-1 rounded-full bg-gray-300 dark:bg-white/20" />
+            <span>{normalizeEsporte(aposta.esporte)}</span>
+            {aposta.casaDeAposta && (
+              <>
+                <span className="w-1 h-1 rounded-full bg-gray-300 dark:bg-white/20" />
+                <span className="font-medium text-emerald-600 dark:text-emerald-400">{aposta.casaDeAposta}</span>
+              </>
+            )}
+          </div>
+        </div>
+        <div className="flex items-center gap-1 shrink-0">
+          <button 
+            onClick={() => onEdit(aposta)}
+            className="p-2 text-gray-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
+          >
+            <Pencil size={16} />
+          </button>
+          <button 
+            onClick={() => onDelete(aposta)}
+            className="p-2 text-gray-400 hover:text-rose-600 dark:hover:text-rose-400 transition-colors"
+          >
+            <Trash2 size={16} />
+          </button>
+        </div>
+      </div>
+      
+      <div className="grid grid-cols-2 gap-3 text-sm mb-4 bg-gray-50 dark:bg-black/20 rounded-xl p-3">
+        <div>
+          <span className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-white/40 block mb-0.5">Aposta</span>
+          <span className="font-medium text-gray-700 dark:text-gray-200 line-clamp-1" title={aposta.aposta}>
+            {formatOptionalCellText(aposta.aposta)}
+          </span>
+        </div>
+        <div>
+          <span className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-white/40 block mb-0.5">Odd</span>
+          <span className="font-medium text-gray-700 dark:text-gray-200">
+            {aposta.odd ? aposta.odd.toFixed(2) : '-'}
+          </span>
+        </div>
+        <div>
+          <span className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-white/40 block mb-0.5">Valor</span>
+          <span className="font-bold text-gray-900 dark:text-white">
+            {formatCurrency(aposta.valorApostado)}
+          </span>
+        </div>
+        <div>
+          <span className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-white/40 block mb-0.5">Retorno</span>
+          <span className={cn(
+            "font-bold", 
+            aposta.retornoObtido > 0 ? "text-emerald-600 dark:text-emerald-400" : 
+            aposta.retornoObtido < 0 ? "text-rose-600 dark:text-rose-400" : "text-gray-500 dark:text-white/50"
+          )}>
+            {formatCurrency(aposta.retornoObtido)}
+          </span>
+        </div>
+      </div>
+
+      <button 
+        onClick={() => onStatusClick(aposta)}
+        className={cn(betStatusPillBaseClass, statusClass, "w-full justify-center text-xs h-9 font-semibold")}
+      >
+        {getBetStatusIcon(aposta.status, { size: 14, className: "mr-2" })}
+        {aposta.status}
+      </button>
+    </div>
+  );
+};
 
 const CellTooltip = ({ children, content }: { children: React.ReactNode; content: string }) => {
   if (!content) return <>{children}</>;
@@ -174,6 +264,7 @@ export default function ApostasList({
   formatCurrency,
   formatDate,
 }: ApostasListProps) {
+  const isMobile = useIsMobile();
   const formatOptionalCellText = (value?: string | null) => {
     if (typeof value !== 'string') {
       return '-';
@@ -183,6 +274,30 @@ export default function ApostasList({
   };
 
   const normalizeEsporte = (esporteFromDb: string): string => normalizarEsporteParaOpcao(esporteFromDb);
+
+  if (isMobile) {
+    return (
+      <div className="space-y-4 pb-4">
+        {apostas.length === 0 ? (
+          <EmptyState title="Nenhuma aposta" description="Cadastre uma nova aposta para começar a acompanhar resultados." />
+        ) : (
+          apostas.map((aposta) => (
+            <MobileBetCard
+              key={aposta.id}
+              aposta={aposta}
+              onEdit={onEdit}
+              onDelete={onDelete}
+              onStatusClick={onStatusClick}
+              formatCurrency={formatCurrency}
+              formatDate={formatDate}
+              normalizeEsporte={normalizeEsporte}
+              formatOptionalCellText={formatOptionalCellText}
+            />
+          ))
+        )}
+      </div>
+    );
+  }
 
   const itemData = {
     apostas,

@@ -238,7 +238,7 @@ export default function Dashboard() {
   return (
     <div className="space-y-8 text-foreground">
       <div className="mb-4">
-        <div className="flex items-center justify-between gap-6">
+        <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
           <div>
             <p className={cn('text-2xs uppercase tracking-[0.3em]', softLabelTextClass)}>Visão geral</p>
             <h1 className="text-3xl font-semibold">
@@ -246,7 +246,7 @@ export default function Dashboard() {
             </h1>
             <p className={cn('text-sm', labelTextClass)}>Acompanhe seus números mais importantes em tempo real.</p>
           </div>
-          <div className="flex items-center gap-3 mt-6 relative">
+          <div className="relative mt-4 flex flex-wrap items-center gap-3 md:mt-0">
             {loading && (
               <span className={cn('inline-flex items-center gap-2 rounded-full border border-white/5 bg-white/5 px-3 py-1 text-xs text-foreground-muted', softLabelTextClass)}>
                 <Loader2 className="h-3.5 w-3.5 animate-spin" /> Atualizando
@@ -448,7 +448,7 @@ export default function Dashboard() {
 
         <div
           className={cn(
-            'col-span-1 flex flex-col justify-between rounded-[32px] border border-gray-200 bg-white p-8 text-gray-900 shadow-xl backdrop-blur-2xl md:col-span-1 xl:col-span-5 hover:border-gray-300 hover:shadow-lg min-w-0',
+            'col-span-1 flex flex-col justify-between rounded-[32px] border border-gray-200 bg-white p-6 sm:p-8 text-gray-900 shadow-xl backdrop-blur-2xl md:col-span-1 xl:col-span-5 hover:border-gray-300 hover:shadow-lg min-w-0',
             'dark:border-emerald-500/30 dark:bg-[#022c22] dark:text-white dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)]'
           )}
         >
@@ -634,15 +634,15 @@ export default function Dashboard() {
                 return (
                   <div
                     key={aposta.id}
-                    className="flex items-center justify-between rounded-2xl border border-gray-100 bg-gray-50 px-4 py-3 text-sm transition-all duration-300 hover:bg-gray-100 hover:border-gray-200 hover:scale-[1.01] dark:border-white/5 dark:bg-white/5 dark:hover:bg-white/10 dark:hover:border-white/20"
+                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0 rounded-2xl border border-gray-100 bg-gray-50 px-4 py-3 text-sm transition-all duration-300 hover:bg-gray-100 hover:border-gray-200 hover:scale-[1.01] dark:border-white/5 dark:bg-white/5 dark:hover:bg-white/10 dark:hover:border-white/20"
                   >
-                    <div className="space-y-0.5">
+                    <div className="space-y-0.5 w-full sm:w-auto">
                       <p className="font-semibold text-gray-900 dark:text-foreground">{description}</p>
                       <p className={cn('text-xs text-foreground-muted', softLabelTextClass)}>
                         {formattedDate} · Odd {oddLabel} · {bettingHouse}
                       </p>
                     </div>
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto">
                       <span className={cn(betStatusPillBaseClass, statusClass)}>
                         {rawStatus}
                       </span>

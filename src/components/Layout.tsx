@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
-import { MessageCircle, Moon, Sun } from 'lucide-react';
+import { MessageCircle, Moon, Sun, Menu } from 'lucide-react';
 import { usePerfil } from '../contexts/PerfilContext';
 import { useTheme } from '../contexts/ThemeContext';
 import Sidebar from './Sidebar';
 import { subscribeToTelegramUpdate } from '../utils/telegramSync';
+import { useIsMobile } from './ui/use-mobile';
+import { Sheet, SheetContent } from './ui/sheet';
 
 const SUPPORT_BOT_USERNAME = typeof import.meta.env.VITE_TELEGRAM_SUPPORT_BOT_USERNAME === 'string' && import.meta.env.VITE_TELEGRAM_SUPPORT_BOT_USERNAME.trim().length > 0
   ? import.meta.env.VITE_TELEGRAM_SUPPORT_BOT_USERNAME.trim()
@@ -14,6 +16,8 @@ const Layout = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const { perfil } = usePerfil();
   const { theme, toggleTheme } = useTheme();
+  const isMobile = useIsMobile();
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
 
   useEffect(() => {
     const unsubscribe = subscribeToTelegramUpdate(() => {
@@ -41,10 +45,29 @@ const Layout = () => {
 
   return (
     <div className="flex min-h-full bg-gray-50 text-gray-900 transition-colors duration-300 dark:bg-app-layout-bg dark:text-white">
-      <Sidebar collapsed={isSidebarCollapsed} onToggle={handleToggleSidebar} />
-      <div 
+      {isMobile ? (
+        <>
+          <div className="fixed left-0 top-0 z-50 flex w-full items-center bg-white p-4 shadow-sm dark:bg-app-card">
+            <button
+              onClick={() => setIsSheetOpen(true)}
+              className="mr-4 rounded-md p-1 hover:bg-gray-100 dark:hover:bg-white/10"
+            >
+              <Menu size={24} />
+            </button>
+            <span className="text-lg font-semibold">Real Comando</span>
+          </div>
+          <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+            <SheetContent side="left" className="w-64 p-0">
+              <Sidebar collapsed={false} onToggle={() => {}} mobile={true} />
+            </SheetContent>
+          </Sheet>
+        </>
+      ) : (
+        <Sidebar collapsed={isSidebarCollapsed} onToggle={handleToggleSidebar} />
+      )}
+      <div
         className={`flex flex-1 flex-col px-4 py-6 sm:px-6 lg:px-8 transition-all duration-300 ${
-          isSidebarCollapsed ? 'ml-20' : 'ml-64'
+          isMobile ? 'ml-0 mt-16' : isSidebarCollapsed ? 'ml-20' : 'ml-64'
         }`}
       >
         <div className="flex flex-1 flex-col p-4 sm:p-6">

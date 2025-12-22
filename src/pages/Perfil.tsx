@@ -32,14 +32,14 @@ import { cn } from '../components/ui/utils';
 import { toast } from '../utils/toast';
 
 const cardBaseClass =
-  'relative overflow-hidden rounded-[32px] border border-emerald-700/20 bg-gradient-to-br from-emerald-900/40 to-emerald-800/20 p-12 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.3)] transition-all duration-300';
-const labelClass = 'text-[0.75rem] font-bold uppercase tracking-[0.25em] text-emerald-400';
+  'relative overflow-hidden rounded-[32px] border border-gray-200 bg-white p-12 backdrop-blur-2xl shadow-xl transition-all duration-300 dark:border-emerald-700/20 dark:bg-transparent dark:bg-gradient-to-br dark:from-emerald-900/40 dark:to-emerald-800/20 dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)]';
+const labelClass = 'text-[0.75rem] font-bold uppercase tracking-[0.25em] text-gray-500 dark:text-emerald-400';
 const inputClass =
-  'w-full rounded-2xl border border-emerald-700/20 bg-emerald-900/10 px-5 py-3.5 text-sm font-medium text-emerald-100 placeholder:text-emerald-300/60 backdrop-blur-md transition-all duration-300 focus:border-emerald-500/50 focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:bg-emerald-900/20';
+  'w-full rounded-2xl border border-gray-200 bg-gray-50 px-5 py-3.5 text-sm font-medium text-gray-900 placeholder:text-gray-400 backdrop-blur-md transition-all duration-300 focus:border-emerald-500/50 focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:bg-white dark:border-emerald-700/20 dark:bg-emerald-900/10 dark:text-emerald-100 dark:placeholder:text-emerald-300/60 dark:focus:bg-emerald-900/20';
 const primaryButtonClass =
   'relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-2xl bg-emerald-600 py-4 text-sm font-bold uppercase tracking-widest text-white shadow-[0_10px_20px_rgba(5,150,105,0.3)] transition-all duration-300 hover:bg-emerald-500 hover:shadow-[0_0_25px_rgba(16,185,129,0.4)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50';
 const neutralButtonClass =
-  'inline-flex items-center justify-center gap-2 rounded-2xl border border-emerald-700/20 bg-emerald-900/10 px-5 py-2.5 text-xs font-bold uppercase tracking-widest text-emerald-100 transition hover:border-emerald-500/50 hover:bg-emerald-900/20 hover:text-emerald-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/30';
+  'inline-flex items-center justify-center gap-2 rounded-2xl border border-gray-200 bg-gray-50 px-5 py-2.5 text-xs font-bold uppercase tracking-widest text-gray-700 transition hover:border-emerald-500/50 hover:bg-gray-100 hover:text-emerald-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/30 dark:border-emerald-700/20 dark:bg-emerald-900/10 dark:text-emerald-100 dark:hover:bg-emerald-900/20 dark:hover:text-emerald-300';
 const dangerButtonClass =
   'inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-red-500/30 bg-red-500/10 px-5 py-3.5 text-sm font-bold uppercase tracking-widest text-red-200 transition hover:bg-red-500/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400/40';
 
@@ -275,29 +275,29 @@ export default function Perfil() {
         
         <div className="relative z-10 flex flex-col gap-10 lg:flex-row lg:items-center">
           <div className="flex flex-1 items-center gap-6">
-            <div className={cn("flex h-20 w-20 items-center justify-center rounded-[24px] bg-emerald-900/10 border border-emerald-700/20 shadow-2xl", planVisual.colorClass)}>
+            <div className={cn("flex h-20 w-20 items-center justify-center rounded-[24px] bg-gray-50 border border-gray-200 shadow-2xl dark:bg-emerald-900/10 dark:border-emerald-700/20", planVisual.colorClass)}>
               <PlanIcon size={32} />
             </div>
             <div>
               <p className={labelClass}>Status do Plano</p>
-              <h2 className="text-4xl font-black tracking-tight text-white">{profile.plano.nome}</h2>
+              <h2 className="text-4xl font-black tracking-tight text-gray-900 dark:text-white">{profile.plano.nome}</h2>
               <div className="mt-2 flex items-center gap-2">
                 <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
-                <span className="text-xs font-bold uppercase tracking-widest text-white/40">Terminal Operacional</span>
+                <span className="text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/40">Terminal Operacional</span>
               </div>
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-8 lg:border-l lg:border-emerald-700/10 lg:pl-10">
+          <div className="flex flex-wrap gap-8 lg:border-l lg:border-gray-200 dark:lg:border-emerald-700/10 lg:pl-10">
             <div className="space-y-1">
               <p className={labelClass}>Limite Diário</p>
-              <p className="text-xl font-bold text-white tabular-nums">
+              <p className="text-xl font-bold text-gray-900 dark:text-white tabular-nums">
                 {isUnlimitedPlan ? 'ILIMITADO' : `${profile.plano.limiteApostasDiarias} APOSTAS`}
               </p>
             </div>
             <div className="space-y-1">
               <p className={labelClass}>Ciclo de Renovação</p>
-              <p className="text-xl font-bold text-white">{formatDateUtil(new Date().toISOString())}</p>
+              <p className="text-xl font-bold text-gray-900 dark:text-white">{formatDateUtil(new Date().toISOString())}</p>
             </div>
           </div>
 
@@ -319,12 +319,12 @@ export default function Perfil() {
         {/* Informações Pessoais */}
         <section className={cardBaseClass}>
           <div className="mb-6 flex items-center gap-4">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-500">
               <User size={20} />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-emerald-50">Informações Pessoais</h3>
-              <p className="text-sm font-medium text-emerald-200/60 uppercase tracking-widest">Identidade no Terminal</p>
+              <h3 className="text-lg font-bold text-gray-900 dark:text-emerald-50">Informações Pessoais</h3>
+              <p className="text-sm font-medium text-gray-500 dark:text-emerald-200/60 uppercase tracking-widest">Identidade no Terminal</p>
             </div>
           </div>
 
@@ -332,11 +332,11 @@ export default function Perfil() {
             <div className="flex items-center gap-6">
               <div className="group relative h-16 w-16 shrink-0">
                 <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-emerald-500/40 to-teal-500/40 blur-md opacity-0 transition group-hover:opacity-100" />
-                <div className="relative h-full w-full overflow-hidden rounded-full border-2 border-emerald-700/20 bg-emerald-900/10">
+                <div className="relative h-full w-full overflow-hidden rounded-full border-2 border-gray-200 bg-gray-50 dark:border-emerald-700/20 dark:bg-emerald-900/10">
                   {fotoPreview ? (
                     <img src={fotoPreview} alt="Perfil" className="h-full w-full object-cover" />
                   ) : (
-                    <div className="flex h-full w-full items-center justify-center text-white/20">
+                    <div className="flex h-full w-full items-center justify-center text-gray-300 dark:text-white/20">
                       <User size={24} />
                     </div>
                   )}
@@ -392,8 +392,8 @@ export default function Perfil() {
               <Lock size={20} />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-emerald-50">Chave de Acesso</h3>
-              <p className="text-sm font-medium text-emerald-200/60 uppercase tracking-widest">Criptografia do Terminal</p>
+              <h3 className="text-lg font-bold text-gray-900 dark:text-emerald-50">Chave de Acesso</h3>
+              <p className="text-sm font-medium text-gray-500 dark:text-emerald-200/60 uppercase tracking-widest">Criptografia do Terminal</p>
             </div>
           </div>
 
@@ -447,23 +447,23 @@ export default function Perfil() {
           </div>
 
           <div className="space-y-6">
-            <div className="rounded-xl bg-emerald-900/10 p-5 border border-emerald-700/20">
+            <div className="rounded-xl bg-gray-50 border border-gray-200 p-5 dark:bg-emerald-900/10 dark:border-emerald-700/20">
               <p className={labelClass}>ID Operacional</p>
               <div className="mt-1.5 flex items-center gap-2">
-                <code className="flex-1 text-sm font-mono text-emerald-400/80 bg-black/40 px-3 py-2 rounded-lg truncate">{profile.id}</code>
+                <code className="flex-1 text-sm font-mono text-gray-700 bg-gray-100 px-3 py-2 rounded-lg truncate dark:text-emerald-400/80 dark:bg-black/40">{profile.id}</code>
                 <button onClick={() => copyToClipboard(profile.id)} className={cn(neutralButtonClass, "p-1.5 min-h-0")}>
                   <Copy size={12} />
                 </button>
               </div>
             </div>
 
-            <div className="rounded-xl bg-emerald-900/10 p-6 border border-emerald-700/20">
-              <div className="flex items-center justify-between mb-6 pb-6 border-b border-emerald-700/10">
+            <div className="rounded-xl bg-gray-50 border border-gray-200 p-6 dark:bg-emerald-900/10 dark:border-emerald-700/20">
+              <div className="flex items-center justify-between mb-6 pb-6 border-b border-gray-200 dark:border-emerald-700/10">
                 <div className="space-y-1">
                   <p className={labelClass}>Status da Conta</p>
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 size={16} className="text-emerald-400" />
-                    <span className="text-lg font-bold text-emerald-300">VERIFICADO</span>
+                    <CheckCircle2 size={16} className="text-emerald-600 dark:text-emerald-400" />
+                    <span className="text-lg font-bold text-emerald-600 dark:text-emerald-300">VERIFICADO</span>
                   </div>
                 </div>
                 <div className="space-y-1 text-right">

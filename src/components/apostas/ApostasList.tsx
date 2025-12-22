@@ -24,7 +24,7 @@ interface ApostasListProps {
 }
 
 const tableActionButtonClass =
-  'inline-flex h-8 w-8 items-center justify-center rounded-lg border border-white/15 bg-white/5 text-white/80 transition hover:border-brand-emerald/40 hover:bg-white/10 hover:text-brand-emerald focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-emerald/30';
+  'inline-flex h-8 w-8 items-center justify-center rounded-lg border border-emerald-500/20 bg-emerald-500/10 text-emerald-100 transition hover:border-emerald-400/40 hover:bg-emerald-500/20 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/30';
 const tableActionButtonDangerClass =
   'inline-flex h-8 w-8 items-center justify-center rounded-lg border border-rose-400/40 bg-rose-500/10 text-rose-200 transition hover:bg-rose-500/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400/40';
 
@@ -79,25 +79,25 @@ const Row = ({ index, style, data }: ListChildComponentProps<RowContext>) => {
     <div className="group">
       <div 
         style={style} 
-        className="grid items-center gap-4 px-6 border-b border-emerald-500/10 hover:bg-emerald-500/5 transition-colors h-full text-sm text-white"
+        className="grid items-center gap-4 px-6 border-b border-gray-200 hover:bg-gray-50 dark:border-emerald-700/10 dark:hover:bg-emerald-900/20 transition-colors h-full text-sm text-gray-900 dark:text-white"
       >
         <div 
           className="grid items-center gap-4 h-full w-full"
           style={{ gridTemplateColumns: GRID_TEMPLATE }}
         >
           <CellTooltip content={aposta.casaDeAposta || ''}>
-          <div className="truncate font-medium text-white">
+          <div className="truncate font-medium text-gray-900 dark:text-white">
             {formatOptionalCellText(aposta.casaDeAposta)}
           </div>
         </CellTooltip>
         
         <CellTooltip content={aposta.tipster || ''}>
-          <div className="truncate text-white/80">
+          <div className="truncate text-gray-500 dark:text-white/80">
             {formatOptionalCellText(aposta.tipster)}
           </div>
         </CellTooltip>
         
-        <div className="truncate text-white/80">
+        <div className="truncate text-gray-500 dark:text-white/80">
           {formatDate(aposta.dataEvento)}
         </div>
         
@@ -144,8 +144,8 @@ const Row = ({ index, style, data }: ListChildComponentProps<RowContext>) => {
         </div>
         <div className={cn(
           "truncate text-base font-bold",
-          aposta.retornoObtido > 0 ? "text-emerald-400" : 
-          aposta.retornoObtido < 0 ? "text-rose-400" : "text-white/60"
+          aposta.retornoObtido > 0 ? "text-emerald-600 dark:text-emerald-400" : 
+          aposta.retornoObtido < 0 ? "text-rose-600 dark:text-rose-400" : "text-gray-400 dark:text-white/60"
         )}>
           {formatCurrency(aposta.retornoObtido)}
         </div>
@@ -207,7 +207,7 @@ export default function ApostasList({
 
   return (
     <TooltipProvider>
-      <div className="rounded-lg border border-emerald-500/20 bg-app-slate-light py-6 text-white shadow-[0_8px_30px_rgb(0,0,0,0.3)] ring-1 ring-white/5 backdrop-blur-sm space-y-6 flex flex-col h-full min-h-[500px]">
+      <div className="rounded-[32px] border border-emerald-700/20 bg-gradient-to-br from-emerald-900/40 to-emerald-800/20 py-6 text-white shadow-[0_20px_50px_rgba(0,0,0,0.3)] backdrop-blur-2xl space-y-6 flex flex-col h-full min-h-[500px]">
         {apostas.length === 0 ? (
           <div className="px-6">
             <EmptyState title="Nenhuma aposta" description="Cadastre uma nova aposta para começar a acompanhar resultados." />
@@ -216,7 +216,7 @@ export default function ApostasList({
           <div className="flex-1 flex flex-col overflow-hidden h-full">
             {/* Header */}
             <div 
-              className="grid gap-4 pl-6 py-3 border-b border-emerald-500/20 text-[0.7rem] uppercase tracking-[0.18em] text-white/60 font-medium shrink-0"
+              className="grid gap-4 pl-6 py-3 border-b border-emerald-700/20 text-[0.7rem] uppercase tracking-[0.18em] text-emerald-400 font-bold shrink-0"
               style={{ gridTemplateColumns: GRID_TEMPLATE, paddingRight: '40px' /* Scrollbar compensation + padding */ }}
             >
               <div>Casa</div>

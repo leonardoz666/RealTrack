@@ -30,6 +30,25 @@ import type {
   AnaliseViewState 
 } from '../utils/typeGuards';
 
+const evolutionMetricCardClassBase = [
+    'relative',
+    'rounded-2xl',
+    'p-4',
+    'bg-gray-50',
+    'backdrop-blur-2xl',
+    'border',
+    'border-gray-200',
+    'shadow-sm',
+    'transition-all',
+    'duration-300',
+    'hover:scale-[1.015]',
+    'hover:border-gray-300',
+    'dark:bg-white/[0.06]',
+    'dark:border-white/20',
+    'dark:shadow-[0_8px_40px_rgba(0,0,0,0.6)]',
+    'dark:hover:border-white/30',
+  ].join(' ');
+
 const heatmapRows = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 const heatmapCols = ['Manhã (06-12)', 'Tarde (12-18)', 'Noite (18-24)', 'Madrugada (00-06)'];
 

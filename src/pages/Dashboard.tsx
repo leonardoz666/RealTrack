@@ -211,55 +211,64 @@ export default function Dashboard() {
   const filterInputClass =
     'mt-2 w-full rounded-2xl border border-border/40 bg-background px-3 py-2 text-sm text-foreground placeholder:text-foreground-muted transition focus-visible:border-brand-emerald focus-visible:ring-2 focus-visible:ring-brand-emerald/30';
 
-  const cardSurfaceClass = 'bg-app-dark';
-  const cardBorderClass = 'border-white/5';
-  const cardShadowClass = 'shadow-[0_25px_45px_rgba(0,0,0,0.25)]';
-  const sectionCardClass = `rounded-lg ${cardBorderClass} ${cardSurfaceClass} p-6 ${cardShadowClass} backdrop-blur-sm transition-all duration-300 hover:scale-[1.015] hover:border-white/20 hover:shadow-emerald-500/5`;
-  const evolutionCardClass =
-    'rounded-lg border border-white/5 bg-app-darker p-6 sm:p-8 text-white transition-all duration-300 hover:scale-[1.015] hover:border-white/20 hover:shadow-emerald-500/5';
+  const sectionCardClass = 'rounded-[32px] border border-gray-200 bg-white p-6 shadow-xl backdrop-blur-2xl transition-all duration-300 hover:scale-[1.015] hover:border-gray-300 hover:shadow-lg dark:border-emerald-700/20 dark:bg-transparent dark:bg-gradient-to-br dark:from-emerald-900/40 dark:to-emerald-800/20 dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] dark:hover:border-emerald-600/30 dark:hover:shadow-emerald-500/10';
+const evolutionCardClass =
+  'rounded-[32px] border border-gray-200 bg-white p-6 sm:p-8 text-gray-900 shadow-xl backdrop-blur-2xl transition-all duration-300 hover:scale-[1.015] hover:border-gray-300 hover:shadow-lg dark:border-emerald-700/20 dark:bg-transparent dark:bg-gradient-to-br dark:from-emerald-900/40 dark:to-emerald-800/20 dark:text-white dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] dark:hover:border-emerald-600/30 dark:hover:shadow-emerald-500/10';
   const evolutionMetricCardClassBase = [
     'relative',
     'rounded-2xl',
     'p-4',
-    'bg-white/[0.06]',
+    'bg-gray-50',
     'backdrop-blur-2xl',
     'border',
-    'border-white/20',
-    'shadow-[0_8px_40px_rgba(0,0,0,0.6)]',
+    'border-gray-200',
+    'shadow-sm',
     'transition-all',
     'duration-300',
     'hover:scale-[1.015]',
-    'hover:border-white/30',
+    'hover:border-gray-300',
+    'dark:bg-white/[0.06]',
+    'dark:border-white/20',
+    'dark:shadow-[0_8px_40px_rgba(0,0,0,0.6)]',
+    'dark:hover:border-white/30',
   ].join(' ');
 
   const evolutionMetricCardClassMelhor = [
     'relative',
     'rounded-2xl',
     'p-4',
-    'bg-emerald-900/40',
+    'bg-emerald-50',
     'backdrop-blur-2xl',
     'border',
-    'border-emerald-500/50',
-    'shadow-[0_8px_40px_rgba(16,185,129,0.1)]',
+    'border-emerald-200',
+    'shadow-sm',
     'transition-all',
     'duration-300',
     'hover:scale-[1.015]',
-    'hover:border-emerald-500/60',
+    'hover:border-emerald-300',
+    'dark:bg-emerald-900/40',
+    'dark:border-emerald-500/50',
+    'dark:shadow-[0_8px_40px_rgba(16,185,129,0.1)]',
+    'dark:hover:border-emerald-500/60',
   ].join(' ');
 
   const evolutionMetricCardClassPior = [
     'relative',
     'rounded-2xl',
     'p-4',
-    'bg-rose-900/40',
+    'bg-rose-50',
     'backdrop-blur-2xl',
     'border',
-    'border-rose-500/50',
-    'shadow-[0_8px_40px_rgba(244,63,94,0.1)]',
+    'border-rose-200',
+    'shadow-sm',
     'transition-all',
     'duration-300',
     'hover:scale-[1.015]',
-    'hover:border-rose-500/60',
+    'hover:border-rose-300',
+    'dark:bg-rose-900/40',
+    'dark:border-rose-500/50',
+    'dark:shadow-[0_8px_40px_rgba(244,63,94,0.1)]',
+    'dark:hover:border-rose-500/60',
   ].join(' ');
 
   const evolutionMetricCardClassMedia = [

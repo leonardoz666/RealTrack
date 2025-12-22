@@ -43,17 +43,18 @@ const defaultForm: EditFormState = {
 };
 
 const sectionCardClass =
-  'rounded-3xl border border-border/30 bg-background-card/80 p-6 shadow-card backdrop-blur-sm';
+  'rounded-[32px] border border-gray-200 bg-white p-6 text-gray-900 shadow-xl backdrop-blur-2xl dark:border-emerald-700/20 dark:bg-transparent dark:bg-gradient-to-br dark:from-emerald-900/40 dark:to-emerald-800/20 dark:text-white dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)]';
 const dashboardCardShellClass =
-  'rounded-lg border border-white/5 bg-app-darker p-6 text-white shadow-[0_25px_45px_rgba(0,0,0,0.25)] backdrop-blur-sm transition-all duration-300 hover:border-white/20 hover:shadow-emerald-500/5';
+  'rounded-[32px] border border-gray-200 bg-white p-6 text-gray-900 shadow-xl backdrop-blur-2xl transition-all duration-300 hover:border-gray-300 hover:shadow-lg dark:border-emerald-700/20 dark:bg-transparent dark:bg-gradient-to-br dark:from-emerald-900/40 dark:to-emerald-800/20 dark:text-white dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] dark:hover:border-emerald-500/30 dark:hover:shadow-emerald-500/10';
 const summaryCardBaseClass =
-  'rounded-lg border border-white/5 bg-app-dark p-6 text-white shadow-[0_25px_45px_rgba(0,0,0,0.25)] backdrop-blur-sm transition-all duration-300 hover:scale-[1.015] hover:border-white/20 hover:shadow-emerald-500/5';
-const modalCardClass = 'rounded-2xl border border-border/30 bg-background px-5 py-5';
-const cardLabelClass = 'text-2xs uppercase tracking-[0.3em] text-foreground-muted';
+  'rounded-[32px] border border-gray-200 bg-white p-6 text-gray-900 shadow-xl backdrop-blur-2xl transition-all duration-300 hover:scale-[1.015] hover:border-gray-300 hover:shadow-lg dark:border-emerald-700/20 dark:bg-transparent dark:bg-gradient-to-br dark:from-emerald-900/40 dark:to-emerald-800/20 dark:text-white dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] dark:hover:border-emerald-500/30 dark:hover:shadow-emerald-500/10';
+const modalCardClass =
+  'rounded-[32px] border border-gray-200 bg-white px-5 py-5 text-gray-900 shadow-xl backdrop-blur-2xl dark:border-emerald-700/20 dark:bg-transparent dark:bg-gradient-to-br dark:from-emerald-900/40 dark:to-emerald-800/20 dark:text-white dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)]';
+const cardLabelClass = 'text-2xs uppercase tracking-[0.3em] text-gray-500 dark:text-white/50';
 const primaryButtonClass =
-  'inline-flex items-center justify-center gap-2 rounded-2xl border border-brand-emerald/40 bg-brand-emerald/10 px-5 py-2.5 text-sm font-semibold text-brand-emerald transition hocus:bg-brand-emerald/20';
+  'inline-flex items-center justify-center gap-2 rounded-2xl border border-transparent bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-700 dark:border-brand-emerald/40 dark:bg-brand-emerald/10 dark:text-brand-emerald dark:hover:bg-brand-emerald/20';
 const ghostButtonClass =
-  'inline-flex items-center justify-center gap-2 rounded-2xl border border-transparent px-4 py-2 text-sm font-semibold text-foreground transition hocus:border-border/60 hocus:text-brand-emerald';
+  'inline-flex items-center justify-center gap-2 rounded-2xl border border-transparent px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-100 hover:text-emerald-600 dark:text-white dark:hover:border-border/60 dark:hover:bg-transparent dark:hover:text-brand-emerald';
 
 export default function Bancas() {
   const [activeTab, setActiveTab] = useState<'bancas' | 'tipsters'>('bancas');
@@ -375,29 +376,33 @@ export default function Bancas() {
       </div>
 
       {/* Selector de Abas */}
-      <div className="flex border-b border-white/10">
+      <div className="flex border-b border-gray-200 dark:border-emerald-700/20">
         <button
           onClick={() => setActiveTab('bancas')}
           className={cn(
             'px-6 py-3 text-sm font-medium transition-colors relative',
-            activeTab === 'bancas' ? 'text-brand-emerald' : 'text-foreground-muted hover:text-foreground'
+            activeTab === 'bancas'
+              ? 'text-emerald-600 dark:text-brand-emerald'
+              : 'text-gray-500 hover:text-gray-900 dark:text-white/60 dark:hover:text-white'
           )}
         >
           Minhas Bancas
           {activeTab === 'bancas' && (
-            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-emerald" />
+            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-600 dark:bg-brand-emerald" />
           )}
         </button>
         <button
           onClick={() => setActiveTab('tipsters')}
           className={cn(
             'px-6 py-3 text-sm font-medium transition-colors relative',
-            activeTab === 'tipsters' ? 'text-brand-emerald' : 'text-foreground-muted hover:text-foreground'
+            activeTab === 'tipsters'
+              ? 'text-emerald-600 dark:text-brand-emerald'
+              : 'text-gray-500 hover:text-gray-900 dark:text-white/60 dark:hover:text-white'
           )}
         >
           Tipsters
           {activeTab === 'tipsters' && (
-            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-emerald" />
+            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-600 dark:bg-brand-emerald" />
           )}
         </button>
       </div>
@@ -408,17 +413,17 @@ export default function Bancas() {
             {summaryCards.map((card, idx) => (
               <div key={idx} className={summaryCardBaseClass}>
                 <div className="flex items-center justify-between gap-4">
-                  <p className="text-xs uppercase tracking-[0.2em] text-white/50">{card.title}</p>
-                  <div className="text-brand-emerald">{card.icon}</div>
+                  <p className="text-xs uppercase tracking-[0.2em] text-gray-500 dark:text-white/50">{card.title}</p>
+                  <div className="text-emerald-600 dark:text-brand-emerald">{card.icon}</div>
                 </div>
-                <p className="mt-4 text-3xl font-bold text-white">{card.value}</p>
-                <p className="mt-1 text-xs text-white/40">{card.helper}</p>
+                <p className="mt-4 text-3xl font-bold text-gray-900 dark:text-white">{card.value}</p>
+                <p className="mt-1 text-xs text-gray-500 dark:text-white/40">{card.helper}</p>
               </div>
             ))}
           </div>
 
           {bancasError && (
-            <div className={cn(sectionCardClass, 'border-rose-500/30 bg-rose-500/5 text-sm text-rose-200')}>
+            <div className={cn(sectionCardClass, 'border-rose-200 bg-rose-50 text-rose-700 dark:border-rose-500/30 dark:bg-rose-500/5 dark:text-rose-200')}>
               {bancasError.message}
             </div>
           )}
@@ -426,24 +431,24 @@ export default function Bancas() {
           <section className={cn(dashboardCardShellClass, 'space-y-6')}>
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div>
-                <p className={cn(cardLabelClass, 'text-white/70')}>Bancas compartilhadas</p>
-                <h2 className="text-2xl font-semibold text-white">Lista completa</h2>
+                <p className={cn(cardLabelClass, 'text-gray-500 dark:text-white/70')}>Bancas compartilhadas</p>
+                <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">Lista completa</h2>
               </div>
-              <p className="text-sm text-white/70">Gerencie o status, padrão e links públicos.</p>
+              <p className="text-sm text-gray-500 dark:text-white/70">Gerencie o status, padrão e links públicos.</p>
             </div>
 
             {bancasLoading ? (
-              <div className="flex h-48 items-center justify-center text-white/70">
+              <div className="flex h-48 items-center justify-center text-gray-500 dark:text-white/70">
                 <Loader2 className="h-6 w-6 animate-spin" />
               </div>
             ) : bancas.length === 0 ? (
-              <div className="rounded-2xl border border-dashed border-white/15 px-6 py-12 text-center text-sm text-white/70">
+              <div className="rounded-2xl border border-dashed border-gray-300 px-6 py-12 text-center text-sm text-gray-500 dark:border-white/15 dark:text-white/70">
                 Nenhuma banca cadastrada ainda.
               </div>
             ) : (
-              <div className="overflow-x-auto rounded-2xl border border-white/10">
-                <table className="min-w-full divide-y divide-white/10 text-sm">
-                  <thead className="bg-white/5 text-white/70">
+              <div className="overflow-x-auto rounded-2xl border border-gray-200 dark:border-emerald-700/20">
+                <table className="min-w-full divide-y divide-gray-200 dark:divide-emerald-500/10 text-sm">
+                  <thead className="bg-gray-50 dark:bg-emerald-900/20 text-gray-500 dark:text-emerald-400">
                     <tr>
                       <th className="px-4 py-3 text-left text-2xs font-semibold uppercase tracking-[0.3em]">Banca</th>
                       <th className="px-4 py-3 text-left text-2xs font-semibold uppercase tracking-[0.3em]">Descrição</th>
@@ -454,16 +459,16 @@ export default function Bancas() {
                       <th className="px-4 py-3 text-right text-2xs font-semibold uppercase tracking-[0.3em]">Ações</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-white/10">
+                  <tbody className="divide-y divide-gray-100 dark:divide-white/10">
                     {bancas.map((banca) => (
-                      <tr key={banca.id} className="transition duration-200 hover:bg-white/10 cursor-default">
+                      <tr key={banca.id} className="transition duration-200 hover:bg-gray-50 dark:hover:bg-white/10 cursor-default">
                         <td className="px-4 py-4 align-middle">
                           <div className="space-y-1">
-                            <p className="font-semibold text-white">{banca.nome}</p>
-                            <p className="text-xs text-white/60">ID: {banca.id}</p>
+                            <p className="font-semibold text-gray-900 dark:text-white">{banca.nome}</p>
+                            <p className="text-xs text-gray-500 dark:text-white/60">ID: {banca.id}</p>
                           </div>
                         </td>
-                        <td className="px-4 py-4 align-middle text-white/70">{banca.descricao}</td>
+                        <td className="px-4 py-4 align-middle text-gray-600 dark:text-white/70">{banca.descricao}</td>
                         <td className="px-4 py-4 align-middle">
                           <SwitchControl
                             checked={banca.status === 'Ativa'}
@@ -478,8 +483,8 @@ export default function Bancas() {
                             label={`Alternar banca padrão para ${banca.nome}`}
                           />
                         </td>
-                        <td className="px-4 py-4 align-middle text-white/70">{banca.ultimaVisualizacao}</td>
-                        <td className="px-4 py-4 align-middle text-white/70">{banca.criadoEm}</td>
+                        <td className="px-4 py-4 align-middle text-gray-600 dark:text-white/70">{banca.ultimaVisualizacao}</td>
+                        <td className="px-4 py-4 align-middle text-gray-600 dark:text-white/70">{banca.criadoEm}</td>
                         <td className="px-4 py-4 align-middle">
                           <div className="flex justify-end gap-2">
                             <ActionIconButton
@@ -520,18 +525,18 @@ export default function Bancas() {
           <section className={cn(dashboardCardShellClass, 'space-y-6')}>
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div>
-                <p className={cn(cardLabelClass, 'text-white/70')}>Gestão de Analistas</p>
-                <h2 className="text-2xl font-semibold text-white">Lista de Tipsters</h2>
+                <p className={cn(cardLabelClass, 'text-gray-500 dark:text-white/70')}>Gestão de Analistas</p>
+                <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">Lista de Tipsters</h2>
               </div>
-              <p className="text-sm text-white/70">Ative ou desative tipsters para usá-los em suas apostas.</p>
+              <p className="text-sm text-gray-500 dark:text-white/70">Ative ou desative tipsters para usá-los em suas apostas.</p>
             </div>
 
             {tipstersLoading ? (
-              <div className="flex h-48 items-center justify-center text-white/70">
+              <div className="flex h-48 items-center justify-center text-gray-500 dark:text-white/70">
                 <Loader2 className="h-6 w-6 animate-spin" />
               </div>
             ) : paginatedTipsters.length === 0 ? (
-              <div className="rounded-2xl border border-dashed border-white/15 px-6 py-12 text-center text-sm text-white/70">
+              <div className="rounded-2xl border border-dashed border-gray-300 px-6 py-12 text-center text-sm text-gray-500 dark:border-white/15 dark:text-white/70">
                 Nenhum tipster cadastrado.
               </div>
             ) : (
@@ -544,7 +549,7 @@ export default function Bancas() {
                         itemCount={paginatedTipsters.length}
                         itemSize={90}
                         width={width}
-                        className="scrollbar-thin scrollbar-thumb-white/10"
+                        className="scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-white/10"
                       >
                         {Row}
                       </List>
@@ -561,7 +566,7 @@ export default function Bancas() {
                     >
                       Anterior
                     </button>
-                    <span className="text-sm text-white/70">
+                    <span className="text-sm text-gray-500 dark:text-white/70">
                       Página {page} de {totalPages}
                     </span>
                     <button
@@ -615,8 +620,8 @@ export default function Bancas() {
             <div className="grid gap-6 lg:grid-cols-2">
               <div className={cn(modalCardClass, 'space-y-3')}>
                 <p className={cardLabelClass}>Link público</p>
-                <div className="flex items-center gap-3 rounded-2xl border border-border/40 bg-background px-4 py-3 text-sm">
-                  <span className="flex-1 truncate text-foreground">{statsData.infoLink.url}</span>
+                <div className="flex items-center gap-3 rounded-2xl border border-emerald-700/20 bg-emerald-900/20 px-4 py-3 text-sm">
+                  <span className="flex-1 truncate text-white">{statsData.infoLink.url}</span>
                   <ActionIconButton
                     label="Copiar link"
                     icon={<Copy className="h-4 w-4" />}
@@ -625,7 +630,7 @@ export default function Bancas() {
                     }}
                   />
                 </div>
-                <p className="text-xs text-foreground-muted">Criado em {statsData.infoLink.criadoEm}</p>
+                <p className="text-xs text-white/50">Criado em {statsData.infoLink.criadoEm}</p>
               </div>
 
               <div className={cn(modalCardClass, 'space-y-3')}>
@@ -783,10 +788,10 @@ function ActionIconButton({
     <button
       type="button"
       className={cn(
-        'inline-flex h-10 w-10 items-center justify-center rounded-2xl border text-white/70 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-emerald/30',
+        'inline-flex h-10 w-10 items-center justify-center rounded-2xl border transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/30',
         variant === 'danger'
-          ? 'border-danger/40 bg-danger/15 text-danger/80 hocus:bg-danger/20'
-          : 'border-white/15 bg-white/5 hocus:border-brand-emerald/40 hocus:bg-white/10'
+          ? 'border-rose-200 bg-rose-50 text-rose-600 hover:bg-rose-100 dark:border-danger/40 dark:bg-danger/15 dark:text-danger/80 dark:hover:bg-danger/20'
+          : 'border-gray-200 bg-gray-50 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:border-emerald-500/20 dark:bg-emerald-500/10 dark:text-emerald-100 dark:hover:border-emerald-400/40 dark:hover:bg-emerald-500/20'
       )}
       onClick={onClick}
       aria-label={label}
@@ -813,12 +818,12 @@ function ModalShell({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 px-4 py-10"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-md animate-fade dark:bg-black/80"
       onClick={onClose}
     >
       <div
         className={cn(
-          'w-full rounded-3xl border border-border/40 bg-background-surface/95 p-6 text-foreground shadow-glass',
+          'w-full rounded-[2.5rem] border border-gray-200 bg-white p-6 text-gray-900 shadow-xl backdrop-blur-3xl animate-slide-up overflow-hidden dark:border-emerald-700/20 dark:bg-transparent dark:bg-gradient-to-br dark:from-emerald-900/90 dark:to-emerald-950/90 dark:text-white dark:shadow-[0_32px_64px_-12px_rgba(0,0,0,0.8)]',
           maxWidth
         )}
         onClick={(event) => {
@@ -827,12 +832,12 @@ function ModalShell({
       >
         <div className="mb-6 flex items-start justify-between gap-4">
           <div>
-            <p className={cardLabelClass}>Modal</p>
-            <h3 className="text-2xl font-semibold text-foreground">{title}</h3>
+            <p className="text-2xs uppercase tracking-[0.3em] text-gray-500 dark:text-white/50">Modal</p>
+            <h3 className="text-2xl font-semibold text-gray-900 dark:text-white">{title}</h3>
           </div>
           <button
             type="button"
-            className="rounded-full border border-border/30 bg-background px-3 py-2 text-sm text-foreground-muted transition hocus:border-brand-emerald/40 hocus:text-brand-emerald"
+            className="rounded-full border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-500 transition hover:bg-gray-100 hover:text-gray-900 dark:border-emerald-500/30 dark:bg-emerald-900/20 dark:text-emerald-100 dark:hover:bg-emerald-500/20 dark:hover:text-white"
             onClick={onClose}
             aria-label="Fechar"
           >
@@ -847,9 +852,9 @@ function ModalShell({
 
 function StatHighlight({ label, value }: { label: string; value: ReactNode }) {
   return (
-    <div className="flex items-center justify-between rounded-2xl border border-border/30 bg-background px-4 py-2 text-sm">
-      <span className="text-foreground-muted">{label}</span>
-      <strong className="text-foreground">{value}</strong>
+    <div className="flex items-center justify-between rounded-2xl border border-gray-200 bg-gray-50 px-4 py-2 text-sm dark:border-emerald-700/20 dark:bg-emerald-900/20">
+      <span className="text-gray-500 dark:text-white/50">{label}</span>
+      <strong className="text-gray-900 dark:text-white">{value}</strong>
     </div>
   );
 }
@@ -864,7 +869,7 @@ interface EditFormProps {
 
 function EditBancoForm({ form, onChange, onCancel, onSubmit, saving }: EditFormProps) {
   const inputClass =
-    'w-full rounded-2xl border border-border/40 bg-background px-4 py-2.5 text-sm text-foreground placeholder:text-foreground-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-emerald/30';
+    'w-full rounded-2xl border border-gray-300 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50 dark:border-emerald-500/20 dark:bg-emerald-900/20 dark:text-white dark:placeholder:text-white/30';
 
   return (
     <form
@@ -875,12 +880,12 @@ function EditBancoForm({ form, onChange, onCancel, onSubmit, saving }: EditFormP
       }}
     >
       <div className="space-y-2">
-        <label className="text-sm font-medium text-foreground">Nome da banca</label>
+        <label className="text-sm font-medium text-gray-900 dark:text-white">Nome da banca</label>
         <input className={inputClass} value={form.nome} onChange={(event) => onChange('nome', event.target.value)} />
       </div>
 
       <div className="space-y-2">
-        <label className="text-sm font-medium text-foreground">Descrição</label>
+        <label className="text-sm font-medium text-gray-900 dark:text-white">Descrição</label>
         <textarea
           rows={3}
           className={cn(inputClass, 'resize-none')}
@@ -890,7 +895,7 @@ function EditBancoForm({ form, onChange, onCancel, onSubmit, saving }: EditFormP
       </div>
 
       <div className="space-y-2">
-        <label className="text-sm font-medium text-foreground">Valor inicial</label>
+        <label className="text-sm font-medium text-gray-900 dark:text-white">Valor inicial</label>
         <input
           className={inputClass}
           value={form.valorInicial}
@@ -925,14 +930,14 @@ function EditBancoForm({ form, onChange, onCancel, onSubmit, saving }: EditFormP
       <div className="flex flex-wrap justify-end gap-3">
         <button
           type="button"
-          className="rounded-2xl border border-border/40 px-4 py-2 text-sm text-foreground hocus:border-brand-emerald/40"
+          className="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-100 dark:border-emerald-500/20 dark:bg-transparent dark:text-white dark:hover:bg-emerald-500/10"
           onClick={onCancel}
         >
           Cancelar
         </button>
         <button
           type="submit"
-          className="rounded-2xl border border-brand-emerald/40 bg-brand-emerald/10 px-4 py-2 text-sm font-semibold text-brand-emerald hocus:bg-brand-emerald/20"
+          className="rounded-2xl border border-transparent bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700 dark:border-emerald-500/40 dark:bg-emerald-500/10 dark:text-emerald-100 dark:hover:bg-emerald-500/20"
           disabled={saving}
         >
           {saving ? 'Salvando...' : 'Salvar alterações'}
@@ -954,10 +959,10 @@ function ToggleLine({
   onToggle: () => void;
 }) {
   return (
-    <div className="flex items-center justify-between gap-4 rounded-2xl border border-border/40 bg-background px-4 py-3">
+    <div className="flex items-center justify-between gap-4 rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 dark:border-emerald-700/20 dark:bg-emerald-900/10">
       <div>
-        <p className="text-sm font-medium text-foreground">{title}</p>
-        <p className="text-xs text-foreground-muted">{description}</p>
+        <p className="text-sm font-medium text-gray-900 dark:text-white">{title}</p>
+        <p className="text-xs text-gray-500 dark:text-white/50">{description}</p>
       </div>
       <SwitchControl checked={value} onToggle={onToggle} label={title} />
     </div>
@@ -1018,16 +1023,16 @@ function TipsterCard({
   onToggleActive: () => void;
 }) {
   return (
-    <div className="flex items-center justify-between gap-4 rounded-2xl border border-white/5 bg-white/5 p-4 transition hover:bg-white/10">
+    <div className="flex items-center justify-between gap-4 rounded-2xl border border-gray-200 bg-gray-50 p-4 transition hover:bg-gray-100 dark:border-emerald-700/20 dark:bg-emerald-900/20 dark:hover:bg-emerald-800/20">
       <div className="flex items-center gap-4">
-        <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-brand-emerald/30 bg-brand-emerald/10 text-brand-emerald">
+        <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-brand-emerald/30 dark:bg-brand-emerald/10 dark:text-brand-emerald">
           <User className="h-5 w-5" />
         </div>
         <div>
-          <p className="font-semibold text-white">{tipster.nome || 'Sem nome'}</p>
+          <p className="font-semibold text-gray-900 dark:text-white">{tipster.nome || 'Sem nome'}</p>
           <div className="flex items-center gap-2">
-            <div className={cn('h-1.5 w-1.5 rounded-full', tipster.ativo ? 'bg-brand-emerald' : 'bg-rose-500')} />
-            <p className="text-xs text-white/50">{tipster.ativo ? 'Ativo' : 'Inativo'}</p>
+            <div className={cn('h-1.5 w-1.5 rounded-full', tipster.ativo ? 'bg-emerald-600 dark:bg-brand-emerald' : 'bg-rose-500')} />
+            <p className="text-xs text-gray-500 dark:text-white/50">{tipster.ativo ? 'Ativo' : 'Inativo'}</p>
           </div>
         </div>
       </div>

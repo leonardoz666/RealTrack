@@ -50,7 +50,7 @@ const navLinkClasses = (isActive: boolean, collapsed: boolean) =>
   } ${
     isActive
       ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/20'
-      : 'text-white/80 hover:text-white hover:bg-emerald-600/10'
+      : 'text-gray-600 hover:text-gray-900 hover:bg-emerald-50 dark:text-white/80 dark:hover:text-white dark:hover:bg-emerald-600/10'
   }`;
 
 const PLAN_VISUALS: Record<string, { icon: LucideIcon; badgeClass: string; iconClass: string }> = {
@@ -364,7 +364,7 @@ const Sidebar = ({ collapsed, onToggle }: SidebarProps) => {
         {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
       </button>
 
-      <div className="flex h-full w-full flex-col overflow-y-auto overflow-x-hidden bg-app-layout-bg border-r border-white/10 text-white">
+      <div className="flex h-full w-full flex-col overflow-y-auto overflow-x-hidden bg-white border-r border-gray-200 text-gray-900 dark:bg-app-layout-bg dark:border-white/10 dark:text-white">
         <div className={`${sectionPadding} pt-6 pb-8`}>
           <div className={`flex items-center gap-3 ${collapsed ? 'justify-center' : ''}`}>
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#14b8a6]">
@@ -372,7 +372,7 @@ const Sidebar = ({ collapsed, onToggle }: SidebarProps) => {
             </div>
                 {!collapsed && (
               <div className="flex flex-col">
-                <h1 className="text-white tracking-tight">Real Comando</h1>
+                <h1 className="text-gray-900 dark:text-white tracking-tight">Real Comando</h1>
                 <p className="text-sm text-[#14b8a6]">Planilha Esportiva</p>
               </div>
             )}
@@ -383,7 +383,7 @@ const Sidebar = ({ collapsed, onToggle }: SidebarProps) => {
           <div className={`mb-6 ${sectionPadding}`} ref={bancaDropdownRef}>
             <button
               type="button"
-              className="flex w-full items-center justify-between rounded-lg border border-emerald-600/20 bg-emerald-950/30 px-3 py-3 transition-all hover:bg-emerald-900/40 hover:border-emerald-600/30"
+              className="flex w-full items-center justify-between rounded-lg border border-gray-200 bg-gray-50 px-3 py-3 transition-all hover:bg-gray-100 hover:border-gray-300 dark:border-emerald-600/20 dark:bg-emerald-950/30 dark:hover:bg-emerald-900/40 dark:hover:border-emerald-600/30"
               onClick={toggleBancaDropdown}
               aria-expanded={isBancaDropdownOpen}
             >
@@ -392,26 +392,26 @@ const Sidebar = ({ collapsed, onToggle }: SidebarProps) => {
                   <Layers className="h-5 w-5 text-white" strokeWidth={2} />
                 </div>
                 <div className="flex flex-col items-start">
-                  <span className="text-xs text-emerald-100/60">Banca Atual</span>
-                  <span className="text-sm font-medium text-white">
+                  <span className="text-xs text-gray-500 dark:text-emerald-100/60">Banca Atual</span>
+                  <span className="text-sm font-medium text-gray-900 dark:text-white">
                     {bancaPanelLoading ? 'Carregando...' : currentBanca?.nome ?? 'Nenhuma banca'}
                   </span>
                 </div>
               </div>
               <ChevronDown
-                className={`h-4 w-4 text-emerald-100/50 transition-transform ${isBancaDropdownOpen ? 'rotate-180' : ''}`}
+                className={`h-4 w-4 text-gray-400 dark:text-emerald-100/50 transition-transform ${isBancaDropdownOpen ? 'rotate-180' : ''}`}
                 strokeWidth={2}
               />
             </button>
 
             {isBancaDropdownOpen && (
-              <div className="mt-2 space-y-2 rounded-lg border border-emerald-600/20 bg-emerald-950 p-2 shadow-xl shadow-black/40">
+              <div className="mt-2 space-y-2 rounded-lg border border-gray-200 bg-white p-2 shadow-xl dark:border-emerald-600/20 dark:bg-emerald-950 dark:shadow-black/40">
                 {bancaPanelLoading ? (
-                  <div className="flex h-20 items-center justify-center text-sm text-white/80">
+                  <div className="flex h-20 items-center justify-center text-sm text-gray-500 dark:text-white/80">
                     Carregando bancas...
                   </div>
                 ) : bancas.length === 0 ? (
-                  <div className="text-sm text-white/80">Nenhuma banca cadastrada ainda.</div>
+                  <div className="text-sm text-gray-500 dark:text-white/80">Nenhuma banca cadastrada ainda.</div>
                 ) : (
                   <div className="grid grid-cols-1 gap-1">
                     {[...bancas]
@@ -425,23 +425,23 @@ const Sidebar = ({ collapsed, onToggle }: SidebarProps) => {
                           type="button"
                           className={`flex flex-col rounded-lg border px-3 py-2.5 text-left transition-all ${
                             banca.padrao
-                              ? 'border-emerald-600/50 bg-emerald-900/20'
-                              : 'border-transparent hover:bg-white/5'
+                              ? 'border-emerald-600/50 bg-emerald-50 dark:bg-emerald-900/20'
+                              : 'border-transparent hover:bg-gray-50 dark:hover:bg-white/5'
                           }`}
                           onClick={() => handleSelectBanca(banca.id)}
                           disabled={updatingBancaId === banca.id}
                         >
                           <div className="flex items-center justify-between">
-                            <span className="text-sm font-medium text-white">{banca.nome}</span>
+                            <span className="text-sm font-medium text-gray-900 dark:text-white">{banca.nome}</span>
                             {banca.padrao && (
-                              <span className="rounded bg-emerald-600/20 px-1.5 py-0.5 text-[10px] font-medium text-emerald-400">
+                              <span className="rounded bg-emerald-600/20 px-1.5 py-0.5 text-[10px] font-medium text-emerald-600 dark:text-emerald-400">
                                 Atual
                               </span>
                             )}
                           </div>
-                          <div className="mt-0.5 flex items-center justify-between text-xs text-white/60">
+                          <div className="mt-0.5 flex items-center justify-between text-xs text-gray-500 dark:text-white/60">
                             <span className="inline-flex items-center gap-2">
-                              <span className="rounded bg-white/10 px-1.5 py-0.5 text-[10px]">{banca.status}</span>
+                              <span className="rounded bg-gray-100 dark:bg-white/10 px-1.5 py-0.5 text-[10px]">{banca.status}</span>
                             </span>
                             <span className="ml-2 flex-1 truncate text-right">{banca.descricao}</span>
                           </div>

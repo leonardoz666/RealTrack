@@ -78,20 +78,20 @@ const createDefaultFormData = (bancaId = '', date = getTodayDateISO()): Financei
 });
 
 const sectionCardClass =
-  'rounded-3xl border border-border/30 bg-background-card/80 p-6 shadow-card backdrop-blur-sm';
+  'rounded-[32px] border border-gray-200 bg-white p-6 text-gray-900 shadow-xl backdrop-blur-2xl dark:border-emerald-700/20 dark:bg-transparent dark:bg-gradient-to-br dark:from-emerald-900/40 dark:to-emerald-800/20 dark:text-white dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)]';
 const dashboardCardShellClass =
-  'rounded-lg border border-white/5 bg-app-darker p-6 text-white shadow-[0_25px_45px_rgba(0,0,0,0.25)] backdrop-blur-sm';
-const sectionLabelClass = 'text-2xs uppercase tracking-[0.3em] text-foreground-muted';
+  'rounded-[32px] border border-gray-200 bg-white p-6 text-gray-900 shadow-xl backdrop-blur-2xl transition-all duration-300 hover:border-gray-300 hover:shadow-lg dark:border-emerald-700/20 dark:bg-transparent dark:bg-gradient-to-br dark:from-emerald-900/40 dark:to-emerald-800/20 dark:text-white dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] dark:hover:border-emerald-500/30 dark:hover:shadow-emerald-500/10';
+const sectionLabelClass = 'text-2xs uppercase tracking-[0.3em] text-gray-500 dark:text-white/50';
 const inputClass =
-  'w-full rounded-2xl border border-border/40 bg-background px-4 py-2.5 text-sm text-foreground placeholder:text-foreground-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-emerald/30';
+  'w-full rounded-2xl border border-gray-300 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50 dark:border-emerald-500/20 dark:bg-emerald-900/20 dark:text-white dark:placeholder:text-white/30';
 const headerGhostButtonClass =
-  'inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40';
+  'inline-flex items-center gap-2 rounded-2xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40';
 const headerPrimaryButtonClass =
-  'inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40';
+  'inline-flex items-center gap-2 rounded-2xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40';
 const tableActionButtonClass =
-  'inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-white/15 bg-white/5 text-white/80 transition hover:border-brand-emerald/40 hover:bg-white/10 hover:text-brand-emerald focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-emerald/30';
+  'inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-gray-200 bg-gray-50 text-gray-500 transition hover:border-gray-300 hover:bg-gray-100 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/30 dark:border-emerald-500/20 dark:bg-emerald-500/10 dark:text-emerald-100 dark:hover:border-emerald-400/40 dark:hover:bg-emerald-500/20 dark:hover:text-white';
 const tableActionButtonDangerClass =
-  'inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-rose-400/40 bg-rose-500/10 text-rose-200 transition hover:bg-rose-500/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400/40';
+  'inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-rose-200 bg-rose-50 text-rose-700 transition hover:bg-rose-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400/40 dark:border-rose-400/40 dark:bg-rose-500/10 dark:text-rose-200 dark:hover:bg-rose-500/20';
 
 const emptyStats: ApiFinancialSummary = {
   totalDepositado: 0,
@@ -472,25 +472,25 @@ export default function Financeiro() {
       key: 'concluidas',
       label: 'Apostas/saldo recebidas',
       icon: CheckCircle2,
-      accent: 'bg-emerald-500/15 text-emerald-200',
-      cardClass: 'border-emerald-400/15 bg-emerald-400/5 shadow-[0_15px_35px_rgba(16,185,129,0.18)]',
+      accent: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-200',
+      cardClass: 'border-emerald-200 bg-emerald-50 shadow-sm dark:border-emerald-400/15 dark:bg-emerald-400/5 dark:shadow-[0_15px_35px_rgba(16,185,129,0.18)]',
       parts: resultadoParts,
       isNegative: resultadoEhNegativo,
       description: 'Valores finalizados',
-      valueClass: 'text-white',
-      decimalClass: 'text-white/60',
+      valueClass: 'text-gray-900 dark:text-white',
+      decimalClass: 'text-gray-500 dark:text-white/60',
     },
     {
       key: 'pendentes',
       label: 'Aguardando resultado',
       icon: Clock3,
-      accent: 'bg-[#ff9a15]/25 text-[#ffebc9]',
-      cardClass: 'border-[#ffb347]/50 bg-gradient-to-br from-[#ff8a00]/25 via-[#ff9a15]/15 to-transparent shadow-[0_20px_45px_rgba(255,138,0,0.25)]',
+      accent: 'bg-orange-100 text-orange-700 dark:bg-[#ff9a15]/25 dark:text-[#ffebc9]',
+      cardClass: 'border-orange-200 bg-orange-50 shadow-sm dark:border-[#ffb347]/50 dark:bg-gradient-to-br dark:from-[#ff8a00]/25 dark:via-[#ff9a15]/15 dark:to-transparent dark:shadow-[0_20px_45px_rgba(255,138,0,0.25)]',
       parts: pendenteParts,
       isNegative: false,
       description: 'Entradas pendentes',
-      valueClass: 'text-[#ffd36b]',
-      decimalClass: 'text-[#ffdd9c]',
+      valueClass: 'text-gray-900 dark:text-[#ffd36b]',
+      decimalClass: 'text-gray-500 dark:text-[#ffdd9c]',
     },
   ];
 
@@ -614,24 +614,24 @@ export default function Financeiro() {
       <section className={cn(dashboardCardShellClass, 'space-y-6')}>
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h2 className="text-2xl font-semibold text-white">Gerenciar Transações Financeiras</h2>
-            <p className="text-sm text-white/70">Visualize depósitos e saques registrados.</p>
+            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">Gerenciar Transações Financeiras</h2>
+            <p className="text-sm text-gray-500 dark:text-white/70">Visualize depósitos e saques registrados.</p>
           </div>
-          <span className="rounded-2xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-white/70">
+          <span className="rounded-2xl border border-gray-200 bg-gray-100 px-4 py-2 text-sm text-gray-700 dark:border-white/10 dark:bg-white/5 dark:text-white/70">
             {transacoes.length} {transacoes.length === 1 ? 'transação' : 'transações'}
           </span>
         </div>
 
         {loading ? (
-          <div className="flex h-48 items-center justify-center text-white/70">
+          <div className="flex h-48 items-center justify-center text-gray-500 dark:text-white/70">
             <Loader2 className="h-6 w-6 animate-spin" />
           </div>
         ) : transacoes.length === 0 ? (
           <EmptyState title="Nenhuma transação" description="Cadastre um depósito ou saque para visualizar aqui." />
         ) : (
-          <div className="overflow-hidden rounded-2xl border border-white/10">
-            <table className="min-w-full table-auto text-sm text-white">
-              <thead className="bg-white/5 text-[0.7rem] uppercase tracking-[0.25em] text-white/60">
+          <div className="overflow-hidden rounded-2xl border border-gray-200 dark:border-emerald-700/20">
+            <table className="min-w-full table-auto text-sm text-gray-900 dark:text-white">
+              <thead className="bg-gray-50 text-[0.7rem] uppercase tracking-[0.25em] text-gray-500 dark:bg-emerald-900/20 dark:text-emerald-400">
                 <tr>
                   <th className="px-4 py-3 text-left">Data</th>
                   <th className="px-4 py-3 text-left">Tipo</th>
@@ -641,30 +641,30 @@ export default function Financeiro() {
                   <th className="px-4 py-3 text-right">Ações</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/10">
+              <tbody className="divide-y divide-gray-100 dark:divide-emerald-500/10">
                 {transacoes.map((transacao) => (
-                  <tr key={transacao.id} className="text-white transition hover:bg-white/5">
+                  <tr key={transacao.id} className="text-gray-900 transition hover:bg-gray-50 dark:text-white dark:hover:bg-emerald-500/10">
                     <td className="px-4 py-4 font-medium">{formatDate(transacao.dataTransacao)}</td>
                     <td className="px-4 py-4">
                       <span
                         className={cn(
                           'inline-flex rounded-full px-3 py-1 text-xs font-semibold',
-                          transacao.tipo === 'Depósito' ? 'bg-emerald-500/15 text-emerald-300' : 'bg-rose-500/15 text-rose-300'
+                          transacao.tipo === 'Depósito' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300' : 'bg-rose-100 text-rose-700 dark:bg-rose-500/15 dark:text-rose-300'
                         )}
                       >
                         {transacao.tipo}
                       </span>
                     </td>
-                    <td className="px-4 py-4 text-white/80">{transacao.casaDeAposta}</td>
+                    <td className="px-4 py-4 text-gray-500 dark:text-white/80">{transacao.casaDeAposta}</td>
                     <td
                       className={cn(
                         'px-4 py-4 font-semibold',
-                        transacao.tipo === 'Depósito' ? 'text-emerald-300' : 'text-rose-300'
+                        transacao.tipo === 'Depósito' ? 'text-emerald-600 dark:text-emerald-300' : 'text-rose-600 dark:text-rose-300'
                       )}
                     >
                       {formatCurrency(transacao.valor)}
                     </td>
-                    <td className="px-4 py-4 text-white/70">
+                    <td className="px-4 py-4 text-gray-500 dark:text-white/70">
                       {transacao.observacao?.trim() ? transacao.observacao : '-'}
                     </td>
                     <td className="px-4 py-4">

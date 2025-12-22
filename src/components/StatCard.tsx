@@ -43,7 +43,7 @@ const COLOR_STYLES: Record<StatCardColor, { icon: string; helper: string; card?:
 };
 
 const STAT_CARD_BASE =
-  'rounded-lg border border-white/5 bg-app-dark p-5 text-white shadow-[0_25px_45px_rgba(0,0,0,0.25)] backdrop-blur-sm transition hover:-translate-y-0.5 hover:shadow-glow';
+  'rounded-[32px] border border-emerald-700/20 bg-gradient-to-br from-emerald-900/40 to-emerald-800/20 p-6 text-white shadow-[0_20px_50px_rgba(0,0,0,0.3)] backdrop-blur-2xl transition hover:-translate-y-0.5 hover:shadow-glow';
 
 function StatCard({ title, value, helper, icon, color = 'purple' }: StatCardProps) {
   const style = COLOR_STYLES[color];

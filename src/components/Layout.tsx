@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
-import { MessageCircle } from 'lucide-react';
+import { MessageCircle, Moon, Sun } from 'lucide-react';
 import { usePerfil } from '../contexts/PerfilContext';
+import { useTheme } from '../contexts/ThemeContext';
 import Sidebar from './Sidebar';
 import { subscribeToTelegramUpdate } from '../utils/telegramSync';
 
@@ -12,6 +13,7 @@ const SUPPORT_BOT_USERNAME = typeof import.meta.env.VITE_TELEGRAM_SUPPORT_BOT_US
 const Layout = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const { perfil } = usePerfil();
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     const unsubscribe = subscribeToTelegramUpdate(() => {
@@ -38,7 +40,7 @@ const Layout = () => {
     : 'Abrir bot de ticket no Telegram';
 
   return (
-    <div className="flex min-h-full bg-app-layout-bg text-white">
+    <div className="flex min-h-full bg-gray-50 text-gray-900 transition-colors duration-300 dark:bg-app-layout-bg dark:text-white">
       <Sidebar collapsed={isSidebarCollapsed} onToggle={handleToggleSidebar} />
       <div 
         className={`flex flex-1 flex-col px-4 py-6 sm:px-6 lg:px-8 transition-all duration-300 ${
@@ -48,16 +50,29 @@ const Layout = () => {
         <div className="flex flex-1 flex-col p-4 sm:p-6">
           <Outlet />
         </div>
-        <button
-          type="button"
-          onClick={handleOpenTelegramTicket}
-          className="fixed bottom-4 right-0 z-40 flex h-10 w-10 items-center justify-center rounded-full bg-brand-emerald text-white shadow-md transition hover:-translate-y-0.5 hover:bg-brand-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-emerald/40 sm:bottom-6 sm:right-1 sm:h-12 sm:w-12"
-          title={ticketButtonTitle}
-          aria-label="Abrir bot de ticket no Telegram"
-        >
-          <MessageCircle size={16} />
-          <span className="sr-only">Ticket Telegram</span>
-        </button>
+        
+        <div className="fixed bottom-4 right-0 z-40 flex flex-col gap-3 sm:bottom-6 sm:right-1">
+          <button
+            type="button"
+            onClick={toggleTheme}
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-gray-700 shadow-md transition hover:-translate-y-0.5 hover:bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 dark:bg-emerald-900/80 dark:text-emerald-100 dark:hover:bg-emerald-800 sm:h-12 sm:w-12"
+            title={theme === 'dark' ? 'Mudar para tema claro' : 'Mudar para tema escuro'}
+            aria-label="Alternar tema"
+          >
+            {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+          </button>
+
+          <button
+            type="button"
+            onClick={handleOpenTelegramTicket}
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-emerald text-white shadow-md transition hover:-translate-y-0.5 hover:bg-brand-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-emerald/40 sm:h-12 sm:w-12"
+            title={ticketButtonTitle}
+            aria-label="Abrir bot de ticket no Telegram"
+          >
+            <MessageCircle size={16} />
+            <span className="sr-only">Ticket Telegram</span>
+          </button>
+        </div>
       </div>
     </div>
   );

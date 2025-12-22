@@ -354,7 +354,7 @@ const Sidebar = ({ collapsed, onToggle, mobile = false }: SidebarProps) => {
     <div
       className={
         mobile
-          ? 'flex h-full w-full flex-col bg-white dark:bg-app-card'
+          ? 'flex h-full w-full flex-col bg-white dark:bg-app-layout-bg'
           : `fixed top-0 left-0 z-40 flex h-screen flex-shrink-0 transition-all duration-300 ${
               collapsed ? 'w-20' : 'w-64'
             }`

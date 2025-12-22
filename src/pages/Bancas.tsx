@@ -1,4 +1,4 @@
-import { AlertTriangle, Check, Copy, Eye, LineChart, Loader2, Pencil, Plus, Share2, Trash2, User, X } from 'lucide-react';
+import { AlertTriangle, Check, Copy, Eye, LineChart, Loader2, Pencil, Plus, Share2, Star, Trash2, User, Wallet, X } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { useBancas } from '../hooks/useBancas';
 import { useTipsters } from '../hooks/useTipsters';
@@ -433,65 +433,16 @@ export default function Bancas() {
             ) : isMobile ? (
               <div className="space-y-4">
                 {bancas.map((banca) => (
-                  <div key={banca.id} className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-emerald-700/20 dark:bg-emerald-900/10">
-                    <div className="flex justify-between items-start mb-3">
-                      <div>
-                        <h3 className="font-semibold text-gray-900 dark:text-white">{banca.nome}</h3>
-                        <p className="text-xs text-gray-500 dark:text-white/60">ID: {banca.id}</p>
-                      </div>
-                      <div className="flex gap-1">
-                        <ActionIconButton
-                          label="Ver estatísticas"
-                          icon={<LineChart className="h-4 w-4" />}
-                          onClick={() => void handleOpenStats(banca)}
-                        />
-                        <ActionIconButton
-                          label="Copiar link"
-                          icon={<Share2 className="h-4 w-4" />}
-                          onClick={() => {
-                            void copyToClipboard(banca.stats.infoLink.url);
-                          }}
-                        />
-                        <ActionIconButton
-                          label="Editar banca"
-                          icon={<Pencil className="h-4 w-4" />}
-                          onClick={() => openEditModal(banca)}
-                        />
-                        <ActionIconButton
-                          label="Excluir banca"
-                          icon={<Trash2 className="h-4 w-4" />}
-                          variant="danger"
-                          onClick={() => setConfirmDelete({ open: true, banca, loading: false })}
-                        />
-                      </div>
-                    </div>
-                    
-                    <p className="text-sm text-gray-600 dark:text-white/70 mb-4">{banca.descricao}</p>
-                    
-                    <div className="grid grid-cols-2 gap-4 text-sm bg-gray-50 dark:bg-black/20 p-3 rounded-xl mb-3">
-                      <div className="flex justify-between items-center">
-                        <span className="text-gray-500 dark:text-white/60">Status</span>
-                        <SwitchControl
-                          checked={banca.status === 'Ativa'}
-                          onToggle={() => void handleToggleStatus(banca)}
-                          label="Status"
-                        />
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-gray-500 dark:text-white/60">Padrão</span>
-                        <SwitchControl
-                          checked={banca.padrao}
-                          onToggle={() => void handleTogglePadrao(banca)}
-                          label="Padrão"
-                        />
-                      </div>
-                    </div>
-                    
-                    <div className="flex justify-between text-xs text-gray-400 dark:text-white/40">
-                       <span>Visto: {banca.ultimaVisualizacao}</span>
-                       <span>Criado: {banca.criadoEm}</span>
-                    </div>
-                  </div>
+                  <MobileBancaCard
+                    key={banca.id}
+                    banca={banca}
+                    onOpenStats={() => void handleOpenStats(banca)}
+                    onCopyLink={() => void copyToClipboard(banca.stats.infoLink.url)}
+                    onEdit={() => openEditModal(banca)}
+                    onDelete={() => setConfirmDelete({ open: true, banca, loading: false })}
+                    onToggleStatus={() => void handleToggleStatus(banca)}
+                    onTogglePadrao={() => void handleTogglePadrao(banca)}
+                  />
                 ))}
               </div>
             ) : (
@@ -795,6 +746,102 @@ export default function Bancas() {
       </ModalShell>
     </div>
   );
+}
+
+function MobileBancaCard({
+  banca,
+  onOpenStats,
+  onCopyLink,
+  onEdit,
+  onDelete,
+  onToggleStatus,
+  onTogglePadrao,
+}: {
+  banca: Banca;
+  onOpenStats: () => void;
+  onCopyLink: () => void;
+  onEdit: () => void;
+  onDelete: () => void;
+  onToggleStatus: () => void;
+  onTogglePadrao: () => void;
+}) {
+  return (
+    <div className="rounded-2xl border border-gray-200 bg-white p-3 shadow-sm dark:border-emerald-700/20 dark:bg-emerald-900/10">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-brand-emerald/30 dark:bg-brand-emerald/10 dark:text-brand-emerald">
+          <Wallet className="h-5 w-5" />
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2">
+            <h3 className="font-semibold text-gray-900 dark:text-white truncate text-base">{banca.nome}</h3>
+          </div>
+          <p className="text-xs text-gray-500 dark:text-white/60 truncate">ID: {banca.id}</p>
+        </div>
+        <div className="flex items-center gap-1 shrink-0">
+          <button
+             onClick={onTogglePadrao}
+             className={cn(
+               "flex h-8 w-8 items-center justify-center rounded-xl transition",
+               banca.padrao
+                 ? "bg-amber-100 text-amber-600 hover:bg-amber-200 dark:bg-amber-900/30 dark:text-amber-400" 
+                 : "bg-gray-100 text-gray-400 hover:bg-gray-200 dark:bg-white/5 dark:text-white/40"
+             )}
+             title={banca.padrao ? 'É a banca padrão' : 'Definir como padrão'}
+           >
+             <Star className={cn("h-4 w-4", banca.padrao && "fill-current")} />
+           </button>
+           
+          <button
+             onClick={onToggleStatus}
+             className={cn(
+               "flex h-8 w-8 items-center justify-center rounded-xl transition",
+               banca.status === 'Ativa'
+                 ? "bg-emerald-600 text-white hover:bg-emerald-700 dark:bg-brand-emerald/20 dark:text-brand-emerald dark:hover:bg-brand-emerald/30" 
+                 : "bg-gray-200 text-gray-500 hover:bg-gray-300 dark:bg-white/5 dark:text-white/40 dark:hover:bg-white/10"
+             )}
+             title={banca.status === 'Ativa' ? 'Desativar' : 'Ativar'}
+           >
+             {banca.status === 'Ativa' ? <Check className="h-4 w-4" /> : <X className="h-4 w-4" />}
+           </button>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-4 gap-2 mb-3">
+         <ActionButton icon={<LineChart className="h-4 w-4" />} onClick={onOpenStats} label="Dados" />
+         <ActionButton icon={<Share2 className="h-4 w-4" />} onClick={onCopyLink} label="Link" />
+         <ActionButton icon={<Pencil className="h-4 w-4" />} onClick={onEdit} label="Editar" />
+         <ActionButton icon={<Trash2 className="h-4 w-4" />} onClick={onDelete} label="Excluir" variant="danger" />
+      </div>
+
+      {banca.descricao && (
+        <p className="text-sm text-gray-600 dark:text-white/70 mb-3 line-clamp-2 px-1">
+          {banca.descricao}
+        </p>
+      )}
+      
+      <div className="flex justify-between text-xs text-gray-400 dark:text-white/40 px-1 pt-2 border-t border-gray-100 dark:border-white/5">
+         <span>Visto: {banca.ultimaVisualizacao}</span>
+         <span>Criado: {banca.criadoEm}</span>
+      </div>
+    </div>
+  );
+}
+
+function ActionButton({ icon, onClick, label, variant = 'default' }: { icon: ReactNode, onClick: () => void, label: string, variant?: 'default' | 'danger' }) {
+   return (
+      <button
+        onClick={onClick}
+        className={cn(
+          "flex flex-col items-center justify-center gap-1 py-2 rounded-xl border transition",
+          variant === 'danger'
+            ? "border-rose-100 bg-rose-50 text-rose-600 hover:bg-rose-100 dark:border-rose-500/20 dark:bg-rose-500/10 dark:text-rose-400"
+            : "border-gray-100 bg-gray-50 text-gray-600 hover:bg-gray-100 dark:border-white/10 dark:bg-white/5 dark:text-white/70"
+        )}
+      >
+        {icon}
+        <span className="text-[0.65rem] font-medium">{label}</span>
+      </button>
+   )
 }
 
 function SwitchControl({ checked, onToggle, label }: { checked: boolean; onToggle: () => void; label: string }) {

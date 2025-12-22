@@ -58,6 +58,10 @@ const Layout = () => {
           </div>
           <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
             <SheetContent side="left" className="w-64 p-0">
+              <SheetTitle className="sr-only">Menu de Navegação</SheetTitle>
+              <SheetDescription className="sr-only">
+                Menu lateral para navegação entre as páginas do sistema
+              </SheetDescription>
               <Sidebar collapsed={false} onToggle={() => {}} mobile={true} />
             </SheetContent>
           </Sheet>

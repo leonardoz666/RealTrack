@@ -89,7 +89,14 @@ export default function Bancas() {
       if (a.padrao === b.padrao) return 0;
       return a.padrao ? -1 : 1;
     });
-    setBancas(ordered);
+    
+    setBancas(prev => {
+      // Evita loop de renderização verificando se houve mudança real
+      if (JSON.stringify(prev) === JSON.stringify(ordered)) {
+        return prev;
+      }
+      return ordered;
+    });
   }, [remoteBancas]);
 
   const refreshFromEvent = useCallback(() => {

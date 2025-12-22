@@ -484,13 +484,13 @@ export default function Financeiro() {
       key: 'pendentes',
       label: 'Aguardando resultado',
       icon: Clock3,
-      accent: 'bg-brand-pending/25 text-brand-pending-light',
-      cardClass: 'border-brand-pending-border/50 bg-gradient-to-br from-brand-pending-gradient-start/25 via-brand-pending/15 to-transparent shadow-[0_20px_45px_rgba(255,138,0,0.25)]',
+      accent: 'bg-[#ff9a15]/25 text-[#ffebc9]',
+      cardClass: 'border-[#ffb347]/50 bg-gradient-to-br from-[#ff8a00]/25 via-[#ff9a15]/15 to-transparent shadow-[0_20px_45px_rgba(255,138,0,0.25)]',
       parts: pendenteParts,
       isNegative: false,
       description: 'Entradas pendentes',
-      valueClass: 'text-brand-pending-text',
-      decimalClass: 'text-brand-pending-text-light',
+      valueClass: 'text-[#ffd36b]',
+      decimalClass: 'text-[#ffdd9c]',
     },
   ];
 

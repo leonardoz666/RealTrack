@@ -34,7 +34,7 @@ const STATUS_ICON_MAP: Record<StatusKey, LucideIcon> = {
 };
 
 export const betStatusPillBaseClass =
-  'inline-flex items-center justify-center gap-2 rounded-full border border-white/15 px-4 py-2.5 text-sm font-semibold text-white transition duration-200 hover:-translate-y-0.5 hover:scale-[1.01] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40';
+  'inline-flex items-center justify-center gap-1.5 rounded-sm border border-white/15 px-2 py-1 text-[0.65rem] font-bold uppercase tracking-wider text-white transition duration-200 hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 shadow-sm';
 
 export const betStatusPillVariants: Record<StatusKey, string> = {
   Pendente:

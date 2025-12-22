@@ -351,7 +351,7 @@ const Sidebar = ({ collapsed, onToggle }: SidebarProps) => {
 
   return (
     <div
-      className={`relative sticky top-0 flex h-screen max-h-screen flex-shrink-0 transition-all duration-300 ${
+      className={`fixed top-0 left-0 z-40 flex h-screen flex-shrink-0 transition-all duration-300 ${
         collapsed ? 'w-20' : 'w-64'
       }`}
     >
@@ -364,7 +364,7 @@ const Sidebar = ({ collapsed, onToggle }: SidebarProps) => {
         {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
       </button>
 
-      <div className="flex h-full w-full flex-col overflow-y-auto overflow-x-hidden bg-gradient-to-br from-emerald-900/40 to-emerald-800/20 border-r border-emerald-700/20 text-white">
+      <div className="flex h-full w-full flex-col overflow-y-auto overflow-x-hidden bg-app-layout-bg border-r border-white/10 text-white">
         <div className={`${sectionPadding} pt-6 pb-8`}>
           <div className={`flex items-center gap-3 ${collapsed ? 'justify-center' : ''}`}>
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#14b8a6]">

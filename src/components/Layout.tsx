@@ -40,14 +40,18 @@ const Layout = () => {
   return (
     <div className="flex min-h-full bg-app-layout-bg text-white">
       <Sidebar collapsed={isSidebarCollapsed} onToggle={handleToggleSidebar} />
-      <div className="flex flex-1 flex-col bg-gradient-to-b from-app-layout-start via-app-layout-via to-app-layout-end px-4 py-6 sm:px-6 lg:px-8">
+      <div 
+        className={`flex flex-1 flex-col px-4 py-6 sm:px-6 lg:px-8 transition-all duration-300 ${
+          isSidebarCollapsed ? 'ml-20' : 'ml-64'
+        }`}
+      >
         <div className="flex flex-1 flex-col p-4 sm:p-6">
           <Outlet />
         </div>
         <button
           type="button"
           onClick={handleOpenTelegramTicket}
-          className="fixed bottom-4 right-2 z-40 flex h-10 w-10 items-center justify-center rounded-full bg-brand-emerald text-white shadow-md transition hover:-translate-y-0.5 hover:bg-brand-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-emerald/40 sm:bottom-6 sm:right-4 sm:h-12 sm:w-12"
+          className="fixed bottom-4 right-0 z-40 flex h-10 w-10 items-center justify-center rounded-full bg-brand-emerald text-white shadow-md transition hover:-translate-y-0.5 hover:bg-brand-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-emerald/40 sm:bottom-6 sm:right-1 sm:h-12 sm:w-12"
           title={ticketButtonTitle}
           aria-label="Abrir bot de ticket no Telegram"
         >

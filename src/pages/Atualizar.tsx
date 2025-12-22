@@ -883,6 +883,14 @@ export default function Atualizar() {
             />
             <button
               type="button"
+              className="inline-flex items-center gap-2 rounded-lg border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white/80 transition hover:border-emerald-500/50 hover:text-emerald-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/30"
+              onClick={seedTestBets}
+              title="Gerar 200 apostas de teste"
+            >
+              Gerar testes
+            </button>
+            <button
+              type="button"
               className={buttonVariants.primary}
               onClick={handleOpenUploadModal}
             >
@@ -900,7 +908,6 @@ export default function Atualizar() {
             >
               <Plus size={16} /> Nova Aposta
             </button>
-            <ApiDiagnostics />
           </div>
         }
       />
@@ -913,15 +920,11 @@ export default function Atualizar() {
 
       <ApostasList
         apostas={apostas}
-        expanded={betsExpanded}
-        onToggleExpand={() => setBetsExpanded((prev) => !prev)}
         onEdit={handleEditAposta}
         onDelete={handleDeleteAposta}
         onStatusClick={handleOpenStatusModal}
         formatCurrency={formatCurrency}
         formatDate={formatDate}
-        onSeedTestBets={isDev ? seedTestBets : undefined}
-        isDev={isDev}
       />
 
       <Modal

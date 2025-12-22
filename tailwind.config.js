@@ -38,19 +38,19 @@ export default {
           'pending-text-light': '#ffdd9c',
         },
         app: {
-          dark: '#10322e',
-          darker: '#0f2d29',
-          slate: '#0f172a', // slate-900
-          'slate-light': '#1e293b', // slate-800
-          'layout-bg': '#041814',
-          'layout-start': '#051f1b',
-          'layout-via': '#051713',
-          'layout-end': '#040f0d',
-          login: {
-            bg: '#010a0f',
-            card: '#020c14',
+            dark: '#0f2229', // More slate/teal aligned with slate-950
+            darker: '#0a1a20',
+            slate: '#051f1b', // Matches layout-bg
+            'slate-light': '#10322e', // Matches surface
+            'layout-bg': '#051f1b',
+            'layout-start': '#051f1b',
+            'layout-via': '#051713',
+            'layout-end': '#040f0d',
+            login: {
+              bg: '#010a0f',
+              card: '#020c14',
+            },
           },
-        },
         plan: {
           gratuito: {
             start: '#02362c',

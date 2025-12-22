@@ -362,7 +362,7 @@ export default function Dashboard() {
             'dark:border-emerald-500/30 dark:bg-gradient-to-br dark:from-[#032b26] dark:via-[#0d5f52] dark:to-[#032b26] dark:text-white dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)]'
           )}
         >
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             <div className="flex items-center justify-between">
               <p className="text-xs font-bold uppercase tracking-[0.2em] text-emerald-500 dark:text-[#5eead4]">Saldo da banca</p>
               <span className={cn(
@@ -376,16 +376,16 @@ export default function Dashboard() {
               </span>
             </div>
             
-            <p className="text-5xl font-bold tracking-tight text-gray-900 dark:text-white">
+            <p className="text-4xl sm:text-5xl font-bold tracking-tight text-gray-900 dark:text-white">
               {formatCurrency(metricas.saldoBanca)}
             </p>
 
-            <div className="flex items-end justify-between">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between sm:gap-0">
               <div>
                 <p className="text-[0.65rem] font-bold uppercase tracking-[0.2em] text-gray-400 dark:text-emerald-100/60 mb-1">Lucro total</p>
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">{formatCurrency(metricas.lucroTotal)}</p>
               </div>
-              <button className="inline-flex items-center gap-1.5 rounded-full bg-gray-900 px-4 py-1.5 text-xs font-bold text-white transition hover:bg-gray-800 hover:scale-[1.02] active:scale-[0.98] dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100">
+              <button className="inline-flex w-full sm:w-auto justify-center items-center gap-1.5 rounded-full bg-gray-900 px-4 py-1.5 text-xs font-bold text-white transition hover:bg-gray-800 hover:scale-[1.02] active:scale-[0.98] dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100 whitespace-nowrap">
                 Ver detalhes <ArrowRight size={14} />
               </button>
             </div>

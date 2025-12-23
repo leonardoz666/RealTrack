@@ -26,10 +26,10 @@ export default {
           teal: '#14b8a6',
           hover: '#0eb07a',
           focus: '#10b981',
-          neon: '#1fe7cb',
-          'neon-light': '#38ffe4',
-          'gradient-start': '#35ffe4',
-          'gradient-end': '#1ddfd0',
+          neon: '#00ff9d',
+          'neon-light': '#66ffc2',
+          'gradient-start': '#00ff9d',
+          'gradient-end': '#00cc7a',
           pending: '#ff9a15',
           'pending-light': '#ffebc9',
           'pending-border': '#ffb347',
@@ -38,17 +38,17 @@ export default {
           'pending-text-light': '#ffdd9c',
         },
         app: {
-            dark: '#0f2229', // More slate/teal aligned with slate-950
-            darker: '#0a1a20',
-            slate: '#051f1b', // Matches layout-bg
-            'slate-light': '#10322e', // Matches surface
-            'layout-bg': '#051f1b',
-            'layout-start': '#051f1b',
-            'layout-via': '#051713',
-            'layout-end': '#040f0d',
+            dark: rgbVar('--app-dark'),
+            darker: rgbVar('--app-darker'),
+            slate: rgbVar('--app-slate'),
+            'slate-light': rgbVar('--app-slate-light'),
+            'layout-bg': rgbVar('--app-layout-bg'),
+            'layout-start': rgbVar('--app-layout-start'),
+            'layout-via': rgbVar('--app-layout-via'),
+            'layout-end': rgbVar('--app-layout-end'),
             login: {
-              bg: '#010a0f',
-              card: '#020c14',
+              bg: rgbVar('--app-login-bg'),
+              card: rgbVar('--app-login-card'),
             },
           },
         plan: {

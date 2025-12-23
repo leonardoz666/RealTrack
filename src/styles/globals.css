@@ -68,7 +68,47 @@
 		--danger: #ef4444;
 		--border-success: rgb(var(--success-rgb) / 0.5);
 		--bg-hover: rgba(255, 255, 255, 0.05);
+
+        /* Green Night (Default) App Colors */
+        --app-dark: 15 34 41;
+        --app-darker: 10 26 32;
+        --app-slate: 5 31 27;
+        --app-slate-light: 16 50 46;
+        --app-layout-bg: 5 31 27;
+        --app-layout-start: 5 31 27;
+        --app-layout-via: 5 23 19;
+        --app-layout-end: 4 15 13;
+        --app-login-bg: 1 10 15;
+        --app-login-card: 2 12 20;
 	}
+
+    .dark.theme-standard {
+        --ui-bg: 5 18 20;           /* #051214 - Slightly lighter deep green */
+        --ui-muted-surface: 8 24 26; /* #08181a - Rich dark teal */
+        --ui-surface: 8 24 26;    /* #08181a */
+        --ui-card: 8 24 26;       /* #08181a */
+        --ui-input: 5 18 20;        /* #051214 */
+        --ui-border: 6 50 45;     /* #06322d */
+        --ui-popover: 8 24 26;    /* #08181a */
+        --ui-accent: 10 32 35;     /* #0a2023 */
+        --ui-ring: 0 255 157;    /* #00ff9d (Neon Green) */
+        
+        --bg: #051214;
+        --surface: #08181a;
+        --border: #06322d;
+        
+        /* Standard Night App Colors (Neon Dark) */
+        --app-dark: 8 24 26;
+        --app-darker: 5 18 20;
+        --app-slate: 5 18 20;
+        --app-slate-light: 8 24 26;
+        --app-layout-bg: 5 18 20;
+        --app-layout-start: 5 18 20;
+        --app-layout-via: 5 18 20;
+        --app-layout-end: 5 18 20;
+        --app-login-bg: 5 18 20;
+        --app-login-card: 8 24 26;
+    }
 
 	*,
 	*::before,

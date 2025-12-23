@@ -9,7 +9,6 @@ import { formatNumber } from '../utils/formatters';
 import { eventBus } from '../utils/eventBus';
 import { cn } from '../components/ui/utils';
 import { toast } from '../utils/toast';
-import { useIsMobile } from '../components/ui/use-mobile';
 
 interface EditFormState {
   nome: string;
@@ -59,9 +58,14 @@ export default function Bancas() {
   const [activeTab, setActiveTab] = useState<'bancas' | 'tipsters'>('bancas');
   const { bancas: remoteBancas, loading: bancasLoading, error: bancasError, invalidateCache: invalidateBancasCache } = useBancas();
   const { tipsters, loading: tipstersLoading, invalidateCache: invalidateTipstersCache } = useTipsters();
-  const isMobile = useIsMobile();
 
-  const [bancas, setBancas] = useState<Banca[]>(remoteBancas);
+  const bancas = useMemo(() => {
+    return [...remoteBancas].sort((a, b) => {
+      if (a.padrao === b.padrao) return 0;
+      return a.padrao ? -1 : 1;
+    });
+  }, [remoteBancas]);
+
   const [selectedBanco, setSelectedBanco] = useState<Banca | null>(null);
   const [statsOverride, setStatsOverride] = useState<BancaStats | null>(null);
   const [statsLoading, setStatsLoading] = useState(false);
@@ -82,22 +86,6 @@ export default function Bancas() {
   const [tipsterError, setTipsterError] = useState('');
 
   const { paginatedItems: paginatedTipsters, page, totalPages, setPage } = usePagination(tipsters, 10);
-
-  useEffect(() => {
-    // Ordena: banca principal (padrao: true) sempre no topo
-    const ordered = [...remoteBancas].sort((a, b) => {
-      if (a.padrao === b.padrao) return 0;
-      return a.padrao ? -1 : 1;
-    });
-    
-    setBancas(prev => {
-      // Evita loop de renderização verificando se houve mudança real
-      if (JSON.stringify(prev) === JSON.stringify(ordered)) {
-        return prev;
-      }
-      return ordered;
-    });
-  }, [remoteBancas]);
 
   const refreshFromEvent = useCallback(() => {
     invalidateBancasCache();
@@ -193,17 +181,6 @@ export default function Bancas() {
 
   const handleTogglePadrao = async (banca: Banca) => {
     const newValue = !banca.padrao;
-    setBancas((prev) =>
-      prev.map((item) => {
-        if (item.id === banca.id) {
-          return { ...item, padrao: newValue };
-        }
-        if (newValue) {
-          return { ...item, padrao: false };
-        }
-        return item;
-      })
-    );
 
     try {
       await bancaService.update(banca.id, { ePadrao: newValue });
@@ -216,9 +193,6 @@ export default function Bancas() {
 
   const handleToggleStatus = async (banca: Banca) => {
     const nextStatus = banca.status === 'Ativa' ? 'Inativa' : 'Ativa';
-    setBancas((prev) =>
-      prev.map((item) => (item.id === banca.id ? { ...item, status: nextStatus } : item))
-    );
 
     try {
       await bancaService.update(banca.id, { status: nextStatus });
@@ -437,102 +411,106 @@ export default function Bancas() {
               <div className="rounded-2xl border border-dashed border-gray-300 px-6 py-12 text-center text-sm text-gray-500 dark:border-white/15 dark:text-white/70">
                 Nenhuma banca cadastrada ainda.
               </div>
-            ) : isMobile ? (
-              <div className="space-y-4">
-                {bancas.map((banca) => (
-                  <MobileBancaCard
-                    key={banca.id}
-                    banca={banca}
-                    onOpenStats={() => void handleOpenStats(banca)}
-                    onCopyLink={() => void copyToClipboard(banca.stats.infoLink.url)}
-                    onEdit={() => openEditModal(banca)}
-                    onDelete={() => setConfirmDelete({ open: true, banca, loading: false })}
-                    onToggleStatus={() => void handleToggleStatus(banca)}
-                    onTogglePadrao={() => void handleTogglePadrao(banca)}
-                  />
-                ))}
-              </div>
             ) : (
-              <div className="overflow-x-auto rounded-2xl border border-gray-200 dark:border-emerald-700/20">
-                <table className="min-w-full divide-y divide-gray-200 dark:divide-emerald-500/10 text-sm">
-                  <thead className="bg-gray-50 dark:bg-emerald-900/20 text-gray-500 dark:text-emerald-400">
-                    <tr>
-                      <th className="px-4 py-3 text-left text-2xs font-semibold uppercase tracking-[0.3em]">Banca</th>
-                      <th className="px-4 py-3 text-left text-2xs font-semibold uppercase tracking-[0.3em]">Descrição</th>
-                      <th className="px-4 py-3 text-left text-2xs font-semibold uppercase tracking-[0.3em]">Status</th>
-                      <th className="px-4 py-3 text-left text-2xs font-semibold uppercase tracking-[0.3em]">Padrão</th>
-                      <th className="px-4 py-3 text-left text-2xs font-semibold uppercase tracking-[0.3em]">Última visualização</th>
-                      <th className="px-4 py-3 text-left text-2xs font-semibold uppercase tracking-[0.3em]">Criado em</th>
-                      <th className="px-4 py-3 text-right text-2xs font-semibold uppercase tracking-[0.3em]">Ações</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-100 dark:divide-white/10">
-                    {bancas.map((banca) => (
-                      <tr key={banca.id} className="transition duration-200 hover:bg-gray-50 dark:hover:bg-white/10 cursor-default">
-                        <td className="px-4 py-4 align-middle">
-                          <div className="space-y-1">
-                            <p className="font-semibold text-gray-900 dark:text-white">{banca.nome}</p>
-                            <p className="text-xs text-gray-500 dark:text-white/60">ID: {banca.id}</p>
-                          </div>
-                        </td>
-                        <td className="px-4 py-4 align-middle text-gray-600 dark:text-white/70">{banca.descricao}</td>
-                        <td className="px-4 py-4 align-middle">
-                          <SwitchControl
-                            checked={banca.status === 'Ativa'}
-                            onToggle={() => void handleToggleStatus(banca)}
-                            label={`Alternar status da banca ${banca.nome}`}
-                          />
-                        </td>
-                        <td className="px-4 py-4 align-middle">
-                          <SwitchControl
-                            checked={banca.padrao}
-                            onToggle={() => void handleTogglePadrao(banca)}
-                            label={`Alternar banca padrão ${banca.nome}`}
-                          />
-                        </td>
-                        <td className="px-4 py-4 align-middle text-gray-500 dark:text-white/60">{banca.ultimaVisualizacao}</td>
-                        <td className="px-4 py-4 align-middle text-gray-500 dark:text-white/60">{banca.criadoEm}</td>
-                        <td className="px-4 py-4 align-middle text-right">
-                          <div className="flex justify-end gap-2">
-                            <button
-                              type="button"
-                              className={cn(ghostButtonClass, 'h-8 w-8 rounded-lg p-0 text-gray-500 hover:bg-gray-100 hover:text-emerald-600 dark:text-white/60 dark:hover:bg-white/10 dark:hover:text-emerald-400')}
-                              onClick={() => void handleOpenStats(banca)}
-                              title="Ver estatísticas"
-                            >
-                              <LineChart className="h-4 w-4" />
-                            </button>
-                            <button
-                              type="button"
-                              className={cn(ghostButtonClass, 'h-8 w-8 rounded-lg p-0 text-gray-500 hover:bg-gray-100 hover:text-emerald-600 dark:text-white/60 dark:hover:bg-white/10 dark:hover:text-emerald-400')}
-                              onClick={() => void copyToClipboard(banca.stats.infoLink.url)}
-                              title="Copiar link"
-                            >
-                              <Share2 className="h-4 w-4" />
-                            </button>
-                            <button
-                              type="button"
-                              className={cn(ghostButtonClass, 'h-8 w-8 rounded-lg p-0 text-gray-500 hover:bg-gray-100 hover:text-emerald-600 dark:text-white/60 dark:hover:bg-white/10 dark:hover:text-emerald-400')}
-                              onClick={() => openEditModal(banca)}
-                              title="Editar banca"
-                            >
-                              <Pencil className="h-4 w-4" />
-                            </button>
-                            <button
-                              type="button"
-                              className={cn(ghostButtonClass, 'h-8 w-8 rounded-lg p-0 text-rose-500 hover:bg-rose-50 hover:text-rose-600 dark:text-rose-400 dark:hover:bg-rose-500/10 dark:hover:text-rose-300')}
-                              onClick={() => setConfirmDelete({ open: true, banca, loading: false })}
-                              title="Excluir banca"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </button>
-                          </div>
-                        </td>
+              <>
+                {/* Mobile List */}
+                <div className="block md:hidden space-y-4">
+                  {bancas.map((banca) => (
+                    <MobileBancaCard
+                      key={banca.id}
+                      banca={banca}
+                      onOpenStats={() => void handleOpenStats(banca)}
+                      onCopyLink={() => void copyToClipboard(banca.stats.infoLink.url)}
+                      onEdit={() => openEditModal(banca)}
+                      onDelete={() => setConfirmDelete({ open: true, banca, loading: false })}
+                      onToggleStatus={() => void handleToggleStatus(banca)}
+                      onTogglePadrao={() => void handleTogglePadrao(banca)}
+                    />
+                  ))}
+                </div>
+
+                {/* Desktop Table */}
+                <div className="hidden md:block overflow-x-auto rounded-2xl border border-gray-200 dark:border-emerald-700/20">
+                  <table className="min-w-full divide-y divide-gray-200 dark:divide-emerald-500/10 text-sm">
+                    <thead className="bg-gray-50 dark:bg-emerald-900/20" style={{ color: '#00ff9d' }}>
+                      <tr>
+                        <th className="px-4 py-3 text-left text-2xs font-semibold uppercase tracking-[0.3em]">Banca</th>
+                        <th className="px-4 py-3 text-left text-2xs font-semibold uppercase tracking-[0.3em]">Descrição</th>
+                        <th className="px-4 py-3 text-left text-2xs font-semibold uppercase tracking-[0.3em]">Status</th>
+                        <th className="px-4 py-3 text-left text-2xs font-semibold uppercase tracking-[0.3em]">Padrão</th>
+                        <th className="px-4 py-3 text-left text-2xs font-semibold uppercase tracking-[0.3em]">Última visualização</th>
+                        <th className="px-4 py-3 text-left text-2xs font-semibold uppercase tracking-[0.3em]">Criado em</th>
+                        <th className="px-4 py-3 text-right text-2xs font-semibold uppercase tracking-[0.3em]">Ações</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100 dark:divide-white/10">
+                      {bancas.map((banca) => (
+                        <tr key={banca.id} className="transition duration-200 hover:bg-gray-50 dark:hover:bg-white/10 cursor-default">
+                          <td className="px-4 py-4 align-middle">
+                            <div className="space-y-1">
+                              <p className="font-semibold text-gray-900 dark:text-white">{banca.nome}</p>
+                              <p className="text-xs text-gray-500 dark:text-white/60">ID: {banca.id}</p>
+                            </div>
+                          </td>
+                          <td className="px-4 py-4 align-middle text-gray-600 dark:text-white/70">{banca.descricao}</td>
+                          <td className="px-4 py-4 align-middle">
+                            <SwitchControl
+                              checked={banca.status === 'Ativa'}
+                              onToggle={() => void handleToggleStatus(banca)}
+                              label={`Alternar status da banca ${banca.nome}`}
+                            />
+                          </td>
+                          <td className="px-4 py-4 align-middle">
+                            <SwitchControl
+                              checked={banca.padrao}
+                              onToggle={() => void handleTogglePadrao(banca)}
+                              label={`Alternar banca padrão ${banca.nome}`}
+                            />
+                          </td>
+                          <td className="px-4 py-4 align-middle text-gray-500 dark:text-white/60">{banca.ultimaVisualizacao}</td>
+                          <td className="px-4 py-4 align-middle text-gray-500 dark:text-white/60">{banca.criadoEm}</td>
+                          <td className="px-4 py-4 align-middle text-right">
+                            <div className="flex justify-end gap-2">
+                              <button
+                                type="button"
+                                className={cn(ghostButtonClass, 'h-8 w-8 rounded-lg p-0 text-gray-500 hover:bg-gray-100 hover:text-emerald-600 dark:text-white/60 dark:hover:bg-white/10 dark:hover:text-emerald-400')}
+                                onClick={() => void handleOpenStats(banca)}
+                                title="Ver estatísticas"
+                              >
+                                <LineChart className="h-4 w-4" />
+                              </button>
+                              <button
+                                type="button"
+                                className={cn(ghostButtonClass, 'h-8 w-8 rounded-lg p-0 text-gray-500 hover:bg-gray-100 hover:text-emerald-600 dark:text-white/60 dark:hover:bg-white/10 dark:hover:text-emerald-400')}
+                                onClick={() => void copyToClipboard(banca.stats.infoLink.url)}
+                                title="Copiar link"
+                              >
+                                <Share2 className="h-4 w-4" />
+                              </button>
+                              <button
+                                type="button"
+                                className={cn(ghostButtonClass, 'h-8 w-8 rounded-lg p-0 text-gray-500 hover:bg-gray-100 hover:text-emerald-600 dark:text-white/60 dark:hover:bg-white/10 dark:hover:text-emerald-400')}
+                                onClick={() => openEditModal(banca)}
+                                title="Editar banca"
+                              >
+                                <Pencil className="h-4 w-4" />
+                              </button>
+                              <button
+                                type="button"
+                                className={cn(ghostButtonClass, 'h-8 w-8 rounded-lg p-0 text-rose-500 hover:bg-rose-50 hover:text-rose-600 dark:text-rose-400 dark:hover:bg-rose-500/10 dark:hover:text-rose-300')}
+                                onClick={() => setConfirmDelete({ open: true, banca, loading: false })}
+                                title="Excluir banca"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </>
             )}
           </section>
         </>

@@ -25,6 +25,7 @@ import { CASAS_APOSTAS } from '../constants/casasApostas';
 import { STATUS_APOSTAS } from '../constants/statusApostas';
 import { formatCurrency, formatPercent, getFirstName, formatAxisCurrency } from '../utils/formatters';
 import { useDashboardData, useTipsters, useBancas, useChartContainer } from '../hooks';
+import { useTheme } from '../contexts/ThemeContext';
 import { cn } from '../components/ui/utils';
 import ImportCSVModal from '../components/ImportCSVModal';
 import { DashboardSkeleton } from '../components/skeletons/DashboardSkeleton';
@@ -83,6 +84,7 @@ interface BreakdownListProps {
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const { theme } = useTheme();
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [expandedSport, setExpandedSport] = useState<string | null>(null);
   const [expandedCasa, setExpandedCasa] = useState<string | null>(null);
@@ -219,10 +221,25 @@ export default function Dashboard() {
   const filterInputClass =
     'mt-2 w-full rounded-2xl border border-gray-300 dark:border-border/40 bg-background px-3 py-2 text-sm text-foreground placeholder:text-foreground-muted transition focus-visible:border-emerald-500 dark:focus-visible:border-brand-emerald focus-visible:ring-2 focus-visible:ring-emerald-500/30 dark:focus-visible:ring-brand-emerald/30';
 
-  const sectionCardClass =
-    'rounded-[32px] border border-gray-200 bg-white p-6 text-gray-900 shadow-xl backdrop-blur-2xl transition hover:-translate-y-0.5 hover:shadow-lg dark:border-emerald-700/20 dark:bg-transparent dark:bg-gradient-to-br dark:from-emerald-900/40 dark:to-emerald-800/20 dark:text-white dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] dark:hover:shadow-glow';
-  const evolutionCardClass =
-    'rounded-[32px] border border-gray-200 bg-white p-6 sm:p-8 text-gray-900 shadow-xl backdrop-blur-2xl transition hover:-translate-y-0.5 hover:shadow-lg dark:border-emerald-700/20 dark:bg-transparent dark:bg-gradient-to-br dark:from-emerald-900/40 dark:to-emerald-800/20 dark:text-white dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] dark:hover:shadow-glow';
+  const sectionCardClass = useMemo(() => {
+    const base = 'rounded-[32px] border border-gray-200 bg-white p-6 text-gray-900 shadow-xl backdrop-blur-2xl transition hover:-translate-y-0.5 hover:shadow-lg dark:border-emerald-700/20 dark:bg-transparent dark:text-white dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] dark:hover:shadow-glow';
+    
+    if (theme === 'dark-standard') {
+      return cn(base, 'dark:bg-[#08181a] dark:border-[#06322d] dark:shadow-none');
+    }
+    
+    return cn(base, 'dark:bg-gradient-to-br dark:from-emerald-900/40 dark:to-emerald-800/20');
+  }, [theme]);
+
+  const evolutionCardClass = useMemo(() => {
+    const base = 'rounded-[32px] border border-gray-200 bg-white p-6 sm:p-8 text-gray-900 shadow-xl backdrop-blur-2xl transition hover:-translate-y-0.5 hover:shadow-lg dark:border-emerald-700/20 dark:bg-transparent dark:text-white dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] dark:hover:shadow-glow';
+
+    if (theme === 'dark-standard') {
+      return cn(base, 'dark:bg-[#08181a] dark:border-[#06322d] dark:shadow-none');
+    }
+    
+    return cn(base, 'dark:bg-gradient-to-br dark:from-emerald-900/40 dark:to-emerald-800/20');
+  }, [theme]);
 
   const timeframeSwitchBaseClass =
     'rounded-full px-4 py-1.5 text-xs font-semibold uppercase tracking-wide transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-neon/40';
@@ -448,8 +465,8 @@ export default function Dashboard() {
 
         <div
           className={cn(
-            'col-span-1 flex flex-col justify-between rounded-[32px] border border-gray-200 bg-white p-6 sm:p-8 text-gray-900 shadow-xl backdrop-blur-2xl md:col-span-1 xl:col-span-5 hover:border-gray-300 hover:shadow-lg min-w-0',
-            'dark:border-emerald-500/30 dark:bg-[#022c22] dark:text-white dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)]'
+            sectionCardClass,
+            'col-span-1 flex flex-col justify-between md:col-span-1 xl:col-span-5 min-w-0 p-6 sm:p-8'
           )}
         >
           <div className="flex items-center justify-between mb-2">
@@ -465,7 +482,7 @@ export default function Dashboard() {
             <span className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white">{accuracyPercentLabel}</span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-y-4 sm:gap-y-0 divide-y sm:divide-y-0 sm:divide-x divide-gray-200 dark:divide-white/10 rounded-[24px] bg-gray-50 dark:bg-black/20 p-5 mb-2">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-y-4 sm:gap-y-0 divide-y sm:divide-y-0 sm:divide-x divide-gray-200 dark:divide-white/10 rounded-[24px] bg-gray-50 dark:bg-emerald-900/10 p-5 mb-2">
             <div className="flex flex-col items-center justify-center px-2 py-2 sm:py-0">
               <span className="text-[0.6rem] font-bold uppercase tracking-[0.2em] text-gray-400 dark:text-emerald-100/60 mb-1.5">Apostas</span>
               <span className="text-2xl font-bold text-gray-900 dark:text-white leading-none">{totalApostas}</span>
@@ -500,7 +517,7 @@ export default function Dashboard() {
               <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
               <span className="text-xs font-medium text-gray-500 dark:text-emerald-100/50">Atualizado agora</span>
             </div>
-            <button className="flex items-center gap-1 text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors">
+            <button className="flex items-center gap-1 text-xs font-bold text-emerald-600 dark:text-brand-neon hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors">
               Ver detalhes <ArrowRight size={12} />
             </button>
           </div>
@@ -512,7 +529,7 @@ export default function Dashboard() {
         <div className={cn(evolutionCardClass, 'space-y-6 xl:col-span-2 min-w-0')}>
           <div className="flex flex-wrap items-start justify-between gap-6">
             <div className="flex items-start gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-600 dark:bg-white/10 dark:text-[#7efee0]">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-600 dark:bg-white/10 dark:text-brand-neon">
                 <CalendarDays className="h-6 w-6" />
               </div>
               <div>
@@ -528,7 +545,7 @@ export default function Dashboard() {
                   className={cn(
                     timeframeSwitchBaseClass,
                     periodoGrafico === option.value
-                      ? 'bg-white text-gray-900 shadow-sm dark:bg-[#1fe7cb] dark:text-[#031d1a] dark:shadow-[0_15px_30px_rgba(31,231,203,0.35)]'
+                      ? 'bg-white text-gray-900 shadow-sm dark:bg-brand-neon dark:text-[#031d1a] dark:shadow-[0_15px_30px_rgba(0,255,157,0.35)]'
                       : 'text-gray-500 hover:text-gray-900 dark:text-white/65 dark:hover:text-white'
                   )}
                   onClick={() => setPeriodoGrafico(option.value)}

@@ -121,8 +121,8 @@ export default function ApostasTable({
              <div style={{ minWidth: MIN_TABLE_WIDTH, height: '100%' }} className="flex flex-col">
                 {/* Header */}
                 <div 
-                  className="grid items-center border-b border-white/10 bg-white/5 text-left text-xs font-semibold uppercase tracking-[0.3em] text-white/60"
-                  style={{ gridTemplateColumns: GRID_TEMPLATE_COLUMNS, paddingRight: 8 }} // paddingRight para compensar scrollbar se necessário
+                  className="grid items-center border-b border-white/10 bg-white/5 text-left text-xs font-semibold uppercase tracking-[0.3em]"
+                  style={{ gridTemplateColumns: GRID_TEMPLATE_COLUMNS, paddingRight: 8, color: '#00ff9d' }} // paddingRight para compensar scrollbar se necessário
                 >
                   <div className="px-4 py-3">Casa de Aposta</div>
                   <div className="px-4 py-3">Tipster</div>

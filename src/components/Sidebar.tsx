@@ -19,6 +19,7 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { usePerfil } from '../contexts/PerfilContext';
+import { useTheme } from '../contexts/ThemeContext';
 import type { Perfil } from '../contexts/PerfilContext';
 import { useBancas } from '../hooks/useBancas';
 import { bancaService, perfilService, type ConsumoPlano } from '../services/api';
@@ -43,15 +44,6 @@ const CREATE_BANCA_DEFAULT: CreateBancaFormState = {
 
 const CONSUMO_MAX_RETRIES = 2;
 const CONSUMO_RETRY_BASE_DELAY = 1200;
-
-const navLinkClasses = (isActive: boolean, collapsed: boolean) =>
-  `flex items-center gap-3 py-3 rounded-lg transition-all ${
-    collapsed ? 'justify-center px-0' : 'px-3'
-  } ${
-    isActive
-      ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/20'
-      : 'text-gray-600 hover:text-gray-900 hover:bg-emerald-50 dark:text-white/80 dark:hover:text-white dark:hover:bg-emerald-600/10'
-  }`;
 
 const PLAN_VISUALS: Record<string, { icon: LucideIcon; badgeClass: string; iconClass: string }> = {
   gratuito: {
@@ -89,7 +81,29 @@ interface SidebarProps {
 }
 
 const Sidebar = ({ collapsed, onToggle, mobile = false }: SidebarProps) => {
+  const { theme } = useTheme();
   const { perfil, loading: perfilLoading } = usePerfil();
+
+  const navLinkClasses = useCallback((isActive: boolean, collapsed: boolean) => {
+    if (theme === 'dark-standard') {
+      return `flex items-center gap-3 py-3 rounded-lg transition-all ${
+        collapsed ? 'justify-center px-0' : 'px-3'
+      } ${
+        isActive
+          ? 'bg-[#08181a] text-brand-neon border border-emerald-500/20 shadow-none'
+          : 'text-gray-500 hover:text-white hover:bg-[#08181a]'
+      }`;
+    }
+
+    return `flex items-center gap-3 py-3 rounded-lg transition-all ${
+      collapsed ? 'justify-center px-0' : 'px-3'
+    } ${
+      isActive
+        ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/20'
+        : 'text-gray-600 hover:text-gray-900 hover:bg-emerald-50 dark:text-white/80 dark:hover:text-white dark:hover:bg-emerald-600/10'
+    }`;
+  }, [theme]);
+
   const { bancas, loading: bancasLoading, refetch: refetchBancas } = useBancas();
   const [consumoPlano, setConsumoPlano] = useState<ConsumoPlano | null>(null);
   const [consumoLoading, setConsumoLoading] = useState(false);
@@ -352,40 +366,40 @@ const Sidebar = ({ collapsed, onToggle, mobile = false }: SidebarProps) => {
 
   return (
     <div
-      className={
-        mobile
-          ? 'flex h-full w-full flex-col bg-white dark:bg-app-layout-bg'
-          : `fixed top-0 left-0 z-40 flex h-screen flex-shrink-0 transition-all duration-300 ${
-              collapsed ? 'w-20' : 'w-64'
-            }`
-      }
-    >
-      {!mobile && (
-        <button
-          type="button"
-          className="absolute right-0 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 translate-x-1/2 items-center justify-center rounded-full bg-[#14b8a6] text-white shadow-lg shadow-[#14b8a6]/30"
-          onClick={onToggle}
-          aria-label={collapsed ? 'Expandir sidebar' : 'Recolher sidebar'}
+          className={
+            mobile
+              ? 'flex h-full w-full flex-col bg-white dark:bg-app-layout-bg'
+              : `fixed top-0 left-0 z-40 flex h-screen flex-shrink-0 transition-all duration-300 ${
+                  collapsed ? 'w-20' : 'w-64'
+                }`
+          }
         >
-          {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-        </button>
-      )}
-
-      <div className="flex h-full w-full flex-col bg-white border-r border-gray-200 text-gray-900 dark:bg-app-layout-bg dark:border-white/10 dark:text-white">
-        <div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0">
-          <div className={`${sectionPadding} pt-6 pb-8`}>
-            <div className={`flex items-center gap-3 ${collapsed ? 'justify-center' : ''}`}>
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#14b8a6]">
-                <Target className="h-6 w-6 text-white" strokeWidth={2.5} />
-              </div>
-              {!collapsed && (
-                <div className="flex flex-col">
-                  <h1 className="text-gray-900 dark:text-white tracking-tight">Real Comando</h1>
-                  <p className="text-sm text-[#14b8a6]">Planilha Esportiva</p>
+          {!mobile && (
+            <button
+              type="button"
+              className="absolute right-0 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 translate-x-1/2 items-center justify-center rounded-full bg-emerald-600 text-white shadow-lg shadow-emerald-600/30 hover:bg-emerald-700 transition-colors"
+              onClick={onToggle}
+              aria-label={collapsed ? 'Expandir sidebar' : 'Recolher sidebar'}
+            >
+              {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+            </button>
+          )}
+    
+          <div className="flex h-full w-full flex-col bg-white border-r border-gray-200 text-gray-900 dark:bg-app-layout-bg dark:border-white/10 dark:text-white">
+            <div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0">
+              <div className={`${sectionPadding} pt-6 pb-8`}>
+                <div className={`flex items-center gap-3 ${collapsed ? 'justify-center' : ''}`}>
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-600 shadow-lg shadow-emerald-600/20">
+                    <Target className="h-6 w-6 text-white" strokeWidth={2.5} />
+                  </div>
+                  {!collapsed && (
+                    <div className="flex flex-col">
+                      <h1 className="text-gray-900 dark:text-white tracking-tight">Real Comando</h1>
+                      <p className="text-sm text-emerald-600 dark:text-brand-neon">Planilha Esportiva</p>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-          </div>
+              </div>
 
           {!collapsed && (
             <div className={`mb-6 ${sectionPadding}`} ref={bancaDropdownRef}>

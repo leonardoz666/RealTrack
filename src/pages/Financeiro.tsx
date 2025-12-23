@@ -38,7 +38,6 @@ import {
   type ApiFinancialTransaction,
 } from '../types/api';
 import { cn } from '../components/ui/utils';
-import { useIsMobile } from '../components/ui/use-mobile';
 
 type TipoFiltro = TipoTransacao | '';
 
@@ -122,7 +121,6 @@ const getCurrencyParts = (value: number) => {
 };
 
 export default function Financeiro() {
-  const isMobile = useIsMobile();
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -454,7 +452,7 @@ export default function Financeiro() {
       label: 'Total Depositado',
       value: formatCurrency(statsData.totalDepositado),
       icon: ArrowUpRight,
-      accent: 'bg-emerald-500/15 text-emerald-200',
+      accent: 'bg-emerald-500/15 text-brand-neon',
     },
     {
       label: 'Total Sacado',
@@ -466,7 +464,7 @@ export default function Financeiro() {
       label: 'Transações',
       value: statsData.totalTransacoes.toLocaleString('pt-BR'),
       icon: ReceiptText,
-      accent: 'bg-cyan-500/15 text-cyan-200',
+      accent: 'bg-emerald-500/15 text-brand-neon',
     },
   ];
   const resumoApostasCards = [
@@ -474,7 +472,7 @@ export default function Financeiro() {
       key: 'concluidas',
       label: 'Apostas/saldo recebidas',
       icon: CheckCircle2,
-      accent: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-200',
+      accent: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-brand-neon',
       cardClass: 'border-emerald-200 bg-emerald-50 shadow-sm dark:border-emerald-400/15 dark:bg-emerald-400/5 dark:shadow-[0_15px_35px_rgba(16,185,129,0.18)]',
       parts: resultadoParts,
       isNegative: resultadoEhNegativo,
@@ -630,126 +628,130 @@ export default function Financeiro() {
           </div>
         ) : transacoes.length === 0 ? (
           <EmptyState title="Nenhuma transação" description="Cadastre um depósito ou saque para visualizar aqui." />
-        ) : isMobile ? (
-          <div className="space-y-3">
-            {transacoes.map((transacao) => (
-              <div key={transacao.id} className="rounded-2xl border border-gray-200 bg-white p-3 shadow-sm dark:border-emerald-700/20 dark:bg-emerald-900/10">
-                <div className="flex justify-between items-center mb-2">
-                  <div className="flex items-center gap-2 min-w-0">
-                    <span
-                      className={cn(
-                        'inline-flex shrink-0 rounded-full px-1.5 py-0.5 text-[0.65rem] font-bold uppercase tracking-wider',
-                        transacao.tipo === 'Depósito' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300' : 'bg-rose-100 text-rose-700 dark:bg-rose-500/15 dark:text-rose-300'
-                      )}
-                    >
-                      {transacao.tipo}
-                    </span>
-                    <h3 className="font-semibold text-sm text-gray-900 dark:text-white truncate">{transacao.casaDeAposta}</h3>
-                  </div>
-                  <div className="flex gap-1 shrink-0">
-                    <button
-                      type="button"
-                      className="h-7 w-7 flex items-center justify-center rounded-lg bg-gray-50 text-gray-500 hover:bg-gray-100 dark:bg-white/5 dark:text-white/60 dark:hover:bg-white/10"
-                      onClick={() => handleEditTransacao(transacao)}
-                      aria-label="Editar"
-                    >
-                      <Pencil className="h-3.5 w-3.5" />
-                    </button>
-                    <button
-                      type="button"
-                      className="h-7 w-7 flex items-center justify-center rounded-lg bg-rose-50 text-rose-500 hover:bg-rose-100 dark:bg-rose-500/10 dark:text-rose-400 dark:hover:bg-rose-500/20"
-                      onClick={() => handleDeleteTransacao(transacao)}
-                      aria-label="Remover"
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </button>
-                  </div>
-                </div>
-
-                <div className="flex justify-between items-end">
-                  <div>
-                    <p className={cn(
-                      'text-base font-bold',
-                      transacao.tipo === 'Depósito' ? 'text-emerald-600 dark:text-emerald-300' : 'text-rose-600 dark:text-rose-300'
-                    )}>
-                      {formatCurrency(transacao.valor)}
-                    </p>
-                    <p className="text-[0.65rem] text-gray-400 dark:text-white/40">{formatDate(transacao.dataTransacao)}</p>
-                  </div>
-                </div>
-
-                {transacao.observacao?.trim() && (
-                  <div className="mt-2 pt-2 border-t border-gray-100 dark:border-white/5">
-                    <p className="text-xs text-gray-600 dark:text-white/70 line-clamp-1">{transacao.observacao}</p>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
         ) : (
-          <div className="overflow-x-auto rounded-2xl border border-gray-200 dark:border-emerald-700/20">
-            <table className="min-w-full table-auto text-sm text-gray-900 dark:text-white">
-              <thead className="bg-gray-50 text-[0.7rem] uppercase tracking-[0.25em] text-gray-500 dark:bg-emerald-900/20 dark:text-emerald-400">
-                <tr>
-                  <th className="px-4 py-3 text-left">Data</th>
-                  <th className="px-4 py-3 text-left">Tipo</th>
-                  <th className="px-4 py-3 text-left">Casa</th>
-                  <th className="px-4 py-3 text-left">Valor</th>
-                  <th className="px-4 py-3 text-left">Observação</th>
-                  <th className="px-4 py-3 text-right">Ações</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100 dark:divide-emerald-500/10">
-                {transacoes.map((transacao) => (
-                  <tr key={transacao.id} className="text-gray-900 transition hover:bg-gray-50 dark:text-white dark:hover:bg-emerald-500/10">
-                    <td className="px-4 py-4 font-medium">{formatDate(transacao.dataTransacao)}</td>
-                    <td className="px-4 py-4">
+          <>
+            {/* Mobile List */}
+            <div className="block md:hidden space-y-3">
+              {transacoes.map((transacao) => (
+                <div key={transacao.id} className="rounded-2xl border border-gray-200 bg-white p-3 shadow-sm dark:border-emerald-700/20 dark:bg-emerald-900/10">
+                  <div className="flex justify-between items-center mb-2">
+                    <div className="flex items-center gap-2 min-w-0">
                       <span
                         className={cn(
-                          'inline-flex rounded-full px-3 py-1 text-xs font-semibold',
-                          transacao.tipo === 'Depósito' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300' : 'bg-rose-100 text-rose-700 dark:bg-rose-500/15 dark:text-rose-300'
+                          'inline-flex shrink-0 rounded-full px-1.5 py-0.5 text-[0.65rem] font-bold uppercase tracking-wider',
+                          transacao.tipo === 'Depósito' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-brand-neon' : 'bg-rose-100 text-rose-700 dark:bg-rose-500/15 dark:text-rose-300'
                         )}
                       >
                         {transacao.tipo}
                       </span>
-                    </td>
-                    <td className="px-4 py-4 text-gray-500 dark:text-white/80">{transacao.casaDeAposta}</td>
-                    <td
-                      className={cn(
-                        'px-4 py-4 font-semibold',
-                        transacao.tipo === 'Depósito' ? 'text-emerald-600 dark:text-emerald-300' : 'text-rose-600 dark:text-rose-300'
-                      )}
-                    >
-                      {formatCurrency(transacao.valor)}
-                    </td>
-                    <td className="px-4 py-4 text-gray-500 dark:text-white/70">
-                      {transacao.observacao?.trim() ? transacao.observacao : '-'}
-                    </td>
-                    <td className="px-4 py-4">
-                      <div className="flex justify-end gap-2">
-                        <button
-                          type="button"
-                          className={tableActionButtonClass}
-                          onClick={() => handleEditTransacao(transacao)}
-                          aria-label="Editar transação"
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </button>
-                        <button
-                          type="button"
-                          className={tableActionButtonDangerClass}
-                          onClick={() => handleDeleteTransacao(transacao)}
-                          aria-label="Remover transação"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </td>
+                      <h3 className="font-semibold text-sm text-gray-900 dark:text-white truncate">{transacao.casaDeAposta}</h3>
+                    </div>
+                    <div className="flex gap-1 shrink-0">
+                      <button
+                        type="button"
+                        className="h-7 w-7 flex items-center justify-center rounded-lg bg-gray-50 text-gray-500 hover:bg-gray-100 dark:bg-white/5 dark:text-white/60 dark:hover:bg-white/10"
+                        onClick={() => handleEditTransacao(transacao)}
+                        aria-label="Editar"
+                      >
+                        <Pencil className="h-3.5 w-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        className="h-7 w-7 flex items-center justify-center rounded-lg bg-rose-50 text-rose-500 hover:bg-rose-100 dark:bg-rose-500/10 dark:text-rose-400 dark:hover:bg-rose-500/20"
+                        onClick={() => handleDeleteTransacao(transacao)}
+                        aria-label="Remover"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-between items-end">
+                    <div>
+                      <p className={cn(
+                        'text-base font-bold',
+                        transacao.tipo === 'Depósito' ? 'text-emerald-600 dark:text-brand-neon' : 'text-rose-600 dark:text-rose-300'
+                      )}>
+                        {formatCurrency(transacao.valor)}
+                      </p>
+                      <p className="text-[0.65rem] text-gray-400 dark:text-white/40">{formatDate(transacao.dataTransacao)}</p>
+                    </div>
+                  </div>
+
+                  {transacao.observacao?.trim() && (
+                    <div className="mt-2 pt-2 border-t border-gray-100 dark:border-white/5">
+                      <p className="text-xs text-gray-600 dark:text-white/70 line-clamp-1">{transacao.observacao}</p>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {/* Desktop Table */}
+            <div className="hidden md:block overflow-x-auto rounded-2xl border border-gray-200 dark:border-emerald-700/20">
+              <table className="min-w-full table-auto text-sm text-gray-900 dark:text-white">
+                <thead className="bg-gray-50 text-[0.7rem] uppercase tracking-[0.25em] dark:bg-emerald-900/20" style={{ color: '#00ff9d' }}>
+                  <tr>
+                    <th className="px-4 py-3 text-left">Data</th>
+                    <th className="px-4 py-3 text-left">Tipo</th>
+                    <th className="px-4 py-3 text-left">Casa</th>
+                    <th className="px-4 py-3 text-left">Valor</th>
+                    <th className="px-4 py-3 text-left">Observação</th>
+                    <th className="px-4 py-3 text-right">Ações</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody className="divide-y divide-gray-100 dark:divide-emerald-500/10">
+                  {transacoes.map((transacao) => (
+                    <tr key={transacao.id} className="text-gray-900 transition hover:bg-gray-50 dark:text-white dark:hover:bg-emerald-500/10">
+                      <td className="px-4 py-4 font-medium">{formatDate(transacao.dataTransacao)}</td>
+                      <td className="px-4 py-4">
+                        <span
+                          className={cn(
+                            'inline-flex rounded-full px-3 py-1 text-xs font-semibold',
+                            transacao.tipo === 'Depósito' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-brand-neon' : 'bg-rose-100 text-rose-700 dark:bg-rose-500/15 dark:text-rose-300'
+                          )}
+                        >
+                          {transacao.tipo}
+                        </span>
+                      </td>
+                      <td className="px-4 py-4 text-gray-500 dark:text-white/80">{transacao.casaDeAposta}</td>
+                      <td
+                        className={cn(
+                          'px-4 py-4 font-semibold',
+                          transacao.tipo === 'Depósito' ? 'text-emerald-600 dark:text-brand-neon' : 'text-rose-600 dark:text-rose-300'
+                        )}
+                      >
+                        {formatCurrency(transacao.valor)}
+                      </td>
+                      <td className="px-4 py-4 text-gray-500 dark:text-white/70">
+                        {transacao.observacao?.trim() ? transacao.observacao : '-'}
+                      </td>
+                      <td className="px-4 py-4">
+                        <div className="flex justify-end gap-2">
+                          <button
+                            type="button"
+                            className={tableActionButtonClass}
+                            onClick={() => handleEditTransacao(transacao)}
+                            aria-label="Editar transação"
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </button>
+                          <button
+                            type="button"
+                            className={tableActionButtonDangerClass}
+                            onClick={() => handleDeleteTransacao(transacao)}
+                            aria-label="Remover transação"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
         )}
       </section>
 

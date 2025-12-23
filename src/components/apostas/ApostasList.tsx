@@ -1,7 +1,6 @@
 import { Pencil, Trash2 } from 'lucide-react';
 import { EmptyState } from '../ui/empty-state';
 import { cn } from '../ui/utils';
-import { useIsMobile } from '../ui/use-mobile';
 import {
   Tooltip,
   TooltipContent,
@@ -23,7 +22,7 @@ interface ApostasListProps {
 }
 
 const tableActionButtonClass =
-  'inline-flex h-8 w-8 items-center justify-center rounded-lg border border-emerald-500/20 bg-emerald-500/10 text-emerald-600 transition hover:border-emerald-400/40 hover:bg-emerald-500/20 hover:text-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/30 dark:text-emerald-100 dark:hover:text-white';
+  'inline-flex h-8 w-8 items-center justify-center rounded-lg border border-emerald-500/20 bg-emerald-500/10 text-emerald-600 transition hover:border-emerald-400/40 hover:bg-emerald-500/20 hover:text-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/30 dark:text-brand-neon dark:hover:text-white';
 const tableActionButtonDangerClass =
   'inline-flex h-8 w-8 items-center justify-center rounded-lg border border-rose-400/40 bg-rose-500/10 text-rose-600 transition hover:bg-rose-500/20 hover:text-rose-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400/40 dark:text-rose-200 dark:hover:text-white';
 
@@ -90,7 +89,7 @@ const MobileBetCard = ({
         </div>
       </div>
       
-      <div className="grid grid-cols-2 gap-3 text-sm mb-4 bg-gray-50 dark:bg-black/20 rounded-xl p-3">
+      <div className="grid grid-cols-2 gap-3 text-sm mb-4 bg-gray-50 dark:bg-emerald-900/20 rounded-xl p-3">
         <div>
           <span className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-white/40 block mb-0.5">Aposta</span>
           <span className="font-medium text-gray-700 dark:text-gray-200 line-clamp-1" title={aposta.aposta}>
@@ -225,7 +224,7 @@ const Row = ({
         </div>
         <div className={cn(
           "truncate text-base font-bold",
-          aposta.retornoObtido > 0 ? "text-emerald-600 dark:text-emerald-400" : 
+          aposta.retornoObtido > 0 ? "text-emerald-600 dark:text-brand-neon" : 
           aposta.retornoObtido < 0 ? "text-rose-600 dark:text-rose-400" : "text-gray-400 dark:text-white/60"
         )}>
           {formatCurrency(aposta.retornoObtido)}
@@ -264,7 +263,6 @@ export default function ApostasList({
   formatCurrency,
   formatDate,
 }: ApostasListProps) {
-  const isMobile = useIsMobile();
   const formatOptionalCellText = (value?: string | null) => {
     if (typeof value !== 'string') {
       return '-';
@@ -275,9 +273,9 @@ export default function ApostasList({
 
   const normalizeEsporte = (esporteFromDb: string): string => normalizarEsporteParaOpcao(esporteFromDb);
 
-  if (isMobile) {
-    return (
-      <div className="space-y-4 pb-4">
+  return (
+    <>
+      <div className="block md:hidden space-y-4 pb-4">
         {apostas.length === 0 ? (
           <EmptyState title="Nenhuma aposta" description="Cadastre uma nova aposta para começar a acompanhar resultados." />
         ) : (
@@ -296,45 +294,31 @@ export default function ApostasList({
           ))
         )}
       </div>
-    );
-  }
 
-  const itemData = {
-    apostas,
-    onEdit,
-    onDelete,
-    onStatusClick,
-    formatCurrency,
-    formatDate,
-    normalizeEsporte,
-    formatOptionalCellText
-  };
-
-  return (
-    <TooltipProvider>
-      <div className="rounded-[32px] border border-gray-200 bg-white py-6 text-gray-900 shadow-xl backdrop-blur-2xl dark:border-emerald-700/20 dark:bg-transparent dark:bg-gradient-to-br dark:from-emerald-900/40 dark:to-emerald-800/20 dark:text-white dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] space-y-6 flex flex-col h-full min-h-[500px]">
-        {apostas.length === 0 ? (
-          <div className="px-6">
-            <EmptyState title="Nenhuma aposta" description="Cadastre uma nova aposta para começar a acompanhar resultados." />
-          </div>
-        ) : (
-          <div className="flex-1 flex flex-col overflow-hidden h-full">
-            {/* Header */}
-            <div 
-              className="grid gap-4 pl-6 py-3 border-b border-gray-100 text-[0.7rem] uppercase tracking-[0.18em] text-gray-500 font-bold shrink-0 dark:border-white/10 dark:text-white/60"
-              style={{ gridTemplateColumns: GRID_TEMPLATE, paddingRight: '40px' /* Scrollbar compensation + padding */ }}
-            >
-              <div>Casa</div>
-              <div>Tipster</div>
-              <div>Data</div>
-              <div>Esporte</div>
-              <div>Evento</div>
-              <div>Aposta</div>
-              <div>Mercado</div>
-              <div>Stake</div>
-              <div>Status</div>
-              <div>Retorno</div>
-              <div className="text-right">Ações</div>
+      <TooltipProvider>
+        <div className="hidden md:flex rounded-[32px] border border-gray-200 bg-white py-6 text-gray-900 shadow-xl backdrop-blur-2xl dark:border-emerald-700/20 dark:bg-transparent dark:bg-gradient-to-br dark:from-emerald-900/40 dark:to-emerald-800/20 dark:text-white dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] space-y-6 flex-col h-full min-h-[500px]">
+          {apostas.length === 0 ? (
+            <div className="px-6">
+              <EmptyState title="Nenhuma aposta" description="Cadastre uma nova aposta para começar a acompanhar resultados." />
+            </div>
+          ) : (
+            <div className="flex-1 flex flex-col overflow-hidden h-full">
+              {/* Header */}
+              <div 
+                className="grid gap-4 pl-6 py-3 border-b border-gray-100 text-[0.7rem] uppercase tracking-[0.18em] font-bold shrink-0 dark:border-white/10"
+                style={{ gridTemplateColumns: GRID_TEMPLATE, paddingRight: '40px', color: '#00ff9d' }}
+              >
+                <div>Casa</div>
+                <div>Tipster</div>
+                <div>Data</div>
+                <div>Esporte</div>
+                <div>Evento</div>
+                <div>Aposta</div>
+                <div>Mercado</div>
+                <div>Stake</div>
+                <div>Status</div>
+                <div>Retorno</div>
+                <div className="text-right">Ações</div>
               </div>
 
               {/* Simple List */}
@@ -354,8 +338,9 @@ export default function ApostasList({
                 ))}
               </div>
             </div>
-        )}
-      </div>
-    </TooltipProvider>
+          )}
+        </div>
+      </TooltipProvider>
+    </>
   );
 }

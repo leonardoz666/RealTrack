@@ -36,7 +36,11 @@ export function FeatureFlagProvider({ children }: { children: ReactNode }) {
         // apiClient já configura baseURL e interceptors (auth, etc.)
         const response = await apiClient.get<FeatureFlags>('/feature-flags/user');
         return response.data;
-      } catch (error) {
+      } catch (error: any) {
+        // Silently ignore 401 errors (user not authenticated)
+        if (error.response?.status === 401) {
+          return {};
+        }
         console.error('Erro ao buscar feature flags:', error);
         return {};
       }

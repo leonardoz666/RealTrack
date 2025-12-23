@@ -103,21 +103,14 @@ function StatusFormContent({ aposta, onClose, onConfirm, loading }: StatusFormCo
 
   const retornoPreview = useMemo(() => {
     const manualVal = parseNullableNumber(formData.retornoObtido.replace(',', '.'));
-    if (STATUS_WITH_RETURNS.includes(formData.status)) {
-      return manualVal ?? calcularRetornoObtido(
-        formData.status,
-        aposta.valorApostado,
-        Number(aposta.odd),
-        manualVal
-      ) ?? 0;
-    }
-    if (['Reembolsada', 'Void'].includes(formData.status)) {
-      return aposta.valorApostado;
-    }
-    if (formData.status === 'Meio Perdida') {
-      return aposta.valorApostado / 2;
-    }
-    return 0;
+    
+    // Agora o calcularRetornoObtido lida com TODOS os casos
+    return calcularRetornoObtido(
+      formData.status,
+      aposta.valorApostado,
+      Number(aposta.odd),
+      manualVal
+    ) ?? 0;
   }, [formData.status, aposta.valorApostado, aposta.odd, formData.retornoObtido]);
 
   const mainStatusList = ['Ganha', 'Perdida', 'Pendente'];

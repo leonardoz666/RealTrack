@@ -126,20 +126,23 @@ export const calcularRetornoObtido = (
   odd: number,
   retornoManualValue?: number
 ): number | null => {
+  const format = (val: number) => Number(val.toFixed(2));
+  
   switch (status) {
     case 'Ganha':
-      return valorApostado * odd;
+      return format(valorApostado * odd);
     case 'Meio Ganha':
-      return (valorApostado * odd) / 2 + valorApostado / 2;
+      return format((valorApostado * odd) / 2 + valorApostado / 2);
     case 'Cashout':
-      return retornoManualValue ?? valorApostado * odd * 0.7;
+      // Se não houver valor manual, não tenta adivinhar, retorna 0 ou valor manual
+      return retornoManualValue ?? 0;
     case 'Perdida':
       return 0;
     case 'Meio Perdida':
-      return valorApostado / 2; // Retorna metade do valor apostado (prejuízo é metade)
+      return format(valorApostado / 2); // Retorna metade do valor apostado (prejuízo é metade)
     case 'Reembolsada':
     case 'Void':
-      return valorApostado; // Retorna o valor apostado
+      return format(valorApostado); // Retorna o valor apostado
     case 'Pendente':
       return null;
     default:
@@ -355,9 +358,9 @@ export function useApostasManager(options: UseApostasManagerOptions = {}) {
 
     return {
       totalApostas: apostas.length,
-      totalInvestido,
-      totalGanhos,
-      totalPendente,
+      totalInvestido: Number(totalInvestido.toFixed(2)),
+      totalGanhos: Number(totalGanhos.toFixed(2)),
+      totalPendente: Number(totalPendente.toFixed(2)),
     };
   }, [apostas]);
 

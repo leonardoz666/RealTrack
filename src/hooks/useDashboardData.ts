@@ -8,7 +8,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { apiClient } from '../services/api';
+import { apiClient, apostaService } from '../services/api';
 import { perfilService, type Perfil } from '../services/api';
 import { eventBus } from '../utils/eventBus';
 import type {
@@ -147,10 +147,50 @@ export function useDashboardData(
     queryKey: ['apostasRecentes', filters.bancaId],
     queryFn: async () => {
       if (!filters.bancaId) return [];
-      const response = await apiClient.get<{ data: ApostaRecente[]; nextCursor: string | null; hasMore: boolean }>('/apostas/recentes', { 
-        params: { bancaId: filters.bancaId } 
-      });
-      return response.data?.data || [];
+      
+      try {
+        // Usar apostaService.getAll para garantir que o limit seja respeitado
+        const response = await apostaService.getAll({ 
+          bancaId: filters.bancaId,
+          limit: 20, // Buscamos mais para garantir ordenação correta
+          page: 1
+        });
+        
+        // Mapear para o formato ApostaRecente
+        const apostasMapeadas: ApostaRecente[] = response.apostas.map(aposta => {
+          let lucro: number | null = null;
+          
+          if (aposta.status !== 'Pendente') {
+            lucro = (aposta.retornoObtido ?? 0) - aposta.valorApostado;
+          }
+
+          return {
+            id: aposta.id,
+            evento: aposta.evento,
+            odd: aposta.odd,
+            status: aposta.status,
+            lucro: lucro,
+            dataEvento: aposta.dataEvento,
+            esporte: aposta.esporte,
+            casaDeAposta: aposta.casaDeAposta
+          };
+        });
+
+        // Ordenar por data (mais recente primeiro) caso a API não garanta
+        // Assumindo dataEvento. Se tiver createdAt seria melhor para "inserção recente", 
+        // mas dataEvento é o que é exibido.
+        return apostasMapeadas
+          .sort((a, b) => {
+            const dateA = new Date(a.dataEvento || 0).getTime();
+            const dateB = new Date(b.dataEvento || 0).getTime();
+            return dateB - dateA;
+          })
+          .slice(0, 7); // Pegar apenas as 7 primeiras
+
+      } catch (error) {
+        console.error("Erro ao buscar apostas recentes:", error);
+        return [];
+      }
     },
     enabled: autoFetch && !!filters.bancaId,
   });

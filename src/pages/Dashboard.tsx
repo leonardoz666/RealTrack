@@ -610,7 +610,7 @@ export default function Dashboard() {
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-lg font-semibold text-foreground">Performance recente</h3>
-              <p className={cn('text-sm text-foreground-muted', labelTextClass)}>Últimas 5 apostas registradas</p>
+              <p className={cn('text-sm text-foreground-muted', labelTextClass)}>Últimas 7 apostas registradas</p>
             </div>
             <TrendingUp size={18} className="text-brand-emerald" />
           </div>
@@ -623,7 +623,7 @@ export default function Dashboard() {
             <div className={cn('flex h-48 items-center justify-center text-sm text-foreground-muted', labelTextClass)}>Nenhuma aposta recente.</div>
           ) : (
             <div className="space-y-3">
-              {apostasRecentes.slice(0, 5).map((aposta) => {
+              {apostasRecentes.slice(0, 7).map((aposta) => {
                 const rawStatus = aposta.status ?? 'Pendente';
                 
                 // Helper para normalizar o status
@@ -656,7 +656,7 @@ export default function Dashboard() {
                 return (
                   <div
                     key={aposta.id}
-                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0 rounded-2xl border border-gray-100 bg-gray-50 px-4 py-3 text-sm transition-all duration-300 hover:bg-gray-100 hover:border-gray-200 hover:scale-[1.01] dark:border-white/5 dark:bg-white/5 dark:hover:bg-white/10 dark:hover:border-white/20"
+                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0 rounded-xl border border-gray-100 bg-gray-50 px-4 py-3 text-sm transition-all duration-300 hover:bg-gray-100 hover:border-gray-200 hover:scale-[1.01] dark:border-white/5 dark:bg-white/5 dark:hover:bg-white/10 dark:hover:border-white/20"
                   >
                     <div className="space-y-0.5 w-full sm:w-auto">
                       <p className="font-semibold text-gray-900 dark:text-foreground">{description}</p>

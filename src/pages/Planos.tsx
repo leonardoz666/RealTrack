@@ -127,7 +127,7 @@ export default function Planos() {
       .replace(/(-\d{4})\d+?$/, '$1');
   };
 
-  return (handleSelectPlan = async (plan: Plano) => {
+  const handleSelectPlan = async (plan: Plano) => {
     if (!perfil || perfil.plano.id === plan.id) return;
     
     if (plan.preco > 0) {

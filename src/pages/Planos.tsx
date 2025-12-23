@@ -61,6 +61,9 @@ export default function Planos() {
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState<string | null>(null);
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
+  const [customerInfoModalOpen, setCustomerInfoModalOpen] = useState(false);
+  const [selectedPlanForPayment, setSelectedPlanForPayment] = useState<Plano | null>(null);
+  const [customerInfo, setCustomerInfo] = useState({ cpf: '', phone: '' });
   const [paymentData, setPaymentData] = useState<{ url: string; id: string } | null>(null);
 
   useEffect(() => {
@@ -71,7 +74,9 @@ export default function Planos() {
     try {
       setLoading(true);
       const data = await perfilService.listPlans();
-      setPlans(data);
+      // Ordenar por preço: Gratuito (0) -> Amador (~49) -> Profissional (~89)
+      const sortedPlans = data.sort((a, b) => a.preco - b.preco);
+      setPlans(sortedPlans);
     } catch (err) {
       console.error('Erro ao carregar planos:', err);
       toast.error('Erro ao carregar planos disponíveis.');
@@ -85,22 +90,49 @@ export default function Planos() {
     setPaymentData(null);
   };
 
-  const handleSelectPlan = async (plan: Plano) => {
+  const handleCustomerInfoSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedPlanForPayment) return;
+
+    try {
+      setUpdating(selectedPlanForPayment.id);
+      setCustomerInfoModalOpen(false); // Close info modal
+      
+      const data = await perfilService.createPayment(selectedPlanForPayment.id, customerInfo);
+      setPaymentData(data);
+      setPaymentModalOpen(true); // Open payment modal
+    } catch (err) {
+      console.error('Erro ao gerar pagamento:', err);
+      toast.error('Erro ao gerar pagamento. Verifique seus dados e tente novamente.');
+      setCustomerInfoModalOpen(true); // Reopen info modal on error
+    } finally {
+      setUpdating(null);
+    }
+  };
+
+  const formatCPF = (value: string) => {
+    return value
+      .replace(/\D/g, '')
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d{1,2})/, '$1-$2')
+      .replace(/(-\d{2})\d+?$/, '$1');
+  };
+
+  const formatPhone = (value: string) => {
+    return value
+      .replace(/\D/g, '')
+      .replace(/(\d{2})(\d)/, '($1) $2')
+      .replace(/(\d{5})(\d)/, '$1-$2')
+      .replace(/(-\d{4})\d+?$/, '$1');
+  };
+
+  return (handleSelectPlan = async (plan: Plano) => {
     if (!perfil || perfil.plano.id === plan.id) return;
     
     if (plan.preco > 0) {
-      try {
-        setUpdating(plan.id);
-        const data = await perfilService.createPayment(plan.id);
-        setPaymentData(data);
-        setPaymentModalOpen(true);
-        toast.success('Pagamento gerado com sucesso!');
-      } catch (err) {
-        console.error('Erro ao gerar pagamento:', err);
-        toast.error('Não foi possível gerar o pagamento.');
-      } finally {
-        setUpdating(null);
-      }
+      setSelectedPlanForPayment(plan);
+      setCustomerInfoModalOpen(true);
       return;
     }
 
@@ -240,7 +272,7 @@ export default function Planos() {
                       <span>Plano Atual</span>
                     </>
                   ) : (
-                    <span>Selecionar Plano</span>
+                    <span>Contratar Plano</span>
                   )}
                 </button>
               </div>
@@ -248,6 +280,68 @@ export default function Planos() {
           );
         })}
       </div>
+      {/* Modal para Dados do Cliente */}
+      <Modal
+        isOpen={customerInfoModalOpen}
+        onClose={() => setCustomerInfoModalOpen(false)}
+        title="Dados para Pagamento"
+      >
+        <form onSubmit={handleCustomerInfoSubmit} className="space-y-4">
+          <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg text-sm text-blue-700 dark:text-blue-300">
+            <p>Precisamos de alguns dados para gerar o PIX através do AbacatePay.</p>
+          </div>
+          
+          <div>
+            <label htmlFor="cpf" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              CPF
+            </label>
+            <input
+              id="cpf"
+              type="text"
+              required
+              value={customerInfo.cpf}
+              onChange={(e) => setCustomerInfo(prev => ({ ...prev, cpf: formatCPF(e.target.value) }))}
+              placeholder="000.000.000-00"
+              maxLength={14}
+              className="w-full rounded-lg border border-gray-300 bg-white p-2.5 text-sm text-gray-900 focus:border-brand-emerald focus:ring-brand-emerald dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Telefone
+            </label>
+            <input
+              id="phone"
+              type="tel"
+              required
+              value={customerInfo.phone}
+              onChange={(e) => setCustomerInfo(prev => ({ ...prev, phone: formatPhone(e.target.value) }))}
+              placeholder="(00) 00000-0000"
+              maxLength={15}
+              className="w-full rounded-lg border border-gray-300 bg-white p-2.5 text-sm text-gray-900 focus:border-brand-emerald focus:ring-brand-emerald dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+            />
+          </div>
+
+          <div className="flex justify-end gap-2 pt-4">
+            <button
+              type="button"
+              onClick={() => setCustomerInfoModalOpen(false)}
+              className="rounded-lg px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              className="rounded-lg bg-brand-emerald px-4 py-2 text-sm font-medium text-white hover:bg-emerald-600"
+            >
+              Confirmar e Gerar PIX
+            </button>
+          </div>
+        </form>
+      </Modal>
+
+      {/* Modal de Pagamento */}
       <Modal
         isOpen={paymentModalOpen}
         onClose={handleClosePayment}

@@ -300,8 +300,8 @@ async function redeemPromoCode(code: string): Promise<RedeemPromoResult> {
 /**
  * Cria um pagamento para o plano selecionado
  */
-async function createPayment(planId: string): Promise<{ url: string; id: string }> {
-  const response = await apiClient.post<{ url: string; id: string }>('/payments/create', { planId });
+async function createPayment(planId: string, customerInfo?: { cpf: string; phone: string }): Promise<{ url: string; id: string }> {
+  const response = await apiClient.post<{ url: string; id: string }>('/payments/create', { planId, ...customerInfo });
   return response.data;
 }
 

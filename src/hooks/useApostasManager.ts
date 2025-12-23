@@ -341,13 +341,13 @@ export function useApostasManager(options: UseApostasManagerOptions = {}) {
 
   // Calcular estatísticas
   const stats = useMemo((): ApostasStats => {
-    const totalInvestido = apostas.reduce((sum: number, aposta: ApiBetWithBank) => sum + aposta.valorApostado, 0);
+    const totalInvestido = apostas.reduce((sum: number, aposta: ApiBetWithBank) => sum + Number(aposta.valorApostado), 0);
     const totalGanhos = apostas
-      .filter((aposta: ApiBetWithBank) => aposta.status !== 'Pendente' && typeof aposta.retornoObtido === 'number')
-      .reduce((sum: number, aposta: ApiBetWithBank) => sum + (aposta.retornoObtido ?? 0), 0);
+      .filter((aposta: ApiBetWithBank) => aposta.status !== 'Pendente')
+      .reduce((sum: number, aposta: ApiBetWithBank) => sum + Number(aposta.retornoObtido ?? 0), 0);
     const totalPendente = apostas
       .filter((aposta: ApiBetWithBank) => aposta.status === 'Pendente')
-      .reduce((sum: number, aposta: ApiBetWithBank) => sum + aposta.valorApostado, 0);
+      .reduce((sum: number, aposta: ApiBetWithBank) => sum + Number(aposta.valorApostado), 0);
 
     return {
       totalApostas: apostas.length,

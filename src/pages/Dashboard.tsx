@@ -441,28 +441,6 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Mini Cards Depósitos e Saques */}
-        <div className="flex flex-col gap-3 col-span-1 md:col-span-1 xl:col-span-2 min-w-0">
-          <div className={cn(sectionCardClass, 'flex items-center gap-3 p-4 h-full')}>
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-100 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400">
-              <Wallet size={16} />
-            </div>
-            <div>
-              <p className="text-[0.55rem] font-bold uppercase tracking-[0.2em] text-gray-500 dark:text-white/50">Depósitos</p>
-              <p className="text-base font-bold text-gray-900 dark:text-white leading-tight mt-0.5">{formatCurrency(metricas.totalDepositado)}</p>
-            </div>
-          </div>
-          <div className={cn(sectionCardClass, 'flex items-center gap-3 p-4 h-full')}>
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-100 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400">
-              <Upload size={16} />
-            </div>
-            <div>
-              <p className="text-[0.55rem] font-bold uppercase tracking-[0.2em] text-gray-500 dark:text-white/50">Saques</p>
-              <p className="text-base font-bold text-gray-900 dark:text-white leading-tight mt-0.5">{formatCurrency(metricas.totalSacado)}</p>
-            </div>
-          </div>
-        </div>
-
         <div
           className={cn(
             sectionCardClass,
@@ -520,6 +498,28 @@ export default function Dashboard() {
             <button className="flex items-center gap-1 text-[0.65rem] font-bold text-emerald-600 dark:text-brand-neon hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors">
               Ver detalhes <ArrowRight size={10} />
             </button>
+          </div>
+        </div>
+
+        {/* Mini Cards Depósitos e Saques */}
+        <div className="flex flex-col gap-3 col-span-1 md:col-span-1 xl:col-span-2 min-w-0">
+          <div className={cn(sectionCardClass, 'flex items-center gap-3 p-4 h-full')}>
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-100 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400">
+              <Wallet size={16} />
+            </div>
+            <div>
+              <p className="text-[0.55rem] font-bold uppercase tracking-[0.2em] text-gray-500 dark:text-white/50">Depósitos</p>
+              <p className="text-base font-bold text-gray-900 dark:text-white leading-tight mt-0.5">{formatCurrency(metricas.totalDepositado)}</p>
+            </div>
+          </div>
+          <div className={cn(sectionCardClass, 'flex items-center gap-3 p-4 h-full')}>
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-100 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400">
+              <Upload size={16} />
+            </div>
+            <div>
+              <p className="text-[0.55rem] font-bold uppercase tracking-[0.2em] text-gray-500 dark:text-white/50">Saques</p>
+              <p className="text-base font-bold text-gray-900 dark:text-white leading-tight mt-0.5">{formatCurrency(metricas.totalSacado)}</p>
+            </div>
           </div>
         </div>
 

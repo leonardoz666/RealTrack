@@ -372,93 +372,93 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <section className="grid gap-5 grid-cols-1 md:grid-cols-2 xl:grid-cols-12">
+      <section className="grid gap-4 grid-cols-1 md:grid-cols-2 xl:grid-cols-12">
         <div
           className={cn(
-            'col-span-1 flex flex-col justify-between rounded-[32px] border border-gray-200 bg-white p-8 text-gray-900 shadow-xl backdrop-blur-2xl md:col-span-2 xl:col-span-5 hover:border-gray-300 hover:shadow-lg min-w-0',
+            'col-span-1 flex flex-col justify-between rounded-[28px] border border-gray-200 bg-white p-6 text-gray-900 shadow-xl backdrop-blur-2xl md:col-span-2 xl:col-span-5 hover:border-gray-300 hover:shadow-lg min-w-0',
             'dark:border-emerald-500/30 dark:bg-gradient-to-br dark:from-[#032b26] dark:via-[#0d5f52] dark:to-[#032b26] dark:text-white dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)]'
           )}
         >
-          <div className="space-y-4 sm:space-y-6">
+          <div className="space-y-3 sm:space-y-5">
             <div className="flex items-center justify-between">
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-emerald-500 dark:text-[#5eead4]">Saldo da banca</p>
+              <p className="text-[0.65rem] font-bold uppercase tracking-[0.2em] text-emerald-500 dark:text-[#5eead4]">Saldo da banca</p>
               <span className={cn(
-                "inline-flex items-center gap-1 rounded-full px-3 py-1 text-sm font-bold",
+                "inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-bold",
                 metricas.roi >= 0 
                   ? "bg-emerald-100 text-emerald-600 dark:bg-emerald-400/20 dark:text-emerald-300"
                   : "bg-rose-100 text-rose-600 dark:bg-rose-400/20 dark:text-rose-300"
               )}>
-                {metricas.roi >= 0 ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
+                {metricas.roi >= 0 ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
                 {formatSignedPercent(metricas.roi)}
               </span>
             </div>
             
-            <p className="text-4xl sm:text-5xl font-bold tracking-tight text-gray-900 dark:text-white">
+            <p className="text-3xl sm:text-4xl font-bold tracking-tight text-gray-900 dark:text-white">
               {formatCurrency(metricas.saldoBanca)}
             </p>
 
             <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between sm:gap-0">
               <div>
-                <p className="text-[0.65rem] font-bold uppercase tracking-[0.2em] text-gray-400 dark:text-emerald-100/60 mb-1">Lucro total</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">{formatCurrency(metricas.lucroTotal)}</p>
+                <p className="text-[0.6rem] font-bold uppercase tracking-[0.2em] text-gray-400 dark:text-emerald-100/60 mb-1">Lucro total</p>
+                <p className="text-xl font-bold text-gray-900 dark:text-white">{formatCurrency(metricas.lucroTotal)}</p>
               </div>
-              <button className="inline-flex w-full sm:w-auto justify-center items-center gap-1.5 rounded-full bg-gray-900 px-4 py-1.5 text-xs font-bold text-white transition hover:bg-gray-800 hover:scale-[1.02] active:scale-[0.98] dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100 whitespace-nowrap">
-                Ver detalhes <ArrowRight size={14} />
+              <button className="inline-flex w-full sm:w-auto justify-center items-center gap-1.5 rounded-full bg-gray-900 px-3 py-1.5 text-[0.7rem] font-bold text-white transition hover:bg-gray-800 hover:scale-[1.02] active:scale-[0.98] dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100 whitespace-nowrap">
+                Ver detalhes <ArrowRight size={12} />
               </button>
             </div>
           </div>
 
-          <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4 rounded-3xl bg-gray-50 p-6 dark:bg-[#000000]/20 backdrop-blur-md">
-            <div className="space-y-2">
+          <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-3 rounded-2xl bg-gray-50 p-4 dark:bg-[#000000]/20 backdrop-blur-md">
+            <div className="space-y-1.5">
               <div className="flex items-center gap-2">
-                <div className="flex h-6 w-6 items-center justify-center rounded bg-blue-100 text-blue-600 dark:bg-blue-500/20 dark:text-blue-300">
-                   <Wallet size={14} strokeWidth={2.5} />
+                <div className="flex h-5 w-5 items-center justify-center rounded bg-blue-100 text-blue-600 dark:bg-blue-500/20 dark:text-blue-300">
+                   <Wallet size={12} strokeWidth={2.5} />
                 </div>
-                <span className="text-[0.65rem] font-bold uppercase tracking-[0.15em] text-gray-500 dark:text-emerald-100/70">Total Investido</span>
+                <span className="text-[0.6rem] font-bold uppercase tracking-[0.15em] text-gray-500 dark:text-emerald-100/70">Total Investido</span>
               </div>
-              <p className="text-xl font-bold text-gray-900 dark:text-white">{formatCurrency(metricas.totalInvestido)}</p>
+              <p className="text-lg font-bold text-gray-900 dark:text-white">{formatCurrency(metricas.totalInvestido)}</p>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <div className="flex items-center gap-2">
-                <div className="flex h-6 w-6 items-center justify-center rounded bg-amber-100 text-amber-600 dark:bg-amber-500/20 dark:text-amber-300">
-                   <Hourglass size={14} strokeWidth={2.5} />
+                <div className="flex h-5 w-5 items-center justify-center rounded bg-amber-100 text-amber-600 dark:bg-amber-500/20 dark:text-amber-300">
+                   <Hourglass size={12} strokeWidth={2.5} />
                 </div>
-                <span className="text-[0.65rem] font-bold uppercase tracking-[0.15em] text-gray-500 dark:text-emerald-100/70">Valor Pendente</span>
+                <span className="text-[0.6rem] font-bold uppercase tracking-[0.15em] text-gray-500 dark:text-emerald-100/70">Valor Pendente</span>
               </div>
-              <p className="text-xl font-bold text-amber-600 dark:text-amber-300">{formatCurrency(metricas.totalInvestidoPendente || 0)}</p>
+              <p className="text-lg font-bold text-amber-600 dark:text-amber-300">{formatCurrency(metricas.totalInvestidoPendente || 0)}</p>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <div className="flex items-center gap-2">
-                <div className="flex h-6 w-6 items-center justify-center rounded bg-rose-100 text-rose-600 dark:bg-rose-500/20 dark:text-rose-300">
-                   <TrendingDown size={14} strokeWidth={2.5} />
+                <div className="flex h-5 w-5 items-center justify-center rounded bg-rose-100 text-rose-600 dark:bg-rose-500/20 dark:text-rose-300">
+                   <TrendingDown size={12} strokeWidth={2.5} />
                 </div>
-                <span className="text-[0.65rem] font-bold uppercase tracking-[0.15em] text-gray-500 dark:text-emerald-100/70">Valor Perdido</span>
+                <span className="text-[0.6rem] font-bold uppercase tracking-[0.15em] text-gray-500 dark:text-emerald-100/70">Valor Perdido</span>
               </div>
-              <p className="text-xl font-bold text-rose-600 dark:text-rose-300">{formatCurrency(metricas.valorPerdido || 0)}</p>
+              <p className="text-lg font-bold text-rose-600 dark:text-rose-300">{formatCurrency(metricas.valorPerdido || 0)}</p>
             </div>
           </div>
         </div>
 
         {/* Mini Cards Depósitos e Saques */}
-        <div className="flex flex-col gap-4 col-span-1 md:col-span-1 xl:col-span-2 min-w-0">
+        <div className="flex flex-col gap-3 col-span-1 md:col-span-1 xl:col-span-2 min-w-0">
           <div className={cn(sectionCardClass, 'flex items-center gap-3 p-4 h-full')}>
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400">
-              <Wallet size={18} />
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-100 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400">
+              <Wallet size={16} />
             </div>
             <div>
-              <p className="text-[0.6rem] font-bold uppercase tracking-[0.2em] text-gray-500 dark:text-white/50">Depósitos</p>
-              <p className="text-lg font-bold text-gray-900 dark:text-white leading-tight mt-0.5">{formatCurrency(metricas.totalDepositado)}</p>
+              <p className="text-[0.55rem] font-bold uppercase tracking-[0.2em] text-gray-500 dark:text-white/50">Depósitos</p>
+              <p className="text-base font-bold text-gray-900 dark:text-white leading-tight mt-0.5">{formatCurrency(metricas.totalDepositado)}</p>
             </div>
           </div>
           <div className={cn(sectionCardClass, 'flex items-center gap-3 p-4 h-full')}>
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400">
-              <Upload size={18} />
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-100 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400">
+              <Upload size={16} />
             </div>
             <div>
-              <p className="text-[0.6rem] font-bold uppercase tracking-[0.2em] text-gray-500 dark:text-white/50">Saques</p>
-              <p className="text-lg font-bold text-gray-900 dark:text-white leading-tight mt-0.5">{formatCurrency(metricas.totalSacado)}</p>
+              <p className="text-[0.55rem] font-bold uppercase tracking-[0.2em] text-gray-500 dark:text-white/50">Saques</p>
+              <p className="text-base font-bold text-gray-900 dark:text-white leading-tight mt-0.5">{formatCurrency(metricas.totalSacado)}</p>
             </div>
           </div>
         </div>
@@ -466,43 +466,43 @@ export default function Dashboard() {
         <div
           className={cn(
             sectionCardClass,
-            'col-span-1 flex flex-col justify-between md:col-span-1 xl:col-span-5 min-w-0 p-6 sm:p-8'
+            'col-span-1 flex flex-col justify-between md:col-span-1 xl:col-span-5 min-w-0 p-5 sm:p-6'
           )}
         >
           <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-emerald-500/30 bg-emerald-500/10 text-emerald-400">
-                <Trophy size={20} strokeWidth={2} />
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-emerald-500/30 bg-emerald-500/10 text-emerald-400">
+                <Trophy size={18} strokeWidth={2} />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-gray-900 dark:text-white leading-none">Taxa de Acerto</h3>
-                <p className="text-[0.65rem] font-bold uppercase tracking-[0.15em] text-emerald-600 dark:text-emerald-400/80 mt-1.5">Performance Atual</p>
+                <h3 className="text-base font-bold text-gray-900 dark:text-white leading-none">Taxa de Acerto</h3>
+                <p className="text-[0.6rem] font-bold uppercase tracking-[0.15em] text-emerald-600 dark:text-emerald-400/80 mt-1">Performance Atual</p>
               </div>
             </div>
-            <span className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white">{accuracyPercentLabel}</span>
+            <span className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">{accuracyPercentLabel}</span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-y-4 sm:gap-y-0 divide-y sm:divide-y-0 sm:divide-x divide-gray-200 dark:divide-white/10 rounded-[24px] bg-gray-50 dark:bg-emerald-900/10 p-5 mb-2">
-            <div className="flex flex-col items-center justify-center px-2 py-2 sm:py-0">
-              <span className="text-[0.6rem] font-bold uppercase tracking-[0.2em] text-gray-400 dark:text-emerald-100/60 mb-1.5">Apostas</span>
-              <span className="text-2xl font-bold text-gray-900 dark:text-white leading-none">{totalApostas}</span>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-y-3 sm:gap-y-0 divide-y sm:divide-y-0 sm:divide-x divide-gray-200 dark:divide-white/10 rounded-[20px] bg-gray-50 dark:bg-emerald-900/10 p-4 mb-2">
+            <div className="flex flex-col items-center justify-center px-2 py-1.5 sm:py-0">
+              <span className="text-[0.55rem] font-bold uppercase tracking-[0.2em] text-gray-400 dark:text-emerald-100/60 mb-1">Apostas</span>
+              <span className="text-xl font-bold text-gray-900 dark:text-white leading-none">{totalApostas}</span>
             </div>
-            <div className="flex flex-col items-center justify-center px-2 py-2 sm:py-0">
-              <span className="text-[0.6rem] font-bold uppercase tracking-[0.2em] text-gray-400 dark:text-emerald-100/60 mb-1.5">Greens</span>
-              <span className="text-2xl font-bold text-emerald-600 dark:text-[#34d399] leading-none">{apostasGanhas}</span>
+            <div className="flex flex-col items-center justify-center px-2 py-1.5 sm:py-0">
+              <span className="text-[0.55rem] font-bold uppercase tracking-[0.2em] text-gray-400 dark:text-emerald-100/60 mb-1">Greens</span>
+              <span className="text-xl font-bold text-emerald-600 dark:text-[#34d399] leading-none">{apostasGanhas}</span>
             </div>
-            <div className="flex flex-col items-center justify-center px-2 py-2 sm:py-0">
-              <span className="text-[0.6rem] font-bold uppercase tracking-[0.2em] text-gray-400 dark:text-emerald-100/60 mb-1.5">Reds</span>
-              <span className="text-2xl font-bold text-rose-600 dark:text-[#f87171] leading-none">{derrotasCalculadas}</span>
+            <div className="flex flex-col items-center justify-center px-2 py-1.5 sm:py-0">
+              <span className="text-[0.55rem] font-bold uppercase tracking-[0.2em] text-gray-400 dark:text-emerald-100/60 mb-1">Reds</span>
+              <span className="text-xl font-bold text-rose-600 dark:text-[#f87171] leading-none">{derrotasCalculadas}</span>
             </div>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-2.5">
             <div className="flex justify-between items-end text-sm">
-              <span className="font-medium text-gray-700 dark:text-emerald-100/80">Progresso</span>
-              <span className="text-xs text-gray-500 dark:text-emerald-100/50">{accuracyDetailText}</span>
+              <span className="font-medium text-gray-700 dark:text-emerald-100/80 text-xs">Progresso</span>
+              <span className="text-[0.65rem] text-gray-500 dark:text-emerald-100/50">{accuracyDetailText}</span>
             </div>
-            <div className="h-2.5 w-full rounded-full bg-gray-100 dark:bg-black/30 overflow-hidden">
+            <div className="h-2 w-full rounded-full bg-gray-100 dark:bg-black/30 overflow-hidden">
               <div 
                 className="h-full rounded-full bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.6)] relative"
                 style={{ width: `${(accuracyPercent * 100).toFixed(1)}%` }}
@@ -512,13 +512,13 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100 dark:border-white/5">
+          <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-100 dark:border-white/5">
             <div className="flex items-center gap-2">
-              <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-xs font-medium text-gray-500 dark:text-emerald-100/50">Atualizado agora</span>
+              <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="text-[0.65rem] font-medium text-gray-500 dark:text-emerald-100/50">Atualizado agora</span>
             </div>
-            <button className="flex items-center gap-1 text-xs font-bold text-emerald-600 dark:text-brand-neon hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors">
-              Ver detalhes <ArrowRight size={12} />
+            <button className="flex items-center gap-1 text-[0.65rem] font-bold text-emerald-600 dark:text-brand-neon hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors">
+              Ver detalhes <ArrowRight size={10} />
             </button>
           </div>
         </div>

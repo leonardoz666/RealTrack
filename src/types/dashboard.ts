@@ -22,6 +22,7 @@ export interface DashboardMetricas {
   valorPerdido?: number;
   totalGanhos?: number;
   totalInvestidoPendente?: number;
+  totalRetornoPendente?: number;
 }
 
 export interface LucroAcumuladoItem {

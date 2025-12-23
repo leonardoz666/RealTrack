@@ -33,6 +33,7 @@ export const initialMetricas: DashboardMetricas = {
   valorPerdido: 0,
   totalGanhos: 0,
   totalInvestidoPendente: 0,
+  totalRetornoPendente: 0,
 };
 
 // ============================================

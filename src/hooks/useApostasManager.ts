@@ -354,7 +354,7 @@ export function useApostasManager(options: UseApostasManagerOptions = {}) {
       .reduce((sum: number, aposta: ApiBetWithBank) => sum + Number(aposta.retornoObtido ?? 0), 0);
     const totalPendente = apostas
       .filter((aposta: ApiBetWithBank) => aposta.status === 'Pendente')
-      .reduce((sum: number, aposta: ApiBetWithBank) => sum + Number(aposta.valorApostado), 0);
+      .reduce((sum: number, aposta: ApiBetWithBank) => sum + (Number(aposta.valorApostado) * Number(aposta.odd)), 0);
 
     return {
       totalApostas: apostas.length,

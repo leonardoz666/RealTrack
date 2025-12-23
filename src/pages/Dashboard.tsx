@@ -422,7 +422,7 @@ export default function Dashboard() {
                 </div>
                 <span className="text-[0.6rem] font-bold uppercase tracking-[0.15em] text-gray-500 dark:text-emerald-100/70">Valor Pendente</span>
               </div>
-              <p className="text-lg font-bold text-amber-600 dark:text-amber-300">{formatCurrency(metricas.totalInvestidoPendente || 0)}</p>
+              <p className="text-lg font-bold text-amber-600 dark:text-amber-300">{formatCurrency(metricas.totalRetornoPendente || 0)}</p>
             </div>
 
             <div className="space-y-1.5">

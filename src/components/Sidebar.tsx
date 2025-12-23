@@ -516,6 +516,12 @@ const Sidebar = ({ collapsed, onToggle, mobile = false }: SidebarProps) => {
                   {!collapsed && <span>Análise</span>}
                 </NavLink>
               </li>
+              <li>
+                <NavLink to={ROUTES.PLANOS} className={({ isActive }) => navLinkClasses(isActive, collapsed)}>
+                  <Crown className="h-5 w-5" strokeWidth={2} />
+                  {!collapsed && <span>Planos</span>}
+                </NavLink>
+              </li>
             </ul>
           </nav>
         </div>

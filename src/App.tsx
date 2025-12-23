@@ -18,6 +18,7 @@ const Financeiro = lazy(() => import('./pages/Financeiro'));
 const Analise = lazy(() => import('./pages/Analise'));
 const Atualizar = lazy(() => import('./pages/Atualizar'));
 const Perfil = lazy(() => import('./pages/Perfil'));
+const Planos = lazy(() => import('./pages/Planos'));
 const TelegramEdit = lazy(() => import('./pages/TelegramEdit'));
 const TelegramStatus = lazy(() => import('./pages/TelegramStatus'));
 
@@ -55,6 +56,7 @@ function App() {
                 <Route path={ROUTES.ANALISE} element={<Analise />} />
                 <Route path={ROUTES.ATUALIZAR} element={<Atualizar />} />
                 <Route path={ROUTES.PERFIL} element={<Perfil />} />
+                <Route path={ROUTES.PLANOS} element={<Planos />} />
               </Route>
               {/* Rotas do Telegram Web App (sem ProtectedRoute, autenticação feita via WebApp) */}
               <Route path={ROUTES.TELEGRAM_EDIT} element={<TelegramEdit />} />

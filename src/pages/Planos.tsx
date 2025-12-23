@@ -1,0 +1,227 @@
+import { useEffect, useState } from 'react';
+import {
+  Check,
+  Crown,
+  Gift,
+  Star,
+  Shield,
+  Zap,
+  CheckCircle2,
+  type LucideIcon,
+} from 'lucide-react';
+import PageHeader from '../components/PageHeader';
+import { perfilService, type Plano } from '../services/api';
+import { usePerfil } from '../contexts/PerfilContext';
+import { cn } from '../components/ui/utils';
+import { toast } from '../utils/toast';
+
+const PLAN_VISUALS: Record<string, { Icon: LucideIcon; colorClass: string; glowClass: string; bgClass: string; borderClass: string }> = {
+  gratuito: {
+    Icon: Gift,
+    colorClass: 'text-emerald-400',
+    glowClass: 'from-emerald-500/20 to-transparent',
+    bgClass: 'bg-emerald-500/5',
+    borderClass: 'border-emerald-500/20',
+  },
+  amador: {
+    Icon: Star,
+    colorClass: 'text-blue-400',
+    glowClass: 'from-blue-500/20 to-transparent',
+    bgClass: 'bg-blue-500/5',
+    borderClass: 'border-blue-500/20',
+  },
+  profissional: {
+    Icon: Crown,
+    colorClass: 'text-purple-400',
+    glowClass: 'from-purple-500/20 to-transparent',
+    bgClass: 'bg-purple-500/5',
+    borderClass: 'border-purple-500/20',
+  },
+  default: {
+    Icon: Shield,
+    colorClass: 'text-gray-400',
+    glowClass: 'from-gray-500/20 to-transparent',
+    bgClass: 'bg-gray-500/5',
+    borderClass: 'border-gray-500/20',
+  },
+};
+
+const getPlanVisual = (planName?: string) => {
+  if (!planName) return PLAN_VISUALS.default;
+  const key = planName.trim().toLowerCase();
+  return PLAN_VISUALS[key] ?? PLAN_VISUALS.default;
+};
+
+export default function Planos() {
+  const { perfil, atualizarPerfil } = usePerfil();
+  const [plans, setPlans] = useState<Plano[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [updating, setUpdating] = useState<string | null>(null);
+
+  useEffect(() => {
+    void fetchPlans();
+  }, []);
+
+  const fetchPlans = async () => {
+    try {
+      setLoading(true);
+      const data = await perfilService.listPlans();
+      setPlans(data);
+    } catch (err) {
+      console.error('Erro ao carregar planos:', err);
+      toast.error('Erro ao carregar planos disponíveis.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSelectPlan = async (plan: Plano) => {
+    if (!perfil || perfil.plano.id === plan.id) return;
+    
+    if (!window.confirm(`Deseja alterar seu plano para ${plan.nome}?`)) {
+      return;
+    }
+
+    try {
+      setUpdating(plan.id);
+      await perfilService.updatePlan(plan.id);
+      await atualizarPerfil();
+      toast.success(`Plano alterado para ${plan.nome} com sucesso!`);
+    } catch (err) {
+      console.error('Erro ao atualizar plano:', err);
+      toast.error('Não foi possível atualizar o plano.');
+    } finally {
+      setUpdating(null);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex h-64 items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-emerald-500 border-t-transparent" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-full space-y-8 pb-8">
+      <PageHeader 
+        title="Planos & Assinaturas" 
+        subtitle="Escolha o plano ideal para sua jornada nas apostas esportivas"
+      />
+
+      <div className="grid gap-8 lg:grid-cols-3">
+        {plans.map((plan) => {
+          const visual = getPlanVisual(plan.nome);
+          const Icon = visual.Icon;
+          const isCurrent = perfil?.plano?.id === plan.id;
+          const isProcessing = updating === plan.id;
+
+          return (
+            <div 
+              key={plan.id}
+              className={cn(
+                "relative flex flex-col overflow-hidden rounded-[32px] border p-8 transition-all duration-300 hover:shadow-xl",
+                visual.bgClass,
+                visual.borderClass,
+                isCurrent ? "ring-2 ring-emerald-500 ring-offset-2 ring-offset-background dark:ring-offset-app-layout-bg" : "hover:-translate-y-1"
+              )}
+            >
+              {/* Glow Effect */}
+              <div className={cn("absolute -right-20 -top-20 h-64 w-64 rounded-full blur-[100px] opacity-20 bg-gradient-to-br", visual.glowClass)} />
+
+              <div className="relative z-10 flex flex-1 flex-col">
+                <div className="mb-6 flex items-center justify-between">
+                  <div className={cn("flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-md border border-white/10", visual.colorClass)}>
+                    <Icon size={28} />
+                  </div>
+                  {isCurrent && (
+                    <span className="rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-emerald-500 border border-emerald-500/20">
+                      Atual
+                    </span>
+                  )}
+                </div>
+
+                <h3 className="mb-2 text-2xl font-black tracking-tight text-gray-900 dark:text-white">
+                  {plan.nome}
+                </h3>
+                
+                <div className="mb-6 flex items-baseline gap-1">
+                  <span className="text-3xl font-bold text-gray-900 dark:text-white">
+                    {plan.preco === 0 ? 'Grátis' : `R$ ${plan.preco.toFixed(2)}`}
+                  </span>
+                  {plan.preco > 0 && <span className="text-sm text-gray-500 dark:text-gray-400">/mês</span>}
+                </div>
+
+                <div className="mb-8 space-y-4 flex-1">
+                  <div className="flex items-center gap-3">
+                    <div className={cn("flex h-5 w-5 items-center justify-center rounded-full bg-white/10", visual.colorClass)}>
+                      <Zap size={12} />
+                    </div>
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      {plan.limiteApostasDiarias === 0 
+                        ? 'Apostas Ilimitadas' 
+                        : `${plan.limiteApostasDiarias} apostas diárias`}
+                    </span>
+                  </div>
+                  
+                  {/* Features placeholders based on plan type */}
+                  <div className="flex items-center gap-3">
+                    <div className={cn("flex h-5 w-5 items-center justify-center rounded-full bg-white/10", visual.colorClass)}>
+                      <Check size={12} />
+                    </div>
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Gestão de Bancas
+                    </span>
+                  </div>
+                  
+                  <div className="flex items-center gap-3">
+                    <div className={cn("flex h-5 w-5 items-center justify-center rounded-full bg-white/10", visual.colorClass)}>
+                      <Check size={12} />
+                    </div>
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Relatórios Detalhados
+                    </span>
+                  </div>
+
+                  {plan.nome.toLowerCase().includes('profissional') && (
+                    <div className="flex items-center gap-3">
+                      <div className={cn("flex h-5 w-5 items-center justify-center rounded-full bg-white/10", visual.colorClass)}>
+                        <Check size={12} />
+                      </div>
+                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Suporte Prioritário
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                <button
+                  onClick={() => handleSelectPlan(plan)}
+                  disabled={isCurrent || isProcessing}
+                  className={cn(
+                    "relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-xl py-3.5 text-sm font-bold uppercase tracking-widest transition-all duration-300",
+                    isCurrent 
+                      ? "bg-gray-100 text-gray-400 cursor-default dark:bg-white/5 dark:text-gray-500"
+                      : "bg-emerald-600 text-white hover:bg-emerald-500 hover:shadow-lg hover:shadow-emerald-600/20 active:scale-[0.98]"
+                  )}
+                >
+                  {isProcessing ? (
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/20 border-t-white" />
+                  ) : isCurrent ? (
+                    <>
+                      <CheckCircle2 size={16} />
+                      <span>Plano Atual</span>
+                    </>
+                  ) : (
+                    <span>Selecionar Plano</span>
+                  )}
+                </button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}

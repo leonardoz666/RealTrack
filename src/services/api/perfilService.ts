@@ -160,6 +160,27 @@ async function getConsumo(): Promise<ConsumoPlano> {
 }
 
 /**
+ * Lista todos os planos disponíveis
+ */
+async function listPlans(): Promise<Plano[]> {
+  const response = await apiClient.get<Plano[]>('/perfil/planos');
+  return response.data;
+}
+
+/**
+ * Atualiza o plano do usuário
+ */
+async function updatePlan(planoId: string): Promise<ApiProfileResponse> {
+  const response = await apiClient.put<{ user: ApiProfileResponse }>('/perfil/plano', { planoId });
+  
+  // Invalidar cache e emitir evento
+  invalidateCachePattern('/perfil');
+  eventBus.emitProfileUpdated();
+  
+  return response.data.user;
+}
+
+/**
  * Busca informações do Telegram
  */
 async function getTelegramInfo(): Promise<TelegramInfo> {
@@ -292,6 +313,8 @@ export const perfilService = {
 
   // Consumo e plano
   getConsumo,
+  listPlans,
+  updatePlan,
 
   // Telegram
   getTelegramInfo,

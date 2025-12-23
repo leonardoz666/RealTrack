@@ -7,6 +7,7 @@ export const ROUTES = {
   ANALISE: '/analise',
   ATUALIZAR: '/atualizar',
   PERFIL: '/perfil',
+  PLANOS: '/planos',
   TELEGRAM_EDIT: '/telegram/edit',
   TELEGRAM_STATUS: '/telegram/status',
 } as const;

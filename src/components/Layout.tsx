@@ -75,9 +75,9 @@ const Layout = () => {
       <div className="hidden md:flex">
         <Sidebar collapsed={isSidebarCollapsed} onToggle={handleToggleSidebar} />
       </div>
-
+{/* Conteúdo Principal */}
       <div
-        className={`flex flex-1 flex-col px-4 py-6 sm:px-6 lg:px-8 transition-all duration-300 ml-0 mt-16 md:mt-0 ${
+        className={`flex flex-1 flex-col min-w-0 w-full px-4 py-6 sm:px-6 lg:px-8 transition-all duration-300 ml-0 mt-16 md:mt-0 ${
           isSidebarCollapsed ? 'md:ml-20' : 'md:ml-64'
         }`}
       >

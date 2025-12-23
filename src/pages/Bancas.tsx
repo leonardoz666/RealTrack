@@ -375,7 +375,7 @@ export default function Bancas() {
 
       {activeTab === 'bancas' ? (
         <>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {summaryCards.map((card, idx) => (
               <div key={idx} className={summaryCardBaseClass}>
                 <div className="flex items-center justify-between gap-4">

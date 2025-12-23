@@ -219,8 +219,10 @@ export default function Dashboard() {
   const GrowthTrendIcon = crescimentoNegativo ? ArrowDownRight : ArrowUpRight;
   const growthColorClass = crescimentoNegativo ? 'text-rose-600 dark:text-rose-300' : 'text-emerald-600 dark:text-brand-neon-light';
 
+  const fieldClass = 'flex flex-col gap-1.5';
+  const labelClass = 'text-xs font-semibold uppercase tracking-wider text-foreground-muted';
   const filterInputClass =
-    'mt-2 w-full rounded-2xl border border-gray-300 dark:border-border/40 bg-background px-3 py-2 text-sm text-foreground placeholder:text-foreground-muted transition focus-visible:border-emerald-500 dark:focus-visible:border-brand-emerald focus-visible:ring-2 focus-visible:ring-emerald-500/30 dark:focus-visible:ring-brand-emerald/30';
+    'w-full rounded-lg border border-gray-200 dark:border-border/50 bg-background px-3 py-2 text-sm text-foreground placeholder:text-foreground-muted shadow-sm transition focus-visible:border-emerald-500 dark:focus-visible:border-brand-emerald focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/30 dark:focus-visible:ring-brand-emerald/30';
 
   const sectionCardClass = useMemo(() => {
     const base = 'rounded-[32px] border border-gray-200 bg-white p-6 text-gray-900 shadow-xl backdrop-blur-2xl transition hover:-translate-y-0.5 hover:shadow-lg dark:border-emerald-700/20 dark:bg-transparent dark:text-white dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] dark:hover:shadow-glow';
@@ -281,91 +283,86 @@ export default function Dashboard() {
               >
                 <Download size={16} /> Importar dados
               </button>
-              <div className="relative">
-                <button
-                  type="button"
-                  className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-600/20 transition hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40"
-                  onClick={() => setFiltersOpen((prev) => !prev)}
-                  aria-expanded={filtersOpen}
-                >
-                  <Filter size={16} />
-                  Filtros
-                  {activeFiltersCount > 0 && (
-                    <span className="rounded-full bg-black/20 px-2 text-xs font-semibold text-white">{activeFiltersCount}</span>
-                  )}
-                </button>
-                {filtersOpen && (
-                  <div className="absolute right-0 top-full mt-2 z-50">
-                    <FilterPopover
-                      open={filtersOpen}
-                      onClose={() => setFiltersOpen(false)}
-                      onClear={handleClearFilters}
-                      maxWidth="900px"
-                      footer={
-                        <button
-                          type="button"
-                          className="w-full rounded-2xl bg-brand-linear px-4 py-2 text-sm font-semibold text-[#f2f2f2] shadow-glow transition active:scale-[0.99]"
-                          onClick={handleApplyFilters}
-                        >
-                          Aplicar filtros
-                        </button>
-                      }
-                    >
-                      <div className="grid gap-4 md:grid-cols-2">
-                        <label className="text-sm font-medium text-foreground">
-                          <span>Status</span>
-                          <DropdownSelect
-                            options={[{ value: '', label: 'Todos' }, ...STATUS_APOSTAS.map((s) => ({ value: s, label: s }))]}
-                            value={filters.status}
-                            onChange={(val) => handleFilterChange('status', val)}
-                            className={filterInputClass}
-                          />
-                        </label>
-                        <label className="text-sm font-medium text-foreground">
-                          <span>Tipster</span>
-                          <DropdownSelect
-                            options={[{ value: '', label: 'Todos' }, ...tipsters.filter((t) => t.ativo).map((t) => ({ value: t.nome, label: t.nome }))]}
-                            value={filters.tipster}
-                            onChange={(val) => handleFilterChange('tipster', val)}
-                            className={filterInputClass}
-                          />
-                        </label>
-                        <label className="text-sm font-medium text-foreground">
-                          <span>Casa de aposta</span>
-                          <DropdownSelect
-                            options={[{ value: '', label: 'Todas' }, ...CASAS_APOSTAS.map((casa) => ({ value: casa, label: casa }))]}
-                            value={filters.casa}
-                            onChange={(val) => handleFilterChange('casa', val)}
-                            className={filterInputClass}
-                            searchable
-                          />
-                        </label>
-                        <label className="text-sm font-medium text-foreground">
-                          <span>Banca</span>
-                          <DropdownSelect
-                            options={[{ value: '', label: 'Todas' }, ...userBancas.map((banca) => ({ value: banca.id, label: banca.nome }))]}
-                            value={filters.bancaId}
-                            onChange={(val) => handleFilterChange('bancaId', val)}
-                            className={filterInputClass}
-                            searchable
-                          />
-                        </label>
-                        <label className="text-sm font-medium text-foreground">
-                          <span>Data (de)</span>
-                          <DateInput value={filters.dataInicio} onChange={(value) => handleFilterChange('dataInicio', value)} className={filterInputClass} />
-                        </label>
-                        <label className="text-sm font-medium text-foreground">
-                          <span>Data (até)</span>
-                          <DateInput value={filters.dataFim} onChange={(value) => handleFilterChange('dataFim', value)} className={filterInputClass} />
-                        </label>
-                        <p className="col-span-2 mt-2 text-xs text-foreground-muted">
-                          Deixe o campo vazio para considerar todo o histórico.
-                        </p>
-                      </div>
-                    </FilterPopover>
+              <FilterPopover
+                open={filtersOpen}
+                onOpenChange={setFiltersOpen}
+                trigger={
+                  <button
+                    type="button"
+                    className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-600/20 transition hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40"
+                    aria-expanded={filtersOpen}
+                  >
+                    <Filter size={16} />
+                    Filtros
+                    {activeFiltersCount > 0 && (
+                      <span className="rounded-full bg-black/20 px-2 text-xs font-semibold text-white">{activeFiltersCount}</span>
+                    )}
+                  </button>
+                }
+                onClear={handleClearFilters}
+                maxWidth="900px"
+                footer={
+                  <button
+                    type="button"
+                    className="w-full sm:w-auto rounded-lg bg-emerald-600 px-6 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-600/20 transition hover:bg-emerald-700 active:scale-[0.99]"
+                    onClick={handleApplyFilters}
+                  >
+                    Aplicar filtros
+                  </button>
+                }
+              >
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div className={fieldClass}>
+                    <label className={labelClass}>Status</label>
+                    <DropdownSelect
+                      options={[{ value: '', label: 'Todos' }, ...STATUS_APOSTAS.map((s) => ({ value: s, label: s }))]}
+                      value={filters.status}
+                      onChange={(val) => handleFilterChange('status', val)}
+                      className={filterInputClass}
+                    />
                   </div>
-                )}
-              </div>
+                  <div className={fieldClass}>
+                    <label className={labelClass}>Tipster</label>
+                    <DropdownSelect
+                      options={[{ value: '', label: 'Todos' }, ...tipsters.filter((t) => t.ativo).map((t) => ({ value: t.nome, label: t.nome }))]}
+                      value={filters.tipster}
+                      onChange={(val) => handleFilterChange('tipster', val)}
+                      className={filterInputClass}
+                    />
+                  </div>
+                  <div className={fieldClass}>
+                    <label className={labelClass}>Casa de aposta</label>
+                    <DropdownSelect
+                      options={[{ value: '', label: 'Todas' }, ...CASAS_APOSTAS.map((casa) => ({ value: casa, label: casa }))]}
+                      value={filters.casa}
+                      onChange={(val) => handleFilterChange('casa', val)}
+                      className={filterInputClass}
+                      searchable
+                    />
+                  </div>
+                  <div className={fieldClass}>
+                    <label className={labelClass}>Banca</label>
+                    <DropdownSelect
+                      options={[{ value: '', label: 'Todas' }, ...userBancas.map((banca) => ({ value: banca.id, label: banca.nome }))]}
+                      value={filters.bancaId}
+                      onChange={(val) => handleFilterChange('bancaId', val)}
+                      className={filterInputClass}
+                      searchable
+                    />
+                  </div>
+                  <div className={fieldClass}>
+                    <label className={labelClass}>Data (de)</label>
+                    <DateInput value={filters.dataInicio} onChange={(value) => handleFilterChange('dataInicio', value)} className={filterInputClass} />
+                  </div>
+                  <div className={fieldClass}>
+                    <label className={labelClass}>Data (até)</label>
+                    <DateInput value={filters.dataFim} onChange={(value) => handleFilterChange('dataFim', value)} className={filterInputClass} />
+                  </div>
+                  <p className="col-span-2 mt-2 text-xs text-foreground-muted">
+                    Deixe o campo vazio para considerar todo o histórico.
+                  </p>
+                </div>
+              </FilterPopover>
             </>
           }
         />

@@ -38,11 +38,11 @@ export function AnaliseFilters({ value, onChange }: AnaliseFiltersProps) {
     'inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-600/20 transition hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40';
   const filterCountClass =
     'rounded-full bg-black/20 px-2 text-xs font-semibold tracking-wide text-white shadow-inner';
-  const panelClass = 'grid gap-2 sm:grid-cols-2 md:grid-cols-2';
-  const fieldClass = 'flex flex-col gap-2 rounded-2xl border border-border/40 bg-background-card/40 p-2 shadow-sm shadow-black/0 backdrop-blur';
-  const labelClass = 'text-2xs font-semibold uppercase tracking-[0.35em] text-foreground-muted';
+  const panelClass = 'grid gap-4 sm:grid-cols-2';
+  const fieldClass = 'flex flex-col gap-1.5';
+  const labelClass = 'text-xs font-semibold uppercase tracking-wider text-foreground-muted';
   const inputClass =
-    'w-full rounded-2xl border border-gray-300 dark:border-border/50 bg-background px-3 py-2 text-sm text-foreground placeholder:text-foreground-muted shadow-sm transition focus-visible:border-emerald-500 dark:focus-visible:border-brand-emerald focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/30 dark:focus-visible:ring-brand-emerald/30';
+    'w-full rounded-lg border border-gray-200 dark:border-border/50 bg-background px-3 py-2 text-sm text-foreground placeholder:text-foreground-muted shadow-sm transition focus-visible:border-emerald-500 dark:focus-visible:border-brand-emerald focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/30 dark:focus-visible:ring-brand-emerald/30';
   const hintClass = 'text-xs leading-relaxed text-foreground-muted';
 
   const handleFilterChange = useCallback(
@@ -73,28 +73,28 @@ export function AnaliseFilters({ value, onChange }: AnaliseFiltersProps) {
   );
 
   return (
-    <div className="relative inline-flex">
-      <button
-        type="button"
-        className={filterButtonClass}
-        onClick={() => {
-          setPendingFilters(value);
-          setOpen((prev) => !prev);
-        }}
-      >
-        <Filter size={16} /> Filtros{' '}
-        {activeFiltersCount > 0 && <span className={filterCountClass}>{activeFiltersCount}</span>}
-      </button>
-      <FilterPopoverAnalise
+    <FilterPopoverAnalise
         open={open}
-        onClose={() => {
-          setOpen(false);
+        onOpenChange={(newOpen) => {
+          if (newOpen) {
+            setPendingFilters(value);
+          }
+          setOpen(newOpen);
         }}
+        trigger={
+          <button
+            type="button"
+            className={filterButtonClass}
+          >
+            <Filter size={16} /> Filtros{' '}
+            {activeFiltersCount > 0 && <span className={filterCountClass}>{activeFiltersCount}</span>}
+          </button>
+        }
         onClear={handleClear}
         footer={
           <button
             type="button"
-            className="w-full rounded-lg bg-emerald-600 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-600/20 transition active:scale-[0.99]"
+            className="w-full sm:w-auto rounded-lg bg-emerald-600 px-6 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-600/20 transition hover:bg-emerald-700 active:scale-[0.99]"
             onClick={handleApply}
           >
             Aplicar filtros
@@ -111,19 +111,7 @@ export function AnaliseFilters({ value, onChange }: AnaliseFiltersProps) {
               onChange={(val) => handleFilterChange('bancaId', val)}
               placeholder={bancas.length > 0 ? 'Selecione a banca' : 'Nenhuma banca disponível'}
               className={inputClass}
-              useWrapperClass
               searchable
-            />
-          </div>
-          <div className={fieldClass}>
-            <label className={labelClass}>Status</label>
-            <DropdownSelect
-              options={STATUS_APOSTAS.map((s) => ({ value: s, label: s }))}
-              value={pendingFilters.status}
-              onChange={(val) => handleFilterChange('status', val)}
-              placeholder="Selecione um status"
-              className={inputClass}
-              useWrapperClass
             />
           </div>
           <div className={fieldClass}>
@@ -134,7 +122,6 @@ export function AnaliseFilters({ value, onChange }: AnaliseFiltersProps) {
               onChange={(val) => handleFilterChange('tipster', val)}
               placeholder="Selecione…"
               className={inputClass}
-              useWrapperClass
             />
           </div>
           <div className={fieldClass}>
@@ -145,18 +132,7 @@ export function AnaliseFilters({ value, onChange }: AnaliseFiltersProps) {
               onChange={(val) => handleFilterChange('casa', val)}
               placeholder="Selecione a casa"
               className={inputClass}
-              useWrapperClass
               searchable
-            />
-          </div>
-          <div className={fieldClass}>
-            <label className={labelClass}>Evento, Mercado ou Aposta</label>
-            <input
-              type="text"
-              value={pendingFilters.evento}
-              onChange={(event) => handleFilterChange('evento', event.target.value)}
-              placeholder="Digite o nome do evento, mercado ou aposta"
-              className={inputClass}
             />
           </div>
           <div className={fieldClass}>
@@ -184,7 +160,6 @@ export function AnaliseFilters({ value, onChange }: AnaliseFiltersProps) {
           {/* ODD fields removed per request to simplify filters */}
         </div>
       </FilterPopoverAnalise>
-    </div>
   );
 }
 

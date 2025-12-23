@@ -41,25 +41,22 @@ export default function ApostasFilters({
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="relative">
-      <button
-        type="button"
-        className={filterButtonClass}
-        onClick={() => setIsOpen(true)}
-      >
-        <Filter size={16} />
-        Filtros
-        {activeFilterCount > 0 && (
-          <span className={filterCountClass}>{activeFilterCount}</span>
-        )}
-      </button>
-
-      {isOpen && (
-        <div className="absolute right-0 top-full mt-2 z-50">
-          <FilterPopoverApostas
-            open={isOpen}
-            onClose={() => setIsOpen(false)}
-            footer={
+    <FilterPopoverApostas
+        open={isOpen}
+        onOpenChange={setIsOpen}
+        trigger={
+          <button
+            type="button"
+            className={filterButtonClass}
+          >
+            <Filter size={16} />
+            Filtros
+            {activeFilterCount > 0 && (
+              <span className={filterCountClass}>{activeFilterCount}</span>
+            )}
+          </button>
+        }
+        footer={
               <button className={buttonVariants.primary} onClick={() => setIsOpen(false)}>
                 Aplicar Filtros
               </button>
@@ -169,8 +166,5 @@ export default function ApostasFilters({
               </div>
             </div>
           </FilterPopoverApostas>
-        </div>
-      )}
-    </div>
   );
 }

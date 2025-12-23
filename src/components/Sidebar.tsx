@@ -368,7 +368,7 @@ const Sidebar = ({ collapsed, onToggle, mobile = false }: SidebarProps) => {
     <div
           className={
             mobile
-              ? 'flex h-full w-full flex-col bg-white dark:bg-app-layout-bg'
+              ? 'flex h-full w-full flex-col bg-surface dark:bg-app-layout-bg'
               : `fixed top-0 left-0 z-40 flex h-screen flex-shrink-0 transition-all duration-300 ${
                   collapsed ? 'w-20' : 'w-64'
                 }`
@@ -385,7 +385,7 @@ const Sidebar = ({ collapsed, onToggle, mobile = false }: SidebarProps) => {
             </button>
           )}
     
-          <div className="flex h-full w-full flex-col bg-white border-r border-gray-200 text-gray-900 dark:bg-app-layout-bg dark:border-white/10 dark:text-white">
+          <div className="flex h-full w-full flex-col bg-surface border-r border-gray-200 text-gray-900 dark:bg-app-layout-bg dark:border-white/10 dark:text-white">
             <div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0">
               <div className={`${sectionPadding} pt-6 pb-8`}>
                 <div className={`flex items-center gap-3 ${collapsed ? 'justify-center' : ''}`}>
@@ -405,7 +405,7 @@ const Sidebar = ({ collapsed, onToggle, mobile = false }: SidebarProps) => {
             <div className={`mb-6 ${sectionPadding}`} ref={bancaDropdownRef}>
               <button
                 type="button"
-                className="flex w-full items-center justify-between rounded-lg border border-gray-200 bg-gray-50 px-3 py-3 transition-all hover:bg-gray-100 hover:border-gray-300 dark:border-emerald-600/20 dark:bg-emerald-950/30 dark:hover:bg-emerald-900/40 dark:hover:border-emerald-600/30"
+                className="flex w-full items-center justify-between rounded-lg border border-gray-200 bg-background px-3 py-3 transition-all hover:bg-background/80 hover:border-gray-300 dark:border-emerald-600/20 dark:bg-emerald-950/30 dark:hover:bg-emerald-900/40 dark:hover:border-emerald-600/30"
                 onClick={toggleBancaDropdown}
                 aria-expanded={isBancaDropdownOpen}
               >
@@ -427,7 +427,7 @@ const Sidebar = ({ collapsed, onToggle, mobile = false }: SidebarProps) => {
               </button>
 
               {isBancaDropdownOpen && (
-                <div className="mt-2 space-y-2 rounded-lg border border-gray-200 bg-white p-2 shadow-xl dark:border-emerald-600/20 dark:bg-emerald-950 dark:shadow-black/40">
+                <div className="mt-2 space-y-2 rounded-lg border border-gray-200 bg-surface p-2 shadow-xl dark:border-emerald-600/20 dark:bg-emerald-950 dark:shadow-black/40">
                   {bancaPanelLoading ? (
                     <div className="flex h-20 items-center justify-center text-sm text-gray-500 dark:text-white/80">
                       Carregando bancas...
@@ -448,7 +448,7 @@ const Sidebar = ({ collapsed, onToggle, mobile = false }: SidebarProps) => {
                             className={`flex flex-col rounded-lg border px-3 py-2.5 text-left transition-all ${
                               banca.padrao
                                 ? 'border-emerald-600/50 bg-emerald-50 dark:bg-emerald-900/20'
-                                : 'border-transparent hover:bg-gray-50 dark:hover:bg-white/5'
+                                : 'border-transparent hover:bg-background dark:hover:bg-white/5'
                             }`}
                             onClick={() => handleSelectBanca(banca.id)}
                             disabled={updatingBancaId === banca.id}
@@ -522,7 +522,7 @@ const Sidebar = ({ collapsed, onToggle, mobile = false }: SidebarProps) => {
 
         {!collapsed && (
           <div className={`mb-6 ${sectionPadding} flex-shrink-0`}>
-            <div className="rounded-[24px] border border-gray-200 bg-white p-4 shadow-sm dark:border-emerald-700/20 dark:bg-transparent dark:bg-gradient-to-br dark:from-emerald-900/40 dark:to-emerald-800/20 dark:backdrop-blur-2xl">
+            <div className="rounded-[24px] border border-gray-200 bg-surface p-4 shadow-sm dark:border-emerald-700/20 dark:bg-transparent dark:bg-gradient-to-br dark:from-emerald-900/40 dark:to-emerald-800/20 dark:backdrop-blur-2xl">
               <div className="mb-3 flex items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
                   <div className={`flex h-7 w-7 items-center justify-center rounded-lg ${planVisual.badgeClass}`}>

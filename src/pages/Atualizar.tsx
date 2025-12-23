@@ -869,6 +869,7 @@ export default function Atualizar() {
       <PageHeader
         title="Atualizar Apostas"
         subtitle="Gerencie seus bilhetes, aplique filtros avançados e mantenha o histórico sincronizado"
+        badge="APOSTAS"
         actions={
           <div className="flex flex-wrap items-center gap-3 relative">
             <ApostasFilters

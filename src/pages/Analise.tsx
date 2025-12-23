@@ -111,6 +111,7 @@ export default function Analise() {
         <PageHeader
           title="Gráficos"
           subtitle="Visualize suas métricas e acompanhe evolução"
+          badge="GRÁFICOS"
         />
         <div className="flex h-96 w-full flex-col items-center justify-center space-y-4 rounded-lg border border-border bg-card p-8 text-center shadow-sm">
           <div className="rounded-full bg-semantic-danger/10 p-4 text-semantic-danger">
@@ -136,6 +137,7 @@ export default function Analise() {
         <PageHeader
           title="Gráficos"
           subtitle="Visualize suas métricas e acompanhe evolução"
+          badge="GRÁFICOS"
         />
         <div className="flex h-96 items-center justify-center">
           <EmptyState
@@ -153,6 +155,7 @@ export default function Analise() {
         <PageHeader
           title="Gráficos"
           subtitle="Visualize suas métricas e acompanhe evolução"
+          badge="GRÁFICOS"
           actions={<AnaliseFiltersComponent value={filters} onChange={handleFiltersChange} />}
         />
         <div className="flex h-96 w-full flex-col items-center justify-center space-y-4 rounded-lg border border-border bg-card p-8 text-center shadow-sm">
@@ -245,6 +248,7 @@ export default function Analise() {
       <PageHeader
         title="Gráficos"
         subtitle="Visualize suas métricas e acompanhe evolução"
+        badge="GRÁFICOS"
         actions={<AnaliseFiltersComponent value={filters} onChange={handleFiltersChange} />}
       />
 

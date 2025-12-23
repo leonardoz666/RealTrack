@@ -18,6 +18,7 @@ import DateInput from '../components/DateInput';
 import DateRangeInput from '../components/DateRangeInput';
 import FilterPopover from '../components/FilterPopover';
 import DropdownSelect from '../components/DropdownSelect';
+import PageHeader from '../components/PageHeader';
 import Modal from '../components/Modal';
 import { EmptyState } from '../components/ui/empty-state';
 import { CASAS_APOSTAS } from '../constants/casasApostas';
@@ -77,21 +78,17 @@ const createDefaultFormData = (bancaId = '', date = getTodayDateISO()): Financei
   observacao: '',
 });
 
-const sectionCardClass =
-  'rounded-[32px] border border-gray-200 bg-white p-4 md:p-6 text-gray-900 shadow-xl backdrop-blur-2xl dark:border-emerald-700/20 dark:bg-transparent dark:bg-gradient-to-br dark:from-emerald-900/40 dark:to-emerald-800/20 dark:text-white dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)]';
-const dashboardCardShellClass =
-  'rounded-[32px] border border-gray-200 bg-white p-4 md:p-6 text-gray-900 shadow-xl backdrop-blur-2xl transition-all duration-300 hover:border-gray-300 hover:shadow-lg dark:border-emerald-700/20 dark:bg-transparent dark:bg-gradient-to-br dark:from-emerald-900/40 dark:to-emerald-800/20 dark:text-white dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] dark:hover:border-emerald-500/30 dark:hover:shadow-emerald-500/10';
 const sectionLabelClass = 'text-2xs uppercase tracking-[0.3em] text-gray-500 dark:text-white/50';
 const inputClass =
   'w-full rounded-2xl border border-gray-300 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50 dark:border-emerald-500/20 dark:bg-emerald-900/20 dark:text-white dark:placeholder:text-white/30';
 const headerGhostButtonClass =
-  'inline-flex items-center gap-2 rounded-2xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40';
+  'inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-600/20 transition hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40';
 const headerPrimaryButtonClass =
-  'inline-flex items-center gap-2 rounded-2xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40';
+  'inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-600/20 transition hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40';
 const tableActionButtonClass =
-  'inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-gray-200 bg-gray-50 text-gray-500 transition hover:border-gray-300 hover:bg-gray-100 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/30 dark:border-emerald-500/20 dark:bg-emerald-500/10 dark:text-emerald-100 dark:hover:border-emerald-400/40 dark:hover:bg-emerald-500/20 dark:hover:text-white';
+  'inline-flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 bg-gray-50 text-gray-500 transition hover:border-gray-300 hover:bg-gray-100 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/30 dark:border-emerald-500/20 dark:bg-emerald-500/10 dark:text-emerald-100 dark:hover:border-emerald-400/40 dark:hover:bg-emerald-500/20 dark:hover:text-white';
 const tableActionButtonDangerClass =
-  'inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-rose-200 bg-rose-50 text-rose-700 transition hover:bg-rose-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400/40 dark:border-rose-400/40 dark:bg-rose-500/10 dark:text-rose-200 dark:hover:bg-rose-500/20';
+  'inline-flex h-10 w-10 items-center justify-center rounded-lg border border-rose-200 bg-rose-50 text-rose-700 transition hover:bg-rose-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400/40 dark:border-rose-400/40 dark:bg-rose-500/10 dark:text-rose-200 dark:hover:bg-rose-500/20';
 
 const emptyStats: ApiFinancialSummary = {
   totalDepositado: 0,
@@ -123,6 +120,11 @@ const getCurrencyParts = (value: number) => {
 export default function Financeiro() {
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  
+  const sectionCardClass = 'rounded-[32px] border border-gray-200 bg-white p-4 md:p-6 text-gray-900 shadow-xl backdrop-blur-2xl dark:border-[var(--header-border)] dark:bg-transparent dark:bg-[image:var(--header-bg)] dark:text-white dark:shadow-[var(--header-shadow)]';
+
+  const dashboardCardShellClass = 'rounded-[32px] border border-gray-200 bg-white p-4 md:p-6 text-gray-900 shadow-xl backdrop-blur-2xl transition-all duration-300 hover:border-gray-300 hover:shadow-lg dark:border-[var(--header-border)] dark:bg-transparent dark:bg-[image:var(--header-bg)] dark:text-white dark:shadow-[var(--header-shadow)] dark:hover:border-emerald-500/30 dark:hover:shadow-emerald-500/10';
+
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -496,13 +498,12 @@ export default function Financeiro() {
 
   return (
     <div className="space-y-6 text-foreground">
-      <div className="mb-4">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="text-2xl font-semibold">Financeiro</h1>
-            <p className="text-sm text-foreground-muted">Gerencie transações e saldos por banca.</p>
-          </div>
-          <div className="flex flex-wrap items-center gap-2">
+      <PageHeader
+        title="Financeiro"
+        subtitle="Gerencie transações e saldos por banca."
+        badge="FINANCEIRO"
+        actions={
+          <>
             <div className="relative">
               <button
                 type="button"
@@ -511,7 +512,7 @@ export default function Financeiro() {
                 aria-expanded={filtersOpen}
               >
                 <Filter className="h-4 w-4" />
-                FILTROS
+                Filtros
               </button>
               {filtersOpen && (
                 <div className="absolute right-0 top-full mt-2 z-50">
@@ -597,11 +598,11 @@ export default function Financeiro() {
               onClick={handleOpenCreateModal}
             >
               <Plus className="h-4 w-4" />
-              NOVA TRANSAÇÃO
+              Nova transação
             </button>
-          </div>
-        </div>
-      </div>
+          </>
+        }
+      />
 
       {/* Financial Summary and Bets Summary cards removed per request */}
 

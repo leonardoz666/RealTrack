@@ -9,6 +9,7 @@ import { formatNumber } from '../utils/formatters';
 import { eventBus } from '../utils/eventBus';
 import { cn } from '../components/ui/utils';
 import { toast } from '../utils/toast';
+import PageHeader from '../components/PageHeader';
 
 interface EditFormState {
   nome: string;
@@ -40,14 +41,6 @@ const defaultForm: EditFormState = {
   compartilhamento: false,
 };
 
-const sectionCardClass =
-  'rounded-[32px] border border-gray-200 bg-white p-4 md:p-6 text-gray-900 shadow-xl backdrop-blur-2xl dark:border-emerald-700/20 dark:bg-transparent dark:bg-gradient-to-br dark:from-emerald-900/40 dark:to-emerald-800/20 dark:text-white dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)]';
-const dashboardCardShellClass =
-  'rounded-[32px] border border-gray-200 bg-white p-4 md:p-6 text-gray-900 shadow-xl backdrop-blur-2xl transition-all duration-300 hover:border-gray-300 hover:shadow-lg dark:border-emerald-700/20 dark:bg-transparent dark:bg-gradient-to-br dark:from-emerald-900/40 dark:to-emerald-800/20 dark:text-white dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] dark:hover:border-emerald-500/30 dark:hover:shadow-emerald-500/10';
-const summaryCardBaseClass =
-  'rounded-[32px] border border-gray-200 bg-white p-4 md:p-6 text-gray-900 shadow-xl backdrop-blur-2xl transition-all duration-300 hover:scale-[1.015] hover:border-gray-300 hover:shadow-lg dark:border-emerald-700/20 dark:bg-transparent dark:bg-gradient-to-br dark:from-emerald-900/40 dark:to-emerald-800/20 dark:text-white dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] dark:hover:border-emerald-500/30 dark:hover:shadow-emerald-500/10';
-const modalCardClass =
-  'rounded-[32px] border border-gray-200 bg-white px-5 py-5 text-gray-900 shadow-xl backdrop-blur-2xl dark:border-emerald-700/20 dark:bg-transparent dark:bg-gradient-to-br dark:from-emerald-900/40 dark:to-emerald-800/20 dark:text-white dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)]';
 const cardLabelClass = 'text-2xs uppercase tracking-[0.3em] text-gray-500 dark:text-white/50';
 const primaryButtonClass =
   'inline-flex items-center justify-center gap-2 rounded-2xl border border-transparent bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-700 dark:border-brand-emerald/40 dark:bg-brand-emerald/10 dark:text-brand-emerald dark:hover:bg-brand-emerald/20';
@@ -56,6 +49,13 @@ const ghostButtonClass =
 
 export default function Bancas() {
   const [activeTab, setActiveTab] = useState<'bancas' | 'tipsters'>('bancas');
+
+  const sectionCardClass = 'rounded-[32px] border border-gray-200 bg-white p-4 md:p-6 text-gray-900 shadow-xl backdrop-blur-2xl dark:border-[var(--header-border)] dark:bg-transparent dark:bg-[image:var(--header-bg)] dark:text-white dark:shadow-[var(--header-shadow)]';
+
+  const dashboardCardShellClass = 'rounded-[32px] border border-gray-200 bg-white p-4 md:p-6 text-gray-900 shadow-xl backdrop-blur-2xl transition-all duration-300 hover:border-gray-300 hover:shadow-lg dark:border-[var(--header-border)] dark:bg-transparent dark:bg-[image:var(--header-bg)] dark:text-white dark:shadow-[var(--header-shadow)] dark:hover:border-emerald-500/30 dark:hover:shadow-emerald-500/10';
+
+  const summaryCardBaseClass = 'rounded-[32px] border border-gray-200 bg-white p-4 md:p-6 text-gray-900 shadow-xl backdrop-blur-2xl transition-all duration-300 hover:scale-[1.015] hover:border-gray-300 hover:shadow-lg dark:border-[var(--header-border)] dark:bg-transparent dark:bg-[image:var(--header-bg)] dark:text-white dark:shadow-[var(--header-shadow)] dark:hover:border-emerald-500/30 dark:hover:shadow-emerald-500/10';
+
   const { bancas: remoteBancas, loading: bancasLoading, error: bancasError, invalidateCache: invalidateBancasCache } = useBancas();
   const { tipsters, loading: tipstersLoading, invalidateCache: invalidateTipstersCache } = useTipsters();
 
@@ -325,21 +325,22 @@ export default function Bancas() {
 
   return (
     <div className="space-y-6 text-foreground">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold">Bancas</h1>
-          <p className="text-sm text-foreground-muted">Gerencie suas bancas e tipsters.</p>
-        </div>
-        {activeTab === 'tipsters' && (
-          <button
-            onClick={() => handleOpenTipsterModal()}
-            className={primaryButtonClass}
-          >
-            <Plus className="mr-2 h-4 w-4" />
-            Novo Tipster
-          </button>
-        )}
-      </div>
+      <PageHeader
+        title="Bancas"
+        subtitle="Gerencie suas bancas e tipsters."
+        badge="BANCAS"
+        actions={
+          activeTab === 'tipsters' ? (
+            <button
+              onClick={() => handleOpenTipsterModal()}
+              className={primaryButtonClass}
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              Novo Tipster
+            </button>
+          ) : null
+        }
+      />
 
       {/* Selector de Abas */}
       <div className="flex border-b border-gray-200 dark:border-emerald-700/20">

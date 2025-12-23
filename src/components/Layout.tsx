@@ -48,10 +48,10 @@ const Layout = () => {
     : 'Abrir bot de ticket no Telegram';
 
   return (
-    <div className="flex min-h-full bg-gray-50 text-gray-900 transition-colors duration-300 dark:bg-app-layout-bg dark:text-white">
+    <div className="flex min-h-full bg-background text-gray-900 transition-colors duration-300 dark:bg-app-layout-bg dark:text-white">
       {/* Mobile Header & Sidebar */}
       <div className="block md:hidden">
-        <div className="fixed left-0 top-0 z-50 flex w-full items-center bg-white p-4 shadow-sm dark:bg-ui-surface dark:text-white dark:border-b dark:border-white/5">
+        <div className="fixed left-0 top-0 z-50 flex w-full items-center bg-surface p-4 shadow-sm dark:bg-ui-surface dark:text-white dark:border-b dark:border-white/5">
           <button
             onClick={() => setIsSheetOpen(true)}
             className="mr-4 rounded-md p-1 hover:bg-gray-100 dark:hover:bg-white/10"

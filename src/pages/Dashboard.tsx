@@ -41,6 +41,7 @@ import {
   betStatusPillVariants,
 } from '../constants/betStatusStyles';
 import { ROUTES } from '../routes';
+import PageHeader from '../components/PageHeader';
 
 const DashboardChart = lazy(() => import('../components/dashboard/DashboardChart'));
 
@@ -255,121 +256,119 @@ export default function Dashboard() {
   return (
     <div className="space-y-8 text-foreground">
       <div className="mb-4">
-        <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-          <div>
-            <p className={cn('text-2xs uppercase tracking-[0.3em]', softLabelTextClass)}>Visão geral</p>
-            <h1 className="text-3xl font-semibold">
-              Bem-vindo de volta, {profile ? getFirstName(profile.nomeCompleto) : 'Usuário'} 👋
-            </h1>
-            <p className={cn('text-sm', labelTextClass)}>Acompanhe seus números mais importantes em tempo real.</p>
-          </div>
-          <div className="relative mt-4 flex flex-wrap items-center gap-3 md:mt-0">
-            {loading && (
-              <span className={cn('inline-flex items-center gap-2 rounded-full border border-white/5 bg-white/5 px-3 py-1 text-xs text-foreground-muted', softLabelTextClass)}>
-                <Loader2 className="h-3.5 w-3.5 animate-spin" /> Atualizando
-              </span>
-            )}
-            <button
-              type="button"
-              className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-600/20 transition hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40"
-              onClick={handleNovaAposta}
-            >
-              <Plus size={16} /> Nova aposta
-            </button>
-            <button
-              type="button"
-              className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-600/20 transition hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40"
-              onClick={() => setImportModalOpen(true)}
-            >
-              <Download size={16} /> Importar dados
-            </button>
-            <div className="relative">
+        <PageHeader
+          title={`Bem-vindo de volta, ${profile ? getFirstName(profile.nomeCompleto) : 'Usuário'} 👋`}
+          subtitle="Acompanhe seus números mais importantes em tempo real."
+          badge="VISÃO GERAL"
+          actions={
+            <>
+              {loading && (
+                <span className={cn('inline-flex items-center gap-2 rounded-full border border-white/5 bg-white/5 px-3 py-1 text-xs text-foreground-muted', softLabelTextClass)}>
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" /> Atualizando
+                </span>
+              )}
               <button
                 type="button"
                 className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-600/20 transition hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40"
-                onClick={() => setFiltersOpen((prev) => !prev)}
-                aria-expanded={filtersOpen}
+                onClick={handleNovaAposta}
               >
-                <Filter size={16} />
-                Filtros
-                {activeFiltersCount > 0 && (
-                  <span className="rounded-full bg-black/20 px-2 text-xs font-semibold text-white">{activeFiltersCount}</span>
-                )}
+                <Plus size={16} /> Nova aposta
               </button>
-              {filtersOpen && (
-                <div className="absolute left-0 top-full mt-2 z-50">
-                  <FilterPopover
-                    open={filtersOpen}
-                    onClose={() => setFiltersOpen(false)}
-                    onClear={handleClearFilters}
-                    maxWidth="900px"
-                    footer={
-                      <button
-                        type="button"
-                        className="w-full rounded-2xl bg-brand-linear px-4 py-2 text-sm font-semibold text-[#f2f2f2] shadow-glow transition active:scale-[0.99]"
-                        onClick={handleApplyFilters}
-                      >
-                        Aplicar filtros
-                      </button>
-                    }
-                  >
-                    <div className="grid gap-4 md:grid-cols-2">
-                      <label className="text-sm font-medium text-foreground">
-                        <span>Status</span>
-                        <DropdownSelect
-                          options={[{ value: '', label: 'Todos' }, ...STATUS_APOSTAS.map((s) => ({ value: s, label: s }))]}
-                          value={filters.status}
-                          onChange={(val) => handleFilterChange('status', val)}
-                          className={filterInputClass}
-                        />
-                      </label>
-                      <label className="text-sm font-medium text-foreground">
-                        <span>Tipster</span>
-                        <DropdownSelect
-                          options={[{ value: '', label: 'Todos' }, ...tipsters.filter((t) => t.ativo).map((t) => ({ value: t.nome, label: t.nome }))]}
-                          value={filters.tipster}
-                          onChange={(val) => handleFilterChange('tipster', val)}
-                          className={filterInputClass}
-                        />
-                      </label>
-                      <label className="text-sm font-medium text-foreground">
-                        <span>Casa de aposta</span>
-                        <DropdownSelect
-                          options={[{ value: '', label: 'Todas' }, ...CASAS_APOSTAS.map((casa) => ({ value: casa, label: casa }))]}
-                          value={filters.casa}
-                          onChange={(val) => handleFilterChange('casa', val)}
-                          className={filterInputClass}
-                          searchable
-                        />
-                      </label>
-                      <label className="text-sm font-medium text-foreground">
-                        <span>Banca</span>
-                        <DropdownSelect
-                          options={[{ value: '', label: 'Todas' }, ...userBancas.map((banca) => ({ value: banca.id, label: banca.nome }))]}
-                          value={filters.bancaId}
-                          onChange={(val) => handleFilterChange('bancaId', val)}
-                          className={filterInputClass}
-                          searchable
-                        />
-                      </label>
-                      <label className="text-sm font-medium text-foreground">
-                        <span>Data (de)</span>
-                        <DateInput value={filters.dataInicio} onChange={(value) => handleFilterChange('dataInicio', value)} className={filterInputClass} />
-                      </label>
-                      <label className="text-sm font-medium text-foreground">
-                        <span>Data (até)</span>
-                        <DateInput value={filters.dataFim} onChange={(value) => handleFilterChange('dataFim', value)} className={filterInputClass} />
-                      </label>
-                      <p className="col-span-2 mt-2 text-xs text-foreground-muted">
-                        Deixe o campo vazio para considerar todo o histórico.
-                      </p>
-                    </div>
-                  </FilterPopover>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
+              <button
+                type="button"
+                className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-600/20 transition hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40"
+                onClick={() => setImportModalOpen(true)}
+              >
+                <Download size={16} /> Importar dados
+              </button>
+              <div className="relative">
+                <button
+                  type="button"
+                  className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-600/20 transition hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40"
+                  onClick={() => setFiltersOpen((prev) => !prev)}
+                  aria-expanded={filtersOpen}
+                >
+                  <Filter size={16} />
+                  Filtros
+                  {activeFiltersCount > 0 && (
+                    <span className="rounded-full bg-black/20 px-2 text-xs font-semibold text-white">{activeFiltersCount}</span>
+                  )}
+                </button>
+                {filtersOpen && (
+                  <div className="absolute right-0 top-full mt-2 z-50">
+                    <FilterPopover
+                      open={filtersOpen}
+                      onClose={() => setFiltersOpen(false)}
+                      onClear={handleClearFilters}
+                      maxWidth="900px"
+                      footer={
+                        <button
+                          type="button"
+                          className="w-full rounded-2xl bg-brand-linear px-4 py-2 text-sm font-semibold text-[#f2f2f2] shadow-glow transition active:scale-[0.99]"
+                          onClick={handleApplyFilters}
+                        >
+                          Aplicar filtros
+                        </button>
+                      }
+                    >
+                      <div className="grid gap-4 md:grid-cols-2">
+                        <label className="text-sm font-medium text-foreground">
+                          <span>Status</span>
+                          <DropdownSelect
+                            options={[{ value: '', label: 'Todos' }, ...STATUS_APOSTAS.map((s) => ({ value: s, label: s }))]}
+                            value={filters.status}
+                            onChange={(val) => handleFilterChange('status', val)}
+                            className={filterInputClass}
+                          />
+                        </label>
+                        <label className="text-sm font-medium text-foreground">
+                          <span>Tipster</span>
+                          <DropdownSelect
+                            options={[{ value: '', label: 'Todos' }, ...tipsters.filter((t) => t.ativo).map((t) => ({ value: t.nome, label: t.nome }))]}
+                            value={filters.tipster}
+                            onChange={(val) => handleFilterChange('tipster', val)}
+                            className={filterInputClass}
+                          />
+                        </label>
+                        <label className="text-sm font-medium text-foreground">
+                          <span>Casa de aposta</span>
+                          <DropdownSelect
+                            options={[{ value: '', label: 'Todas' }, ...CASAS_APOSTAS.map((casa) => ({ value: casa, label: casa }))]}
+                            value={filters.casa}
+                            onChange={(val) => handleFilterChange('casa', val)}
+                            className={filterInputClass}
+                            searchable
+                          />
+                        </label>
+                        <label className="text-sm font-medium text-foreground">
+                          <span>Banca</span>
+                          <DropdownSelect
+                            options={[{ value: '', label: 'Todas' }, ...userBancas.map((banca) => ({ value: banca.id, label: banca.nome }))]}
+                            value={filters.bancaId}
+                            onChange={(val) => handleFilterChange('bancaId', val)}
+                            className={filterInputClass}
+                            searchable
+                          />
+                        </label>
+                        <label className="text-sm font-medium text-foreground">
+                          <span>Data (de)</span>
+                          <DateInput value={filters.dataInicio} onChange={(value) => handleFilterChange('dataInicio', value)} className={filterInputClass} />
+                        </label>
+                        <label className="text-sm font-medium text-foreground">
+                          <span>Data (até)</span>
+                          <DateInput value={filters.dataFim} onChange={(value) => handleFilterChange('dataFim', value)} className={filterInputClass} />
+                        </label>
+                        <p className="col-span-2 mt-2 text-xs text-foreground-muted">
+                          Deixe o campo vazio para considerar todo o histórico.
+                        </p>
+                      </div>
+                    </FilterPopover>
+                  </div>
+                )}
+              </div>
+            </>
+          }
+        />
       </div>
 
       <section className="grid gap-4 grid-cols-1 md:grid-cols-2 xl:grid-cols-12">

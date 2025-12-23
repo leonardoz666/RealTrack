@@ -99,7 +99,7 @@ const MobileBetCard = ({
         <div>
           <span className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-white/40 block mb-0.5">Odd</span>
           <span className="font-medium text-gray-700 dark:text-gray-200">
-            {aposta.odd ? aposta.odd.toFixed(2) : '-'}
+            {aposta.odd ? Number(aposta.odd).toFixed(2) : '-'}
           </span>
         </div>
         <div>
@@ -210,7 +210,7 @@ const Row = ({
             {formatCurrency(aposta.valorApostado)}
           </span>
           <span className="text-xs text-gray-500 dark:text-white/50 font-medium">
-            ODD: {aposta.odd ? aposta.odd.toFixed(2) : '-'}
+            ODD: {aposta.odd ? Number(aposta.odd).toFixed(2) : '-'}
           </span>
         </div>
         <div>

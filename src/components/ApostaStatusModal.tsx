@@ -93,7 +93,7 @@ function StatusFormContent({ aposta, onClose, onConfirm, loading }: StatusFormCo
     const calculado = calcularRetornoObtido(
       formData.status,
       aposta.valorApostado,
-      aposta.odd,
+      Number(aposta.odd),
       manualRetornoValue
     );
     if (calculado !== null) {
@@ -107,7 +107,7 @@ function StatusFormContent({ aposta, onClose, onConfirm, loading }: StatusFormCo
       return manualVal ?? calcularRetornoObtido(
         formData.status,
         aposta.valorApostado,
-        aposta.odd,
+        Number(aposta.odd),
         manualVal
       ) ?? 0;
     }

@@ -557,28 +557,33 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-3">
-            <StatCard
-              title="Melhor dia"
-              value={formatCurrency(melhorDia && melhorDia.valor ? melhorDia.valor : 0)}
-              helper={melhorDia && melhorDia.data ? melhorDia.data : 'Sem dados'}
-              icon={<CalendarDays className="h-5 w-5" />}
-              color="emerald"
-            />
-            <StatCard
-              title="Pior dia"
-              value={formatCurrency(piorDia && piorDia.valor ? piorDia.valor : 0)}
-              helper={piorDia && piorDia.data ? piorDia.data : 'Sem dados'}
-              icon={<CalendarDays className="h-5 w-5" />}
-              color="red"
-            />
-            <StatCard
-              title="Média diária"
-              value={formatCurrency(mediaDiaria || 0)}
-              helper={`Últimos ${periodoDiasLabel}`}
-              icon={<CalendarDays className="h-5 w-5" />}
-              color="blue"
-            />
+          <div className="grid gap-4 md:grid-cols-3">
+            <div className="rounded-[24px] border border-emerald-300 bg-emerald-200 p-5 flex flex-col justify-center transition duration-300 hover:-translate-y-0.5 relative overflow-hidden backdrop-blur-sm dark:bg-emerald-500/25 dark:border-emerald-500/40">
+              <div className="flex items-center gap-2 mb-1.5 text-emerald-900 dark:text-emerald-500">
+                <CalendarDays className="h-4 w-4" />
+                <span className="text-[0.6rem] font-bold uppercase tracking-[0.2em]">Melhor dia</span>
+              </div>
+              <p className="text-2xl font-bold tracking-tight text-gray-950 dark:text-white">{formatCurrency(melhorDia && melhorDia.valor ? melhorDia.valor : 0)}</p>
+              <p className="mt-1 text-[0.65rem] font-medium text-emerald-800 dark:text-emerald-400">{melhorDia && melhorDia.data ? melhorDia.data : 'Sem dados'}</p>
+            </div>
+
+            <div className="rounded-[24px] border border-rose-300 bg-rose-200 p-5 flex flex-col justify-center transition duration-300 hover:-translate-y-0.5 relative overflow-hidden backdrop-blur-sm dark:bg-rose-500/30 dark:border-rose-500/50">
+              <div className="flex items-center gap-2 mb-1.5 text-rose-900 dark:text-rose-500">
+                <CalendarDays className="h-4 w-4" />
+                <span className="text-[0.6rem] font-bold uppercase tracking-[0.2em]">Pior dia</span>
+              </div>
+              <p className="text-2xl font-bold tracking-tight text-gray-950 dark:text-white">{formatCurrency(piorDia && piorDia.valor ? piorDia.valor : 0)}</p>
+              <p className="mt-1 text-[0.65rem] font-medium text-rose-800 dark:text-rose-400">{piorDia && piorDia.data ? piorDia.data : 'Sem dados'}</p>
+            </div>
+
+            <div className="rounded-[24px] border border-blue-300 bg-blue-200 p-5 flex flex-col justify-center transition duration-300 hover:-translate-y-0.5 relative overflow-hidden backdrop-blur-sm dark:bg-blue-500/25 dark:border-blue-500/40">
+              <div className="flex items-center gap-2 mb-1.5 text-blue-900 dark:text-blue-500">
+                <CalendarDays className="h-4 w-4" />
+                <span className="text-[0.6rem] font-bold uppercase tracking-[0.2em]">Média diária</span>
+              </div>
+              <p className="text-2xl font-bold tracking-tight text-gray-950 dark:text-white">{formatCurrency(mediaDiaria || 0)}</p>
+              <p className="mt-1 text-[0.65rem] font-medium text-blue-800 dark:text-blue-400">{`Últimos ${periodoDiasLabel}`}</p>
+            </div>
           </div>
 
           <div className={evolutionChartShellClass}>

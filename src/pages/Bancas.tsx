@@ -41,6 +41,14 @@ const defaultForm: EditFormState = {
   compartilhamento: false,
 };
 
+const sectionCardClass =
+  'rounded-[32px] border border-gray-200 bg-white p-4 md:p-6 text-gray-900 shadow-xl backdrop-blur-2xl dark:border-emerald-700/20 dark:bg-transparent dark:bg-gradient-to-br dark:from-emerald-900/40 dark:to-emerald-800/20 dark:text-white dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)]';
+const dashboardCardShellClass =
+  'rounded-[32px] border border-gray-200 bg-white p-4 md:p-6 text-gray-900 shadow-xl backdrop-blur-2xl transition-all duration-300 hover:border-gray-300 hover:shadow-lg dark:border-emerald-700/20 dark:bg-transparent dark:bg-gradient-to-br dark:from-emerald-900/40 dark:to-emerald-800/20 dark:text-white dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] dark:hover:border-emerald-500/30 dark:hover:shadow-emerald-500/10';
+const summaryCardBaseClass =
+  'rounded-[32px] border border-gray-200 bg-white p-4 md:p-6 text-gray-900 shadow-xl backdrop-blur-2xl transition-all duration-300 hover:scale-[1.015] hover:border-gray-300 hover:shadow-lg dark:border-emerald-700/20 dark:bg-transparent dark:bg-gradient-to-br dark:from-emerald-900/40 dark:to-emerald-800/20 dark:text-white dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] dark:hover:border-emerald-500/30 dark:hover:shadow-emerald-500/10';
+const modalCardClass =
+  'rounded-[32px] border border-gray-200 bg-white px-5 py-5 text-gray-900 shadow-xl backdrop-blur-2xl dark:border-emerald-700/20 dark:bg-transparent dark:bg-gradient-to-br dark:from-emerald-900/40 dark:to-emerald-800/20 dark:text-white dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)]';
 const cardLabelClass = 'text-2xs uppercase tracking-[0.3em] text-gray-500 dark:text-white/50';
 const primaryButtonClass =
   'inline-flex items-center justify-center gap-2 rounded-2xl border border-transparent bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-700 dark:border-brand-emerald/40 dark:bg-brand-emerald/10 dark:text-brand-emerald dark:hover:bg-brand-emerald/20';
@@ -49,13 +57,6 @@ const ghostButtonClass =
 
 export default function Bancas() {
   const [activeTab, setActiveTab] = useState<'bancas' | 'tipsters'>('bancas');
-
-  const sectionCardClass = 'rounded-[32px] border border-gray-200 bg-white p-4 md:p-6 text-gray-900 shadow-xl backdrop-blur-2xl dark:border-[var(--header-border)] dark:bg-transparent dark:bg-[image:var(--header-bg)] dark:text-white dark:shadow-[var(--header-shadow)]';
-
-  const dashboardCardShellClass = 'rounded-[32px] border border-gray-200 bg-white p-4 md:p-6 text-gray-900 shadow-xl backdrop-blur-2xl transition-all duration-300 hover:border-gray-300 hover:shadow-lg dark:border-[var(--header-border)] dark:bg-transparent dark:bg-[image:var(--header-bg)] dark:text-white dark:shadow-[var(--header-shadow)] dark:hover:border-emerald-500/30 dark:hover:shadow-emerald-500/10';
-
-  const summaryCardBaseClass = 'rounded-[32px] border border-gray-200 bg-white p-4 md:p-6 text-gray-900 shadow-xl backdrop-blur-2xl transition-all duration-300 hover:scale-[1.015] hover:border-gray-300 hover:shadow-lg dark:border-[var(--header-border)] dark:bg-transparent dark:bg-[image:var(--header-bg)] dark:text-white dark:shadow-[var(--header-shadow)] dark:hover:border-emerald-500/30 dark:hover:shadow-emerald-500/10';
-
   const { bancas: remoteBancas, loading: bancasLoading, error: bancasError, invalidateCache: invalidateBancasCache } = useBancas();
   const { tipsters, loading: tipstersLoading, invalidateCache: invalidateTipstersCache } = useTipsters();
 

@@ -16,6 +16,9 @@ function PageHeader({ title, subtitle, badge, actions }: PageHeaderProps) {
 
   return (
     <div className="relative overflow-hidden rounded-[24px] border border-gray-200 bg-white p-5 shadow-sm backdrop-blur-2xl dark:border-[var(--header-border)] dark:bg-transparent dark:bg-[image:var(--header-bg)] dark:shadow-[var(--header-shadow)] md:p-6">
+      {/* Background gradient decoration */}
+      <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-gradient-to-br from-emerald-500/10 to-transparent blur-3xl dark:from-emerald-500/10" />
+      
       <div className="relative flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div className="space-y-3">
           <div className="flex items-center gap-3">

@@ -39,7 +39,7 @@
 
 	.dark {
 		color-scheme: dark;
-		--ui-bg: 5 31 27;
+		--ui-bg: 3 43 38;
 		--ui-muted-surface: 16 50 46;
 		--ui-surface: 16 50 46;
 		--ui-card: 16 50 46;
@@ -53,7 +53,7 @@
 		--ui-accent: 6 76 62;
 		--ui-accent-foreground: 255 255 255;
 		--ui-ring: 20 184 166;
-		--bg: #051f1b;
+		--bg: #032b26;
 		--surface: #10322e;
 		--border: #064c3e;
 		--muted: #52525b;
@@ -83,7 +83,6 @@
         
         --header-border: rgba(4, 120, 87, 0.2);
         --header-bg: linear-gradient(to bottom right, rgba(6, 78, 59, 0.4), rgba(6, 95, 70, 0.2));
-        --header-shadow: 0 20px 50px rgba(0,0,0,0.3);
 	}
 
     .dark.theme-standard {
@@ -114,7 +113,7 @@
         --app-login-card: 8 24 26;
 
         --header-border: #06322d;
-        --header-bg: linear-gradient(to bottom right, #08181a, #08181a);
+        --header-bg: linear-gradient(to bottom right, #051214, #051214);
         --header-shadow: none;
     }
 

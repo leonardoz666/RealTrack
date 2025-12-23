@@ -78,6 +78,10 @@ const createDefaultFormData = (bancaId = '', date = getTodayDateISO()): Financei
   observacao: '',
 });
 
+const sectionCardClass =
+  'rounded-[32px] border border-gray-200 bg-white p-4 md:p-6 text-gray-900 shadow-xl backdrop-blur-2xl dark:border-emerald-700/20 dark:bg-transparent dark:bg-gradient-to-br dark:from-emerald-900/40 dark:to-emerald-800/20 dark:text-white dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)]';
+const dashboardCardShellClass =
+  'rounded-[32px] border border-gray-200 bg-white p-4 md:p-6 text-gray-900 shadow-xl backdrop-blur-2xl transition-all duration-300 hover:border-gray-300 hover:shadow-lg dark:border-emerald-700/20 dark:bg-transparent dark:bg-gradient-to-br dark:from-emerald-900/40 dark:to-emerald-800/20 dark:text-white dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] dark:hover:border-emerald-500/30 dark:hover:shadow-emerald-500/10';
 const sectionLabelClass = 'text-2xs uppercase tracking-[0.3em] text-gray-500 dark:text-white/50';
 const inputClass =
   'w-full rounded-2xl border border-gray-300 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50 dark:border-emerald-500/20 dark:bg-emerald-900/20 dark:text-white dark:placeholder:text-white/30';
@@ -120,11 +124,6 @@ const getCurrencyParts = (value: number) => {
 export default function Financeiro() {
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
-  
-  const sectionCardClass = 'rounded-[32px] border border-gray-200 bg-white p-4 md:p-6 text-gray-900 shadow-xl backdrop-blur-2xl dark:border-[var(--header-border)] dark:bg-transparent dark:bg-[image:var(--header-bg)] dark:text-white dark:shadow-[var(--header-shadow)]';
-
-  const dashboardCardShellClass = 'rounded-[32px] border border-gray-200 bg-white p-4 md:p-6 text-gray-900 shadow-xl backdrop-blur-2xl transition-all duration-300 hover:border-gray-300 hover:shadow-lg dark:border-[var(--header-border)] dark:bg-transparent dark:bg-[image:var(--header-bg)] dark:text-white dark:shadow-[var(--header-shadow)] dark:hover:border-emerald-500/30 dark:hover:shadow-emerald-500/10';
-
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);

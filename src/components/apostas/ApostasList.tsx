@@ -296,7 +296,7 @@ export default function ApostasList({
       </div>
 
       <TooltipProvider>
-        <div className="hidden md:flex rounded-[32px] border border-gray-200 bg-white py-6 text-gray-900 shadow-xl backdrop-blur-2xl dark:border-emerald-700/20 dark:bg-transparent dark:bg-gradient-to-br dark:from-emerald-900/40 dark:to-emerald-800/20 dark:text-white dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] space-y-6 flex-col h-full min-h-[500px]">
+        <div className="hidden md:flex rounded-[32px] border border-gray-200 bg-white py-6 text-gray-900 shadow-xl backdrop-blur-2xl dark:border-emerald-700/20 dark:bg-transparent dark:bg-gradient-to-br dark:from-emerald-900/40 dark:to-emerald-800/20 dark:text-white dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] space-y-6 flex-col max-h-[75vh] min-h-[500px]">
           {apostas.length === 0 ? (
             <div className="px-6">
               <EmptyState title="Nenhuma aposta" description="Cadastre uma nova aposta para começar a acompanhar resultados." />

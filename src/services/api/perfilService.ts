@@ -297,6 +297,14 @@ async function redeemPromoCode(code: string): Promise<RedeemPromoResult> {
   };
 }
 
+/**
+ * Cria um pagamento para o plano selecionado
+ */
+async function createPayment(planId: string): Promise<{ url: string; id: string }> {
+  const response = await apiClient.post<{ url: string; id: string }>('/payments/create', { planId });
+  return response.data;
+}
+
 // ============================================
 // Export
 // ============================================
@@ -315,6 +323,7 @@ export const perfilService = {
   getConsumo,
   listPlans,
   updatePlan,
+  createPayment,
 
   // Telegram
   getTelegramInfo,

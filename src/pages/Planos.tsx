@@ -7,6 +7,8 @@ import {
   Shield,
   Zap,
   CheckCircle2,
+  ExternalLink,
+  QrCode,
   type LucideIcon,
 } from 'lucide-react';
 import PageHeader from '../components/PageHeader';
@@ -14,6 +16,7 @@ import { perfilService, type Plano } from '../services/api';
 import { usePerfil } from '../contexts/PerfilContext';
 import { cn } from '../components/ui/utils';
 import { toast } from '../utils/toast';
+import Modal from '../components/Modal';
 
 const PLAN_VISUALS: Record<string, { Icon: LucideIcon; colorClass: string; glowClass: string; bgClass: string; borderClass: string }> = {
   gratuito: {
@@ -222,6 +225,42 @@ export default function Planos() {
           );
         })}
       </div>
+      <Modal
+        isOpen={paymentModalOpen}
+        onClose={handleClosePayment}
+        title="Pagamento do Plano"
+        className="max-w-md"
+      >
+        <div className="flex flex-col items-center justify-center space-y-6 py-4">
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-900/30">
+            <QrCode className="h-8 w-8 text-emerald-600 dark:text-emerald-400" />
+          </div>
+          
+          <div className="text-center">
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white">Pagamento Gerado</h3>
+            <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+              Seu pagamento PIX foi gerado com sucesso. Clique no botão abaixo para concluir o pagamento.
+            </p>
+          </div>
+
+          {paymentData?.url && (
+            <a
+              href={paymentData.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-brand-emerald px-4 py-3 text-sm font-bold text-white transition hover:bg-emerald-600 active:scale-95"
+            >
+              Pagar agora <ExternalLink size={16} />
+            </a>
+          )}
+          
+          <div className="rounded-lg bg-yellow-50 p-4 text-xs text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-200">
+            <p>
+              Após o pagamento, seu plano será atualizado automaticamente em alguns instantes.
+            </p>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

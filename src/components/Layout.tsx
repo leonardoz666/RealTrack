@@ -81,7 +81,7 @@ const Layout = () => {
           isSidebarCollapsed ? 'md:ml-20' : 'md:ml-64'
         }`}
       >
-        <div className="flex flex-1 flex-col p-4 sm:p-6">
+        <div className="flex flex-1 flex-col sm:p-6">
           <Outlet />
         </div>
         

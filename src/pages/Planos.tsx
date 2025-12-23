@@ -60,6 +60,8 @@ export default function Planos() {
   const [plans, setPlans] = useState<Plano[]>([]);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState<string | null>(null);
+  const [paymentModalOpen, setPaymentModalOpen] = useState(false);
+  const [paymentData, setPaymentData] = useState<{ url: string; id: string } | null>(null);
 
   useEffect(() => {
     void fetchPlans();
@@ -78,9 +80,30 @@ export default function Planos() {
     }
   };
 
+  const handleClosePayment = () => {
+    setPaymentModalOpen(false);
+    setPaymentData(null);
+  };
+
   const handleSelectPlan = async (plan: Plano) => {
     if (!perfil || perfil.plano.id === plan.id) return;
     
+    if (plan.preco > 0) {
+      try {
+        setUpdating(plan.id);
+        const data = await perfilService.createPayment(plan.id);
+        setPaymentData(data);
+        setPaymentModalOpen(true);
+        toast.success('Pagamento gerado com sucesso!');
+      } catch (err) {
+        console.error('Erro ao gerar pagamento:', err);
+        toast.error('Não foi possível gerar o pagamento.');
+      } finally {
+        setUpdating(null);
+      }
+      return;
+    }
+
     if (!window.confirm(`Deseja alterar seu plano para ${plan.nome}?`)) {
       return;
     }

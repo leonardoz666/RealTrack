@@ -55,6 +55,8 @@ const getPlanVisual = (planName?: string) => {
   return PLAN_VISUALS[key] ?? PLAN_VISUALS.default;
 };
 
+const TEST_PLAN_NAMES = ['TestPlan', 'SmokeTestPlan', 'LoadTestPlan'];
+
 export default function Planos() {
   const { perfil, atualizarPerfil } = usePerfil();
   const [plans, setPlans] = useState<Plano[]>([]);
@@ -161,6 +163,134 @@ export default function Planos() {
     );
   }
 
+  const MAIN_PLAN_ORDER = ['Gratuito', 'Amador', 'Profissional'];
+
+  const mainPlans = plans
+    .filter(p => !TEST_PLAN_NAMES.includes(p.nome))
+    .sort((a, b) => {
+      const indexA = MAIN_PLAN_ORDER.indexOf(a.nome);
+      const indexB = MAIN_PLAN_ORDER.indexOf(b.nome);
+      if (indexA === -1) return 1;
+      if (indexB === -1) return -1;
+      return indexA - indexB;
+    });
+
+  const testPlans = plans
+    .filter(p => TEST_PLAN_NAMES.includes(p.nome));
+
+  const renderPlanCard = (plan: Plano, isTestPlan = false) => {
+    const visual = getPlanVisual(plan.nome);
+    const Icon = visual.Icon;
+    const isCurrent = perfil?.plano?.id === plan.id;
+    const isProcessing = updating === plan.id;
+
+    return (
+      <div 
+        key={plan.id}
+        className={cn(
+          "relative flex flex-col overflow-hidden rounded-[32px] border p-8 transition-all duration-300 hover:shadow-xl",
+          visual.bgClass,
+          visual.borderClass,
+          isCurrent ? "ring-2 ring-emerald-500 ring-offset-2 ring-offset-background dark:ring-offset-app-layout-bg" : "hover:-translate-y-1"
+        )}
+      >
+        {/* Glow Effect */}
+        <div className={cn("absolute -right-20 -top-20 h-64 w-64 rounded-full blur-[100px] opacity-20 bg-gradient-to-br", visual.glowClass)} />
+
+        <div className="relative z-10 flex flex-1 flex-col">
+          <div className="mb-6 flex items-center justify-between">
+            <div className={cn("flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-md border border-white/10", visual.colorClass)}>
+              <Icon size={28} />
+            </div>
+            {isCurrent && (
+              <span className="rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-emerald-500 border border-emerald-500/20">
+                Atual
+              </span>
+            )}
+          </div>
+
+          <h3 className="mb-2 text-2xl font-black tracking-tight text-gray-900 dark:text-white">
+            {plan.nome}
+          </h3>
+          
+          <div className="mb-6 flex items-baseline gap-1">
+            <span className="text-3xl font-bold text-gray-900 dark:text-white">
+              {plan.preco === 0 ? 'Grátis' : `R$ ${plan.preco.toFixed(2)}`}
+            </span>
+            {plan.preco > 0 && <span className="text-sm text-gray-500 dark:text-gray-400">/mês</span>}
+          </div>
+
+          <div className="mb-8 space-y-4 flex-1">
+            <div className="flex items-center gap-3">
+              <div className={cn("flex h-5 w-5 items-center justify-center rounded-full bg-white/10", visual.colorClass)}>
+                <Zap size={12} />
+              </div>
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                {plan.limiteApostasDiarias === 0 
+                  ? 'Apostas Ilimitadas' 
+                  : `${plan.limiteApostasDiarias} apostas diárias`}
+              </span>
+            </div>
+            
+            {/* Features placeholders based on plan type */}
+            <div className="flex items-center gap-3">
+              <div className={cn("flex h-5 w-5 items-center justify-center rounded-full bg-white/10", visual.colorClass)}>
+                <Check size={12} />
+              </div>
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                Gestão de Bancas
+              </span>
+            </div>
+            
+            <div className="flex items-center gap-3">
+              <div className={cn("flex h-5 w-5 items-center justify-center rounded-full bg-white/10", visual.colorClass)}>
+                <Check size={12} />
+              </div>
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                Relatórios Detalhados
+              </span>
+            </div>
+
+            {plan.nome.toLowerCase().includes('profissional') && (
+              <div className="flex items-center gap-3">
+                <div className={cn("flex h-5 w-5 items-center justify-center rounded-full bg-white/10", visual.colorClass)}>
+                  <Check size={12} />
+                </div>
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Suporte Prioritário
+                </span>
+              </div>
+            )}
+          </div>
+
+          <button
+            onClick={() => handleSelectPlan(plan)}
+            disabled={isCurrent || isProcessing || isTestPlan}
+            className={cn(
+              "relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-xl py-3.5 text-sm font-bold uppercase tracking-widest transition-all duration-300",
+              (isCurrent || isTestPlan)
+                ? "bg-gray-100 text-gray-400 cursor-default dark:bg-white/5 dark:text-gray-500"
+                : "bg-emerald-600 text-white hover:bg-emerald-500 hover:shadow-lg hover:shadow-emerald-600/20 active:scale-[0.98]"
+            )}
+          >
+            {isProcessing ? (
+              <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/20 border-t-white" />
+            ) : isCurrent ? (
+              <>
+                <CheckCircle2 size={16} />
+                <span>Plano Atual</span>
+              </>
+            ) : isTestPlan ? (
+              <span>Indisponível</span>
+            ) : (
+              <span>Contratar Plano</span>
+            )}
+          </button>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="w-full space-y-8 pb-8">
       <PageHeader 
@@ -169,117 +299,17 @@ export default function Planos() {
       />
 
       <div className="grid gap-8 lg:grid-cols-3">
-        {plans.map((plan) => {
-          const visual = getPlanVisual(plan.nome);
-          const Icon = visual.Icon;
-          const isCurrent = perfil?.plano?.id === plan.id;
-          const isProcessing = updating === plan.id;
-
-          return (
-            <div 
-              key={plan.id}
-              className={cn(
-                "relative flex flex-col overflow-hidden rounded-[32px] border p-8 transition-all duration-300 hover:shadow-xl",
-                visual.bgClass,
-                visual.borderClass,
-                isCurrent ? "ring-2 ring-emerald-500 ring-offset-2 ring-offset-background dark:ring-offset-app-layout-bg" : "hover:-translate-y-1"
-              )}
-            >
-              {/* Glow Effect */}
-              <div className={cn("absolute -right-20 -top-20 h-64 w-64 rounded-full blur-[100px] opacity-20 bg-gradient-to-br", visual.glowClass)} />
-
-              <div className="relative z-10 flex flex-1 flex-col">
-                <div className="mb-6 flex items-center justify-between">
-                  <div className={cn("flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-md border border-white/10", visual.colorClass)}>
-                    <Icon size={28} />
-                  </div>
-                  {isCurrent && (
-                    <span className="rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-emerald-500 border border-emerald-500/20">
-                      Atual
-                    </span>
-                  )}
-                </div>
-
-                <h3 className="mb-2 text-2xl font-black tracking-tight text-gray-900 dark:text-white">
-                  {plan.nome}
-                </h3>
-                
-                <div className="mb-6 flex items-baseline gap-1">
-                  <span className="text-3xl font-bold text-gray-900 dark:text-white">
-                    {plan.preco === 0 ? 'Grátis' : `R$ ${plan.preco.toFixed(2)}`}
-                  </span>
-                  {plan.preco > 0 && <span className="text-sm text-gray-500 dark:text-gray-400">/mês</span>}
-                </div>
-
-                <div className="mb-8 space-y-4 flex-1">
-                  <div className="flex items-center gap-3">
-                    <div className={cn("flex h-5 w-5 items-center justify-center rounded-full bg-white/10", visual.colorClass)}>
-                      <Zap size={12} />
-                    </div>
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                      {plan.limiteApostasDiarias === 0 
-                        ? 'Apostas Ilimitadas' 
-                        : `${plan.limiteApostasDiarias} apostas diárias`}
-                    </span>
-                  </div>
-                  
-                  {/* Features placeholders based on plan type */}
-                  <div className="flex items-center gap-3">
-                    <div className={cn("flex h-5 w-5 items-center justify-center rounded-full bg-white/10", visual.colorClass)}>
-                      <Check size={12} />
-                    </div>
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Gestão de Bancas
-                    </span>
-                  </div>
-                  
-                  <div className="flex items-center gap-3">
-                    <div className={cn("flex h-5 w-5 items-center justify-center rounded-full bg-white/10", visual.colorClass)}>
-                      <Check size={12} />
-                    </div>
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Relatórios Detalhados
-                    </span>
-                  </div>
-
-                  {plan.nome.toLowerCase().includes('profissional') && (
-                    <div className="flex items-center gap-3">
-                      <div className={cn("flex h-5 w-5 items-center justify-center rounded-full bg-white/10", visual.colorClass)}>
-                        <Check size={12} />
-                      </div>
-                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Suporte Prioritário
-                      </span>
-                    </div>
-                  )}
-                </div>
-
-                <button
-                  onClick={() => handleSelectPlan(plan)}
-                  disabled={isCurrent || isProcessing}
-                  className={cn(
-                    "relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-xl py-3.5 text-sm font-bold uppercase tracking-widest transition-all duration-300",
-                    isCurrent 
-                      ? "bg-gray-100 text-gray-400 cursor-default dark:bg-white/5 dark:text-gray-500"
-                      : "bg-emerald-600 text-white hover:bg-emerald-500 hover:shadow-lg hover:shadow-emerald-600/20 active:scale-[0.98]"
-                  )}
-                >
-                  {isProcessing ? (
-                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/20 border-t-white" />
-                  ) : isCurrent ? (
-                    <>
-                      <CheckCircle2 size={16} />
-                      <span>Plano Atual</span>
-                    </>
-                  ) : (
-                    <span>Contratar Plano</span>
-                  )}
-                </button>
-              </div>
-            </div>
-          );
-        })}
+        {mainPlans.map((plan) => renderPlanCard(plan))}
       </div>
+
+      {testPlans.length > 0 && (
+        <div className="mt-8 border-t pt-8 dark:border-white/10">
+           <h3 className="mb-6 text-xl font-bold text-gray-900 dark:text-white">Planos de Teste</h3>
+           <div className="grid gap-8 lg:grid-cols-3">
+            {testPlans.map((plan) => renderPlanCard(plan, true))}
+           </div>
+        </div>
+      )}
       {/* Modal para Dados do Cliente */}
       <Modal
         isOpen={customerInfoModalOpen}

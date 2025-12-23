@@ -134,10 +134,14 @@ export const calcularRetornoObtido = (
     case 'Cashout':
       return retornoManualValue ?? valorApostado * odd * 0.7;
     case 'Perdida':
+      return 0;
     case 'Meio Perdida':
+      return valorApostado / 2; // Retorna metade do valor apostado (prejuízo é metade)
     case 'Reembolsada':
     case 'Void':
+      return valorApostado; // Retorna o valor apostado
     case 'Pendente':
+      return null;
     default:
       return null;
   }
@@ -261,23 +265,23 @@ export function useApostasManager(options: UseApostasManagerOptions = {}) {
       aposta: ApiBetWithBank;
       statusFormData: StatusFormState;
     }) => {
-      let retornoObtido: number | undefined;
+      let retornoObtido: number | undefined | null;
 
-      if (STATUS_WITH_RETURNS.includes(statusFormData.status)) {
-        const retornoManualValue = parseNullableNumber(statusFormData.retornoObtido);
-        if (retornoManualValue !== undefined && retornoManualValue > 0) {
-          retornoObtido = retornoManualValue;
-        } else {
-          const calculado = calcularRetornoObtido(
-            statusFormData.status,
-            aposta.valorApostado,
-            aposta.odd,
-            retornoManualValue
-          );
-          if (calculado !== null) {
-            retornoObtido = calculado;
-          }
-        }
+      const retornoManualValue = parseNullableNumber(statusFormData.retornoObtido);
+      
+      // Prioriza valor manual apenas para status que permitem retorno variável
+      if (STATUS_WITH_RETURNS.includes(statusFormData.status) && retornoManualValue !== undefined && retornoManualValue > 0) {
+        retornoObtido = retornoManualValue;
+      } else {
+        const calculado = calcularRetornoObtido(
+          statusFormData.status,
+          aposta.valorApostado,
+          aposta.odd,
+          retornoManualValue
+        );
+        // Atribui o valor calculado (seja número ou null para Pendente)
+        // Se calculado for null, retornoObtido será null (limpa o campo no banco)
+        retornoObtido = calculado;
       }
 
       return apostaService.update(id, {
